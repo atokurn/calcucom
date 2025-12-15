@@ -1197,74 +1197,79 @@
             opacity: 1;
         }
 
-/* ==================== GLASSMORPHISM ENHANCEMENTS ==================== */
+        /* ==================== GLASSMORPHISM ENHANCEMENTS ==================== */
 
-/* Upgrade Standard Cards to Glass */
-.bg-white.rounded-2xl.shadow-sm,
-.bg-white.rounded-xl.shadow-sm,
-.bg-white.dark\:bg-slate-800.rounded-2xl {
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08) !important;
-}
+        /* Upgrade Standard Cards to Glass */
+        .bg-white.rounded-2xl.shadow-sm,
+        .bg-white.rounded-xl.shadow-sm,
+        .bg-white.dark\:bg-slate-800.rounded-2xl {
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08) !important;
+        }
 
-.dark .bg-white.rounded-2xl.shadow-sm,
-.dark .bg-white.rounded-xl.shadow-sm,
-.dark .bg-white.dark\:bg-slate-800.rounded-2xl {
-    background: rgba(30, 41, 59, 0.7) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3) !important;
-}
+        .dark .bg-white.rounded-2xl.shadow-sm,
+        .dark .bg-white.rounded-xl.shadow-sm,
+        .dark .bg-white.dark\:bg-slate-800.rounded-2xl {
+            background: rgba(30, 41, 59, 0.7) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3) !important;
+        }
 
-/* Navbar Glass */
-nav#mainNav {
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
-}
+        /* Navbar Glass */
+        nav#mainNav {
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
 
-.dark nav#mainNav {
-    background: rgba(30, 41, 59, 0.8) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-}
+        .dark nav#mainNav {
+            background: rgba(30, 41, 59, 0.8) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
 
-/* Smooth Transitions for Theme Switch */
-body, .bg-slate-50, .dark\:bg-slate-900 {
-    transition: background-color 0.5s ease, color 0.5s ease;
-}
+        /* Smooth Transitions for Theme Switch */
+        body,
+        .bg-slate-50,
+        .dark\:bg-slate-900 {
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
 
-/* Modern Gradient Text for Logo */
-.text-orange-500 {
-    background: linear-gradient(135deg, #EE4D2D 0%, #ff7e5f 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-/* Exclude icons from gradient text */
-i.text-orange-500 {
-    background: none;
-    -webkit-text-fill-color: initial;
-    color: #EE4D2D;
-}
+        /* Modern Gradient Text for Logo */
+        .text-orange-500 {
+            background: linear-gradient(135deg, #EE4D2D 0%, #ff7e5f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-/* Button Upgrades */
-button {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-button:active {
-    transform: scale(0.96);
-}
+        /* Exclude icons from gradient text */
+        i.text-orange-500 {
+            background: none;
+            -webkit-text-fill-color: initial;
+            color: #EE4D2D;
+        }
 
-/* Mobile Bottom Nav Glass */
-.mobile-module-nav {
-    background: rgba(255, 255, 255, 0.9) !important;
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(0,0,0,0.05) !important;
-}
-.dark .mobile-module-nav {
-    background: rgba(30, 41, 59, 0.9) !important;
-    border-top: 1px solid rgba(255,255,255,0.05) !important;
-}
+        /* Button Upgrades */
+        button {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        /* Mobile Bottom Nav Glass */
+        .mobile-module-nav {
+            background: rgba(255, 255, 255, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+        }
+
+        .dark .mobile-module-nav {
+            background: rgba(30, 41, 59, 0.9) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }

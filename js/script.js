@@ -31,6 +31,59 @@ function getPlatformIcon(platform) {
     return icons[platformLower] || '<i class="fas fa-store text-slate-500"></i>';
 }
 
+/**
+ * Get category data based on current platform
+ * Returns platform-specific category data or default (Shopee) categories
+ * @returns {Array} Category data array for the current platform
+ */
+function getCategoryData() {
+    switch (currentPlatform) {
+        case 'tokopedia':
+            return typeof tokopediaCategoryData !== 'undefined' ? tokopediaCategoryData : categoryData;
+        case 'tiktok':
+            return typeof tiktokCategoryData !== 'undefined' ? tiktokCategoryData : categoryData;
+        default:
+            return categoryData;
+    }
+}
+
+/**
+ * Get fee rates based on current platform
+ * @param {string} sellerType - 'regular', 'power', 'mall', 'star', 'nonstar'
+ * @returns {Object} Fee rates object
+ */
+function getPlatformRates(sellerType) {
+    switch (currentPlatform) {
+        case 'tokopedia':
+            return typeof tokopediaRates !== 'undefined' ? tokopediaRates[sellerType] || tokopediaRates.regular : shopeeRates.nonstar;
+        case 'tiktok':
+            return typeof tiktokRates !== 'undefined' ? tiktokRates[sellerType] || tiktokRates.regular : shopeeRates.nonstar;
+        default:
+            return shopeeRates[sellerType] || shopeeRates.nonstar;
+    }
+}
+
+/**
+ * Get dynamic commission rate for a category cluster
+ * @param {string} cluster - Category cluster (elektronik, fashion, fmcg, lifestyle, others)
+ * @returns {number} Dynamic commission rate percentage
+ */
+function getDynamicCommissionRate(cluster) {
+    let rates;
+    switch (currentPlatform) {
+        case 'tokopedia':
+            rates = typeof tokopediaDynamicRates !== 'undefined' ? tokopediaDynamicRates : null;
+            break;
+        case 'tiktok':
+            rates = typeof tiktokDynamicRates !== 'undefined' ? tiktokDynamicRates : null;
+            break;
+        default:
+            return 0; // Shopee doesn't have dynamic commission
+    }
+    if (!rates) return 0;
+    return rates[cluster] || rates.others || 0;
+}
+
 // ==================== MODULE SWITCHING ====================
 
 function switchModule(moduleName) {
@@ -2086,9 +2139,9 @@ function openHistoryDetail(id) {
                 discount: product.discount_percent || product.discount || 0,
                 profit: formatRupiah(product.result_profit || product.profit || 0),
                 margin: (product.result_margin || product.margin || 0) + '%',
-                adminFee: product.cost_admin || 0,
-                serviceFee: product.cost_service || 0,
-                otherFee: (product.cost_packing || 0) + (product.cost_affiliate || 0) + (product.cost_shipping || 0)
+                adminFee: product.fee_admin || product.cost_admin || 0,
+                serviceFee: product.fee_service || product.cost_service || 0,
+                otherFee: (product.fee_affiliate || 0) + (product.cost_packing || 0) + (product.cost_shipping || 0)
             };
             // Raw values for re-loading
             item.raw = product;
@@ -2690,7 +2743,7 @@ function applyLanguage() {
 
 document.addEventListener('DOMContentLoaded', () => {
     setPlatform('shopee');
-    renderCol1(categoryData);
+    renderCol1(getCategoryData());
     renderCustomCosts();
     initChart();
     addBulkRow();
@@ -2861,7 +2914,7 @@ function resetModalView() {
     document.getElementById('col3').classList.remove('hidden');
     document.getElementById('searchResultList').classList.add('hidden');
 
-    renderCol1(categoryData);
+    renderCol1(getCategoryData());
     document.getElementById('col2').innerHTML = '';
     document.getElementById('col3').innerHTML = '';
 
@@ -2902,7 +2955,7 @@ function filterCategories(query) {
     // Flatten and search
     let matches = [];
 
-    categoryData.forEach(l1 => {
+    getCategoryData().forEach(l1 => {
         if (l1.name.toLowerCase().includes(query)) {
             // Matches L1 logic could be added here
         }
@@ -3152,16 +3205,73 @@ function recalcAfterCategoryChange() {
 
 function setPlatform(p) {
     currentPlatform = p;
+
+    // Update Platform Buttons UI
+    document.querySelectorAll('.platform-btn').forEach(btn => {
+        btn.classList.remove('active');
+        // Reset scale/transform if any inline styles were applied (optional, but good for cleanup)
+    });
+    const activeBtn = document.getElementById(`btn-${p}`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
+
     const wrapper = document.getElementById('programWrapper');
     const catWrapper = document.getElementById('shopeeCategoryWrapper');
+    const sellerTypeSelect = document.getElementById('sellerType');
 
+    // Show/hide Shopee-specific programs (Gratis Ongkir, Cashback)
     if (p === 'shopee') {
         if (wrapper) wrapper.style.display = 'block';
-        if (catWrapper) catWrapper.style.display = 'block';
     } else {
         if (wrapper) wrapper.style.display = 'none';
-        if (catWrapper) catWrapper.style.display = 'none';
     }
+
+    // Category wrapper is shown for all platforms now (each has own categories)
+    if (catWrapper) catWrapper.style.display = 'block';
+
+    // Update seller type options based on platform
+    if (sellerTypeSelect) {
+        if (p === 'shopee') {
+            sellerTypeSelect.innerHTML = `
+                <option value="nonstar">Non-Star (Regular)</option>
+                <option value="star">Star Seller / Star+</option>
+                <option value="mall">Shopee Mall</option>
+            `;
+        } else if (p === 'tokopedia') {
+            sellerTypeSelect.innerHTML = `
+                <option value="regular">Regular</option>
+                <option value="power">Power Merchant</option>
+                <option value="mall">Official Store</option>
+            `;
+        } else if (p === 'tiktok') {
+            sellerTypeSelect.innerHTML = `
+                <option value="regular">Regular Seller</option>
+                <option value="mall">TikTok Shop Mall</option>
+            `;
+        } else {
+            sellerTypeSelect.innerHTML = `
+                <option value="regular">Regular</option>
+                <option value="mall">Official Store</option>
+            `;
+        }
+    }
+
+    // Reset category selection when platform changes
+    selectedPath = { l1: null, l2: null, l3: null, group: 'A' };
+
+    // Update category display text
+    const catDisplay = document.getElementById('catDisplay');
+    if (catDisplay) {
+        const platformNames = {
+            'shopee': 'Shopee',
+            'tokopedia': 'Tokopedia',
+            'tiktok': 'TikTok Shop',
+            'lazada': 'Lazada'
+        };
+        catDisplay.innerText = `Klik untuk pilih Kategori ${platformNames[p] || ''}`;
+    }
+
     calculate();
 }
 

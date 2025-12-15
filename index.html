@@ -2282,7 +2282,7 @@
     </div>
 
     <!-- History Detail Modal -->
-    <div id="historyDetailModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+    <div id="historyDetailModal" class="fixed inset-0 z-[9999] hidden" aria-labelledby="modal-title" role="dialog"
         aria-modal="true">
         <!-- Backdrop -->
         <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity opacity-0"
@@ -2291,9 +2291,9 @@
 
         <!-- Modal Panel -->
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0">
                 <div id="histDetailPanel"
-                    class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                    class="relative transform overflow-hidden rounded-none sm:rounded-2xl bg-white dark:bg-slate-800 text-left shadow-xl transition-all h-full sm:h-auto w-full sm:my-8 sm:w-full sm:max-w-md opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95 flex flex-col">
 
                     <!-- Header -->
                     <div
@@ -2316,7 +2316,7 @@
                     </div>
 
                     <!-- Content -->
-                    <div class="px-4 py-4 sm:p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                    <div class="px-4 py-4 sm:p-6 space-y-4 flex-1 overflow-y-auto sm:max-h-[70vh]">
 
                         <!-- Financial Summary -->
                         <div class="grid grid-cols-2 gap-3 mb-4">
@@ -2411,6 +2411,8 @@
 
     <!-- Data and main script -->
     <script src="js/data.js"></script>
+    <script src="js/data-tokopedia.js"></script>
+    <script src="js/data-tiktok.js"></script>
     <script src="js/script.js"></script>
     <script>
         if ("serviceWorker" in navigator) {

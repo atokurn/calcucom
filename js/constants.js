@@ -2,11 +2,11 @@
  * AppConstants - Centralized configuration and constants
  * Using IIFE pattern for browser compatibility without build tools
  */
-const AppConstants = (function() {
+const AppConstants = (function () {
     'use strict';
 
     // ==================== MARKETPLACE CONFIGURATIONS ====================
-    
+
     /**
      * Shopee admin fee rates by category and seller type
      */
@@ -24,37 +24,58 @@ const AppConstants = (function() {
             name: 'Shopee',
             icon: 'fa-shopping-bag',
             color: '#EE4D2D',
-            adminFees: { A: 8, B: 7.5, C: 5.75, D: 4.25, E: 2.5 },
+            adminFees: { A: 8, B: 7.5, C: 5.75, D: 4.25, E: 2.5, F: 3.2 },
             serviceFees: {
                 freeShip: { rate: 4.0, cap: 40000 },
                 cashback: { rate: 4.5, cap: 60000 }
             },
             orderProcessFee: 1250,
-            fixedFee: 0
+            fixedFee: 0,
+            hasDynamicCommission: false
         },
         tokopedia: {
             name: 'Tokopedia',
             icon: 'fa-store',
             color: '#03AC0E',
-            adminFees: { A: 6.5, B: 6, C: 4.5, D: 3.5, E: 2 },
+            adminFees: { A: 7.5, B: 6.5, C: 5.5, D: 4.5, E: 2.5, F: 3.5 },
+            dynamicCommission: {
+                elektronik: 4.0,
+                fashion: 5.5,
+                fmcg: 4.0,
+                lifestyle: 5.5,
+                others: 5.0,
+                cap: 40000
+            },
             serviceFees: {
-                freeShip: { rate: 4.0, cap: 40000 },
+                freeShip: { rate: 0, cap: 0 },  // Included in dynamic commission
                 cashback: { rate: 0, cap: 0 }
             },
-            orderProcessFee: 1000,
-            fixedFee: 0
+            orderProcessFee: 1250,
+            preOrderFee: 3.0,
+            fixedFee: 0,
+            hasDynamicCommission: true
         },
         tiktok: {
-            name: 'TikTok',
+            name: 'TikTok Shop',
             icon: 'fab fa-tiktok',
             color: '#000000',
-            adminFees: { A: 5, B: 4.5, C: 3.5, D: 2.5, E: 1.5 },
+            adminFees: { A: 7.5, B: 6.5, C: 5.5, D: 4.5, E: 2.5, F: 3.5 },
+            dynamicCommission: {
+                elektronik: 4.0,
+                fashion: 5.5,
+                fmcg: 4.0,
+                lifestyle: 5.5,
+                others: 5.0,
+                cap: 40000
+            },
             serviceFees: {
-                freeShip: { rate: 4.0, cap: 40000 },
+                freeShip: { rate: 0, cap: 0 },  // Included in dynamic commission
                 cashback: { rate: 0, cap: 0 }
             },
-            orderProcessFee: 1000,
-            fixedFee: 0
+            orderProcessFee: 1250,
+            preOrderFee: 3.0,
+            fixedFee: 0,
+            hasDynamicCommission: true
         },
         lazada: {
             name: 'Lazada',
@@ -66,12 +87,13 @@ const AppConstants = (function() {
                 cashback: { rate: 0, cap: 0 }
             },
             orderProcessFee: 1000,
-            fixedFee: 0
+            fixedFee: 0,
+            hasDynamicCommission: false
         }
     };
 
     // ==================== UI CONSTANTS ====================
-    
+
     const UI = {
         DEBOUNCE_DELAY: 150,
         TOAST_DURATION: 3000,
@@ -80,7 +102,7 @@ const AppConstants = (function() {
     };
 
     // ==================== DEFAULT VALUES ====================
-    
+
     const DEFAULTS = {
         platform: 'shopee',
         sellerType: 'nonstar',
@@ -92,7 +114,7 @@ const AppConstants = (function() {
     };
 
     // ==================== VALIDATION LIMITS ====================
-    
+
     const LIMITS = {
         maxPrice: 999999999,
         minPrice: 0,
@@ -109,7 +131,7 @@ const AppConstants = (function() {
         UI,
         DEFAULTS,
         LIMITS,
-        
+
         /**
          * Get admin fee rate for a platform/seller/category
          * @param {string} platform 
@@ -123,7 +145,7 @@ const AppConstants = (function() {
             }
             return MARKETPLACE_FEES[platform]?.adminFees[categoryGroup] || 8;
         },
-        
+
         /**
          * Get marketplace config
          * @param {string} platform 

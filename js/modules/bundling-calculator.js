@@ -449,10 +449,21 @@ const BundlingCalculator = (function () {
 
         let products = window.productDB || JSON.parse(localStorage.getItem('productDB') || '[]');
         let addedCount = 0;
+        let blockedCount = 0;
+        let blockedMessage = '';
 
         selectedFromDB.forEach(id => {
             const product = products.find(p => p.id === id);
             if (product) {
+                // VALIDATE: Check marketplace lock before adding
+                const validation = validateProductMarketplace(product);
+
+                if (!validation.valid) {
+                    blockedCount++;
+                    blockedMessage = validation.message;
+                    return; // Skip this product
+                }
+
                 // Add product with full metadata from database (no render yet)
                 addProductFromDB(product, false);
                 addedCount++;
@@ -468,7 +479,18 @@ const BundlingCalculator = (function () {
             calculateAndRender();
         }
 
-        if (typeof showToast === 'function') showToast(`${addedCount} produk ditambahkan ke bundle`, 'success');
+        // Show appropriate feedback
+        if (blockedCount > 0) {
+            if (typeof showToast === 'function') {
+                showToast(blockedMessage, 'error');
+            }
+        }
+
+        if (addedCount > 0) {
+            if (typeof showToast === 'function') {
+                showToast(`${addedCount} produk ditambahkan ke bundle`, 'success');
+            }
+        }
     }
 
     /**
@@ -503,30 +525,136 @@ const BundlingCalculator = (function () {
     }
 
     /**
-     * Get the highest fee category among all database products
-     * Returns category with highest admin fee rate
+     * ==================== BUNDLE BUSINESS RULES ====================
+     * These functions enforce real marketplace rules:
+     * 1. Marketplace lock - all products must be from same marketplace
+     * 2. Highest fee category - use actual fee rates, not hardcoded priority
+     * 3. Conservative cap - use smallest cap among categories
      */
-    function getHighestFeeCategory() {
+
+    /**
+     * Get the locked marketplace from existing bundle products
+     * First DB product locks the marketplace for the entire bundle
+     * @returns {string|null} - Marketplace name or null if no DB products
+     */
+    function getBundleMarketplace() {
+        const dbProducts = bundleProducts.filter(p => p.fromDB);
+        return dbProducts.length > 0 ? dbProducts[0].platform : null;
+    }
+
+    /**
+     * Validate if a product can be added to the bundle
+     * Enforces marketplace lock rule
+     * @param {Object} product - Product to validate
+     * @returns {{valid: boolean, message?: string}}
+     */
+    function validateProductMarketplace(product) {
+        const lockedMarketplace = getBundleMarketplace();
+
+        // No lock yet - first product sets the marketplace
+        if (!lockedMarketplace) return { valid: true };
+
+        const productMarketplace = product.platform || 'shopee';
+
+        if (productMarketplace !== lockedMarketplace) {
+            return {
+                valid: false,
+                message: `Bundle hanya boleh berisi produk dari marketplace yang sama (${lockedMarketplace.charAt(0).toUpperCase() + lockedMarketplace.slice(1)}).`
+            };
+        }
+
+        return { valid: true };
+    }
+
+    /**
+     * Resolve bundle fees using ACTUAL fee rates from AppConstants
+     * REPLACES hardcoded category priority mapping
+     * 
+     * Business rules:
+     * - Uses AppConstants.getAdminFeeRate() for dynamic lookup
+     * - Selects category with HIGHEST admin fee rate
+     * - Uses SMALLEST cap (conservative/seller-safe)
+     * 
+     * @returns {Object|null} - Fee resolution result
+     */
+    function resolveBundleFees() {
         const dbProducts = bundleProducts.filter(p => p.fromDB && p.categoryGroup);
         if (dbProducts.length === 0) return null;
 
-        // Category fee priority (highest to lowest for Shopee): A > B > F > C > D > E
-        const categoryPriority = { 'A': 6, 'B': 5, 'F': 4, 'C': 3, 'D': 2, 'E': 1 };
+        // Get seller context
+        const sellerType = AppState?.get('sellerType') || 'nonstar';
+        const freeShipEnabled = AppState?.get('features.freeShipEnabled') || false;
 
-        let highestCategory = dbProducts[0].categoryGroup;
-        let highestPriority = categoryPriority[highestCategory] || 0;
+        // Find highest admin fee and smallest cap
+        let result = {
+            effectiveCategory: null,
+            adminRate: 0,
+            serviceRate: 0,
+            serviceCap: Infinity,
+            processFee: 0,
+            platform: null,
+            hasMixedCategories: false
+        };
+
+        const categories = new Set();
 
         dbProducts.forEach(p => {
-            const priority = categoryPriority[p.categoryGroup] || 0;
-            if (priority > highestPriority) {
-                highestPriority = priority;
-                highestCategory = p.categoryGroup;
+            const platform = p.platform || 'shopee';
+            const category = p.categoryGroup || 'A';
+            categories.add(category);
+
+            // Get ACTUAL admin fee rate from AppConstants (not hardcoded)
+            const adminRate = typeof AppConstants !== 'undefined'
+                ? AppConstants.getAdminFeeRate(platform, sellerType, category)
+                : 8; // Fallback to highest rate
+
+            const config = typeof AppConstants !== 'undefined'
+                ? AppConstants.getMarketplace(platform)
+                : { serviceFees: { freeShip: { rate: 4, cap: 40000 } }, orderProcessFee: 1250 };
+
+            const serviceCap = config.serviceFees?.freeShip?.cap || 40000;
+            const serviceRate = freeShipEnabled ? (config.serviceFees?.freeShip?.rate || 0) : 0;
+            const processFee = config.orderProcessFee || 1250;
+
+            // Select category with HIGHEST admin rate
+            if (adminRate > result.adminRate) {
+                result.effectiveCategory = category;
+                result.adminRate = adminRate;
+                result.platform = platform;
             }
+
+            // CONSERVATIVE: Use SMALLEST cap (worst case for seller)
+            if (serviceCap < result.serviceCap) {
+                result.serviceCap = serviceCap;
+            }
+
+            // Always use the service rate and process fee from resolved platform
+            result.serviceRate = serviceRate;
+            result.processFee = processFee;
         });
 
+        result.hasMixedCategories = categories.size > 1;
+
+        // If no service cap was found, use reasonable default
+        if (result.serviceCap === Infinity) {
+            result.serviceCap = 40000;
+        }
+
+        return result;
+    }
+
+    /**
+     * Legacy alias - getHighestFeeCategory now calls resolveBundleFees
+     * Maintained for backward compatibility
+     * @deprecated Use resolveBundleFees() instead
+     */
+    function getHighestFeeCategory() {
+        const fees = resolveBundleFees();
+        if (!fees) return null;
+
         return {
-            category: highestCategory,
-            hasMixedCategories: new Set(dbProducts.map(p => p.categoryGroup)).size > 1
+            category: fees.effectiveCategory,
+            hasMixedCategories: fees.hasMixedCategories
         };
     }
 
@@ -700,25 +828,41 @@ const BundlingCalculator = (function () {
     }
 
     /**
-     * Render fee category badge when mixed categories exist
+     * Render fee category badge with enhanced information
+     * Shows which category is used and the actual fee rate
      */
     function renderFeeCategoryBadge() {
         const badgeContainer = document.getElementById('bundle-fee-category-badge');
         if (!badgeContainer) return;
 
-        const feeInfo = getHighestFeeCategory();
+        const feeInfo = resolveBundleFees();
 
-        if (!feeInfo || !feeInfo.hasMixedCategories) {
+        // No DB products - hide badge
+        if (!feeInfo) {
             badgeContainer.innerHTML = '';
             return;
         }
 
-        badgeContainer.innerHTML = `
-            <div class="flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-1 rounded-lg">
-                <i class="fas fa-info-circle"></i>
-                <span>Menggunakan fee Kategori ${feeInfo.category}</span>
-            </div>
-        `;
+        // Always show badge when DB products exist for transparency
+        const categoryLabel = `Kategori ${feeInfo.effectiveCategory}`;
+        const feeLabel = `${feeInfo.adminRate}%`;
+
+        // Different styling for mixed vs single category
+        if (feeInfo.hasMixedCategories) {
+            badgeContainer.innerHTML = `
+                <div class="flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-1.5 rounded-lg mb-2">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Kategori campuran → Menggunakan fee tertinggi: <strong>${categoryLabel} (${feeLabel})</strong></span>
+                </div>
+            `;
+        } else {
+            badgeContainer.innerHTML = `
+                <div class="flex items-center gap-1 text-[10px] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-lg mb-2">
+                    <i class="fas fa-tag"></i>
+                    <span>Fee ${categoryLabel}: ${feeLabel}</span>
+                </div>
+            `;
+        }
     }
 
     function formatAndUpdate(id, field, input) {
@@ -1063,7 +1207,12 @@ const BundlingCalculator = (function () {
         renderProductBreakdown,
         renderBusinessInsights,
         toggleProductAccordion,
-        getHighestFeeCategory,
+
+        // Business rules
+        getHighestFeeCategory,    // @deprecated - use resolveBundleFees
+        resolveBundleFees,        // Dynamic fee resolution
+        getBundleMarketplace,     // Get locked marketplace
+        validateProductMarketplace, // Validate product can be added
         init,
 
         // Getters

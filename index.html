@@ -378,6 +378,50 @@
                                             </div>
                                         </button>
                                     </div>
+
+                                    <!-- Quick Category Group Selector -->
+                                    <div class="flex gap-1.5 mt-2">
+                                        <button onclick="setQuickCategory('A')"
+                                            class="quick-cat-btn flex-1 py-1.5 text-xs font-bold rounded-lg border transition-all active"
+                                            data-group="A">A</button>
+                                        <button onclick="setQuickCategory('B')"
+                                            class="quick-cat-btn flex-1 py-1.5 text-xs font-bold rounded-lg border transition-all"
+                                            data-group="B">B</button>
+                                        <button onclick="setQuickCategory('C')"
+                                            class="quick-cat-btn flex-1 py-1.5 text-xs font-bold rounded-lg border transition-all"
+                                            data-group="C">C</button>
+                                        <button onclick="setQuickCategory('D')"
+                                            class="quick-cat-btn flex-1 py-1.5 text-xs font-bold rounded-lg border transition-all"
+                                            data-group="D">D</button>
+                                        <button onclick="setQuickCategory('E')"
+                                            class="quick-cat-btn flex-1 py-1.5 text-xs font-bold rounded-lg border transition-all"
+                                            data-group="E">E</button>
+                                        <button onclick="setQuickCategory('F')"
+                                            class="quick-cat-btn flex-1 py-1.5 text-xs font-bold rounded-lg border transition-all"
+                                            data-group="F">F</button>
+                                    </div>
+
+                                    <!-- Category Group Detail Info -->
+                                    <div id="categoryGroupDetail"
+                                        class="mt-2 p-2 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
+                                        <div class="flex items-start gap-2">
+                                            <span id="categoryGroupIcon" class="text-lg">👗</span>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center gap-2">
+                                                    <span id="categoryGroupTitle"
+                                                        class="text-xs font-bold text-slate-700 dark:text-slate-200">Fashion
+                                                        & Kecantikan</span>
+                                                    <span id="categoryGroupFee"
+                                                        class="text-[10px] px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold">8%</span>
+                                                </div>
+                                                <p id="categoryGroupDesc"
+                                                    class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
+                                                    Pakaian, Sepatu, Tas, Aksesoris, Makeup, Skincare, Parfum
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <input type="hidden" id="currentCategoryGroup" value="A">
                                 </div>
 
@@ -1969,13 +2013,73 @@
                             <h3 class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2 text-sm">
                                 <i class="fas fa-cubes text-purple-500"></i> Produk Dalam Bundle
                             </h3>
-                            <button onclick="BundlingCalculator.addProduct()"
-                                class="text-xs font-bold px-3 py-1.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors">
-                                <i class="fas fa-plus mr-1"></i> Tambah
-                            </button>
+                            <!-- Mode Toggle -->
+                            <div class="flex bg-slate-100 dark:bg-slate-600 rounded-lg p-0.5 gap-1">
+                                <button onclick="switchBundleMode('manual')" id="btn-bundle-manual"
+                                    class="px-3 py-1 text-xs font-bold rounded-md bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 shadow-sm transition-all">
+                                    Manual
+                                </button>
+                                <button onclick="switchBundleMode('auto')" id="btn-bundle-auto"
+                                    class="px-3 py-1 text-xs font-bold text-slate-400 rounded-md transition-all hover:bg-white/50 dark:hover:bg-slate-600/50">
+                                    Database
+                                </button>
+                            </div>
                         </div>
 
-                        <div id="bundleProductsList" class="p-4 space-y-2 max-h-80 overflow-y-auto">
+                        <div class="p-4 space-y-3 border-b border-slate-100 dark:border-slate-700">
+                            <!-- MANUAL MODE -->
+                            <div id="bundle_manual_section">
+                                <button onclick="BundlingCalculator.addProduct()"
+                                    class="w-full text-xs font-bold px-4 py-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-2">
+                                    <i class="fas fa-plus"></i> Tambah Produk Manual
+                                </button>
+                            </div>
+                            <!-- AUTO MODE: Multi-Select Product -->
+                            <div id="bundle_auto_section" class="hidden space-y-3">
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+                                    Pilih Produk untuk Bundle
+                                </label>
+
+                                <!-- Multi-Select Component -->
+                                <div class="multiselect-wrapper" id="bundleMultiSelect">
+                                    <button type="button" class="multiselect-trigger"
+                                        onclick="toggleBundleMultiSelect()">
+                                        <div class="multiselect-badges" id="bundle-selected-badges">
+                                            <span class="text-slate-400">Pilih produk dari database...</span>
+                                        </div>
+                                        <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+                                    </button>
+                                    <div class="multiselect-dropdown" id="bundle-multiselect-dropdown">
+                                        <div class="combobox-search">
+                                            <div class="relative">
+                                                <i
+                                                    class="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                                <input type="text" id="bundle-multiselect-search"
+                                                    placeholder="Cari produk..."
+                                                    oninput="filterBundleMultiOptions(this.value)"
+                                                    onclick="event.stopPropagation()">
+                                            </div>
+                                        </div>
+                                        <div class="multiselect-options" id="bundle-multiselect-options">
+                                            <!-- Options populated by JS -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Add Selected Button -->
+                                <button onclick="BundlingCalculator.addSelectedToBundle()"
+                                    class="w-full text-xs font-bold px-4 py-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-2">
+                                    <i class="fas fa-plus"></i> Tambahkan Terpilih ke Bundle
+                                </button>
+
+                                <p class="text-[10px] text-slate-400 text-center" id="bundle_auto_info">
+                                    <i class="fas fa-info-circle mr-1"></i>Pilih satu atau lebih produk lalu klik tombol
+                                    di atas
+                                </p>
+                            </div>
+                        </div>
+
+                        <div id="bundleProductsList" class="p-4 space-y-2 max-h-60 overflow-y-auto">
                             <!-- Products will be rendered here by JS -->
                             <div class="text-center text-slate-400 dark:text-slate-500 py-6">
                                 <i class="fas fa-box-open text-2xl mb-2 block opacity-50"></i>

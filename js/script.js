@@ -15,6 +15,7 @@ let editingProductIndex = null; // For category modal
 let currentModule = 'profit'; // Current active module
 let priceFinderTarget = 'margin'; // 'margin' or 'profit'
 let productDB = JSON.parse(localStorage.getItem('productDB') || '[]'); // Product database for Ads Analyzer
+window.productDB = productDB; // Expose globally for modules
 
 // ==================== HELPER FUNCTIONS ====================
 
@@ -3090,14 +3091,44 @@ function recalcAfterCategoryChange() {
             const seller = elSeller.value || 'nonstar';
 
             let rate = 0;
-            if (shopeeRates[seller] && shopeeRates[seller][group] !== undefined) {
-                rate = shopeeRates[seller][group];
+
+            // Get rate based on current platform
+            if (currentPlatform === 'shopee') {
+                if (shopeeRates[seller] && shopeeRates[seller][group] !== undefined) {
+                    rate = shopeeRates[seller][group];
+                }
+            } else if (currentPlatform === 'tokopedia' && typeof tokopediaRates !== 'undefined') {
+                const tType = seller === 'power' ? 'power' : (seller === 'mall' ? 'mall' : 'regular');
+                if (tokopediaRates[tType] && tokopediaRates[tType][group] !== undefined) {
+                    rate = tokopediaRates[tType][group];
+                }
+            } else if (currentPlatform === 'tiktok' && typeof tiktokRates !== 'undefined') {
+                const tType = seller === 'mall' ? 'mall' : 'regular';
+                if (tiktokRates[tType] && tiktokRates[tType][group] !== undefined) {
+                    rate = tiktokRates[tType][group];
+                }
+            } else if (currentPlatform === 'lazada') {
+                // Lazada uses similar structure to Shopee for now
+                if (shopeeRates[seller] && shopeeRates[seller][group] !== undefined) {
+                    rate = shopeeRates[seller][group] * 0.9; // Lazada typically slightly lower
+                }
             }
 
             elAdmin.value = rate;
         }
     }
+
+    // Sync quick category buttons
+    updateQuickCategoryButtons();
+
     calculate();
+}
+
+/**
+ * Alias for recalcAfterCategoryChange - called from setQuickCategory
+ */
+function updateAdminFeeFromCategory() {
+    recalcAfterCategoryChange();
 }
 
 function confirmCategory() {
@@ -3135,6 +3166,149 @@ function confirmCategory() {
     closeCategoryModal();
     // Force a small delay to ensure DOM updates if necessary, though not strictly needed
     setTimeout(recalcAfterCategoryChange, 50);
+}
+
+/**
+ * Set category group quickly without opening modal
+ * @param {string} group - Category group (A-F)
+ */
+function setQuickCategory(group) {
+    // Update selected path
+    selectedPath.group = group;
+    selectedPath.l1 = `Kategori Group ${group}`;
+    selectedPath.l2 = null;
+    selectedPath.l3 = null;
+
+    // Update hidden input
+    const elGroup = document.getElementById('currentCategoryGroup');
+    if (elGroup) {
+        elGroup.value = group;
+    }
+
+    // Update display text
+    const catText = document.getElementById('selectedCategoryText');
+    if (catText) {
+        catText.innerText = `Kategori Group ${group}`;
+    }
+
+    // Update badge
+    const mainBadge = document.getElementById('categoryGroupBadge');
+    if (mainBadge) {
+        mainBadge.innerText = `Grup ${group}`;
+        mainBadge.className = `text-[10px] px-1.5 py-0.5 rounded font-bold badge-${group}`;
+        mainBadge.classList.remove('hidden');
+    }
+
+    // Update quick buttons visual state
+    document.querySelectorAll('.quick-cat-btn').forEach(btn => {
+        if (btn.dataset.group === group) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // Update category detail info panel
+    updateCategoryGroupDetail(group);
+
+    // Update admin fee based on category group
+    updateAdminFeeFromCategory();
+
+    // Recalculate
+    calculate();
+}
+
+/**
+ * Update quick category buttons to reflect current selection
+ * Called when category is selected from modal
+ */
+function updateQuickCategoryButtons() {
+    const currentGroup = selectedPath.group || 'A';
+    document.querySelectorAll('.quick-cat-btn').forEach(btn => {
+        if (btn.dataset.group === currentGroup) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // Also update the category detail panel
+    updateCategoryGroupDetail(currentGroup);
+}
+
+/**
+ * Category group descriptions and details
+ */
+const CATEGORY_GROUP_INFO = {
+    A: {
+        icon: '👗',
+        title: 'Fashion & Kecantikan',
+        desc: 'Pakaian, Sepatu, Tas, Aksesoris, Makeup, Skincare, Parfum',
+        feeLabel: 'Tertinggi'
+    },
+    B: {
+        icon: '🍼',
+        title: 'FMCG & Kesehatan',
+        desc: 'Makanan, Minuman, Suplemen, Vitamin, Popok, Perawatan Bayi',
+        feeLabel: 'Tinggi'
+    },
+    C: {
+        icon: '🏠',
+        title: 'Rumah & Lifestyle',
+        desc: 'Peralatan Rumah, Dekorasi, Olahraga, Hobi, Mainan',
+        feeLabel: 'Sedang'
+    },
+    D: {
+        icon: '📱',
+        title: 'Elektronik & Gadget',
+        desc: 'Handphone, Tablet, Laptop, Komputer, Aksesoris Elektronik',
+        feeLabel: 'Rendah'
+    },
+    E: {
+        icon: '🍎',
+        title: 'Fresh & Large Items',
+        desc: 'Makanan Segar, TV, AC, Kulkas, Mesin Cuci, Furniture Besar',
+        feeLabel: 'Terendah'
+    },
+    F: {
+        icon: '📚',
+        title: 'Buku & Lainnya',
+        desc: 'Buku, Majalah, Alat Tulis, Koleksi, Produk Virtual',
+        feeLabel: 'Khusus'
+    }
+};
+
+/**
+ * Update category group detail info panel
+ * @param {string} group - Category group (A-F)
+ */
+function updateCategoryGroupDetail(group) {
+    const info = CATEGORY_GROUP_INFO[group] || CATEGORY_GROUP_INFO['A'];
+
+    // Get fee rate based on current platform and seller type
+    const sellerType = document.getElementById('sellerType')?.value || 'nonstar';
+    let feeRate = 0;
+
+    if (currentPlatform === 'shopee' && shopeeRates[sellerType]) {
+        feeRate = shopeeRates[sellerType][group] || 0;
+    } else if (currentPlatform === 'tokopedia' && typeof tokopediaRates !== 'undefined') {
+        const tType = sellerType === 'star' ? 'power' : (sellerType === 'mall' ? 'mall' : 'regular');
+        feeRate = tokopediaRates[tType]?.[group] || 0;
+    } else if (currentPlatform === 'tiktok' && typeof tiktokRates !== 'undefined') {
+        const tType = sellerType === 'mall' ? 'mall' : 'regular';
+        feeRate = tiktokRates[tType]?.[group] || 0;
+    }
+
+    // Update UI elements
+    const iconEl = document.getElementById('categoryGroupIcon');
+    const titleEl = document.getElementById('categoryGroupTitle');
+    const feeEl = document.getElementById('categoryGroupFee');
+    const descEl = document.getElementById('categoryGroupDesc');
+
+    if (iconEl) iconEl.innerText = info.icon;
+    if (titleEl) titleEl.innerText = info.title;
+    if (feeEl) feeEl.innerText = feeRate > 0 ? `${feeRate}%` : info.feeLabel;
+    if (descEl) descEl.innerText = info.desc;
 }
 
 // --- HELPER FUNCTIONS ---
@@ -3272,7 +3446,11 @@ function setPlatform(p) {
         catDisplay.innerText = `Klik untuk pilih Kategori ${platformNames[p] || ''}`;
     }
 
-    calculate();
+    // Update quick category buttons and detail panel
+    updateQuickCategoryButtons();
+
+    // Update admin fee for the new platform
+    recalcAfterCategoryChange();
 }
 
 function updateServiceFee() {

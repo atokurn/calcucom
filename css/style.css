@@ -636,6 +636,45 @@
             background: #1e3a5f;
         }
 
+        /* Quick Category Selector Buttons */
+        .quick-cat-btn {
+            background: white;
+            border-color: #e2e8f0;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .quick-cat-btn:hover {
+            border-color: #f97316;
+            color: #f97316;
+            background: #fff7ed;
+        }
+
+        .quick-cat-btn.active {
+            background: #f97316;
+            border-color: #f97316;
+            color: white;
+            box-shadow: 0 2px 4px rgba(249, 115, 22, 0.3);
+        }
+
+        .dark .quick-cat-btn {
+            background: #334155;
+            border-color: #475569;
+            color: #94a3b8;
+        }
+
+        .dark .quick-cat-btn:hover {
+            border-color: #fb923c;
+            color: #fb923c;
+            background: #431407;
+        }
+
+        .dark .quick-cat-btn.active {
+            background: #f97316;
+            border-color: #f97316;
+            color: white;
+        }
+
         /* Pulse Animation for Important Values */
         @keyframes pulse-success {
 
@@ -1109,76 +1148,177 @@
             accent-color: #3b82f6;
         }
 
-        .multiselect-option .mp-tag {
+        .mp-tag {
             font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 600;
+            padding: 3px 8px;
+            /* Increased padding */
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            display: inline-block;
+            /* Ensure padding works correctly */
+            line-height: normal;
         }
 
         .mp-tag.shopee {
-            background: #FDEDE8;
-            color: #EE4D2D;
+            background: #fff1f0;
+            color: #ff4d4f;
+            border: 1px solid #ffccc7;
         }
 
         .mp-tag.tokopedia {
-            background: #E6F7E9;
-            color: #03AC0E;
+            background: #f6ffed;
+            color: #52c41a;
+            border: 1px solid #b7eb8f;
         }
 
         .mp-tag.tiktok {
-            background: #f1f5f9;
-            color: #000;
+            background: #f8f9fa;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
         }
 
         .mp-tag.lazada {
-            background: #E8E9F5;
-            color: #10156F;
+            background: #f0f5ff;
+            color: #2f54eb;
+            border: 1px solid #adc6ff;
+        }
+
+        /* Dark mode adjustments for tags */
+        .dark .mp-tag.shopee {
+            background: #431418;
+            color: #ff7875;
+            border-color: #5c2227;
+        }
+
+        .dark .mp-tag.tokopedia {
+            background: #135200;
+            color: #95de64;
+            border-color: #237804;
+        }
+
+        .dark .mp-tag.tiktok {
+            background: #000000;
+            color: #ffffff;
+            border-color: #374151;
+        }
+
+        .dark .mp-tag.lazada {
+            background: #10239e;
+            color: #85a5ff;
+            border-color: #1d39c4;
         }
 
         /* Badge styles for selected items */
         .multiselect-badges {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 6px;
             flex: 1;
         }
 
         .multiselect-badges .badge {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 11px;
+            gap: 6px;
+            padding: 3px 8px 3px 6px;
+            border-radius: 6px;
+            font-size: 12px;
             font-weight: 500;
-            background: #f1f5f9;
-            color: #475569;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            transition: all 0.2s;
         }
 
         .dark .multiselect-badges .badge {
-            background: #475569;
+            background: #1e293b;
+            border-color: #334155;
             color: #e2e8f0;
         }
 
+        .multiselect-badges .badge .mp-tag {
+            font-size: 9px;
+            padding: 1px 4px;
+            border-radius: 4px;
+            border: none;
+            /* Remove border inside badge */
+        }
+
         .badge.shopee {
-            background: #FDEDE8;
-            color: #EE4D2D;
+            background: #fff2e8;
+            border-color: #ffbb96;
+            color: #d4380d;
         }
 
         .badge.tokopedia {
-            background: #E6F7E9;
-            color: #03AC0E;
+            background: #f6ffed;
+            border-color: #b7eb8f;
+            color: #389e0d;
         }
 
         .badge.tiktok {
-            background: #f1f5f9;
-            color: #000;
+            background: #f8f9fa;
+            border-color: #e5e7eb;
+            color: #1f2937;
         }
 
         .badge.lazada {
-            background: #E8E9F5;
-            color: #10156F;
+            background: #f0f5ff;
+            border-color: #adc6ff;
+            color: #1d39c4;
+        }
+
+        .dark .badge.shopee {
+            background: #431418;
+            border-color: #5c2227;
+            color: #ff9c6e;
+        }
+
+        .dark .badge.tokopedia {
+            background: #135200;
+            border-color: #237804;
+            color: #95de64;
+        }
+
+        .dark .badge.tiktok {
+            background: #111827;
+            border-color: #374151;
+            color: #e5e7eb;
+        }
+
+        .dark .badge.lazada {
+            background: #10239e;
+            border-color: #1d39c4;
+            color: #85a5ff;
+        }
+
+        .badge-remove {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.1);
+            color: currentColor;
+            font-size: 10px;
+            line-height: 1;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .badge-remove:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .dark .badge-remove {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dark .badge-remove:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .badge-remove {

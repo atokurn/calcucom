@@ -7,31 +7,55 @@ const CompareCalculator = (function () {
 
     // ==================== MARKETPLACE DATA ====================
 
+    // Fee rates per marketplace and seller type
+    // These match the main calculator's shopeeRates, tokopediaRates, tiktokRates
     const MARKETPLACE_FEES = {
         shopee: {
             name: 'Shopee',
-            admin: { A: 8, B: 7.5, C: 5.75, D: 4.25, E: 2.5 },
-            service: 6.0,
+            admin: {
+                nonstar: { A: 8, B: 7.5, C: 5.75, D: 4.25, E: 2.5, F: 2.5 },
+                star: { A: 7, B: 6.5, C: 5, D: 3.75, E: 2, F: 2 },
+                mall: { A: 6.5, B: 6, C: 4.5, D: 3.5, E: 1.75, F: 1.75 }
+            },
+            service: { freeShip: 4.0, cashback: 4.5 },
             color: '#EE4D2D'
         },
         tokopedia: {
             name: 'Tokopedia',
-            admin: { A: 5.5, B: 5, C: 4, D: 3, E: 2 },
-            service: 4.5,
+            admin: {
+                regular: { A: 6.5, B: 6, C: 4.5, D: 3.5, E: 2, F: 2 },
+                power: { A: 5.5, B: 5, C: 4, D: 3, E: 1.75, F: 1.75 },
+                mall: { A: 5, B: 4.5, C: 3.5, D: 2.75, E: 1.5, F: 1.5 }
+            },
+            service: { freeShip: 4.0 },
             color: '#03AC0E'
         },
         tiktok: {
             name: 'TikTok',
-            admin: { A: 5, B: 4.5, C: 3.5, D: 2.5, E: 1.5 },
-            service: 4.0,
+            admin: {
+                regular: { A: 6.5, B: 6, C: 4.5, D: 3.5, E: 2, F: 2 },
+                mall: { A: 5.5, B: 5, C: 4, D: 3, E: 1.5, F: 1.5 }
+            },
+            service: { freeShip: 4.0 },
             color: '#000000'
         },
         lazada: {
             name: 'Lazada',
-            admin: { A: 6, B: 5.5, C: 4.5, D: 3.5, E: 2 },
-            service: 5.0,
+            admin: {
+                regular: { A: 6, B: 5.5, C: 4.5, D: 3.5, E: 2, F: 2 },
+                mall: { A: 5, B: 4.5, C: 3.5, D: 2.5, E: 1.5, F: 1.5 }
+            },
+            service: { freeShip: 4.0 },
             color: '#10156F'
         }
+    };
+
+    // Default seller type per marketplace for comparison
+    const DEFAULT_SELLER_TYPE = {
+        shopee: 'nonstar',
+        tokopedia: 'regular',
+        tiktok: 'regular',
+        lazada: 'regular'
     };
 
     // ==================== PRIVATE STATE ====================
@@ -71,16 +95,25 @@ const CompareCalculator = (function () {
      * Calculate profit for a product in a specific marketplace
      * @param {number} hpp - Cost of goods
      * @param {number} price - Selling price
-     * @param {string} category - Category group (A-E)
+     * @param {string} category - Category group (A-F)
      * @param {string} marketplace - Marketplace key
+     * @param {string} sellerType - Optional seller type override
      * @returns {Object}
      */
-    function calculateForMarketplace(hpp, price, category, marketplace) {
+    function calculateForMarketplace(hpp, price, category, marketplace, sellerType) {
         const mp = MARKETPLACE_FEES[marketplace];
         if (!mp) return null;
 
-        const adminPct = mp.admin[category] || mp.admin.A;
-        const servicePct = mp.service;
+        // Get seller type (use provided or default)
+        const sType = sellerType || DEFAULT_SELLER_TYPE[marketplace] || 'regular';
+
+        // Get admin fee from nested structure
+        const adminRates = mp.admin[sType] || mp.admin[Object.keys(mp.admin)[0]];
+        const adminPct = adminRates[category] || adminRates.A || 0;
+
+        // Calculate service fee (assume freeShip program is active for comparison)
+        const servicePct = mp.service?.freeShip || 4.0;
+
         const totalFeePct = adminPct + servicePct;
         const totalFee = price * (totalFeePct / 100);
         const profit = price - hpp - totalFee;
@@ -91,6 +124,7 @@ const CompareCalculator = (function () {
             key: marketplace,
             name: mp.name,
             color: mp.color,
+            sellerType: sType,
             adminPct,
             servicePct,
             totalFeePct,

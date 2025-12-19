@@ -9,6 +9,9 @@ const BundlingCalculator = (function () {
 
     let bundleProducts = [];
     let productIdCounter = 0;
+    let inputMode = 'manual'; // 'manual' or 'auto'
+    let selectedFromDB = []; // Products selected from database for multi-select
+    let bundleMultiOpen = false; // Multi-select dropdown state
 
     // ==================== PRIVATE METHODS ====================
 
@@ -189,6 +192,313 @@ const BundlingCalculator = (function () {
         });
 
         return { totalProfit, details };
+    }
+
+    // ==================== MODE SWITCHING ====================
+
+    /**
+     * Switch between Manual and Auto mode
+     * @param {string} newMode - 'manual' or 'auto'
+     */
+    function switchMode(newMode) {
+        inputMode = newMode;
+        const manualSection = document.getElementById('bundle_manual_section');
+        const autoSection = document.getElementById('bundle_auto_section');
+        const btnManual = document.getElementById('btn-bundle-manual');
+        const btnAuto = document.getElementById('btn-bundle-auto');
+
+        const activeClass = 'px-3 py-1 text-xs font-bold rounded-md bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 shadow-sm transition-all';
+        const inactiveClass = 'px-3 py-1 text-xs font-bold text-slate-400 rounded-md transition-all hover:bg-white/50 dark:hover:bg-slate-600/50';
+
+        if (newMode === 'manual') {
+            manualSection?.classList.remove('hidden');
+            autoSection?.classList.add('hidden');
+            if (btnManual) btnManual.className = activeClass;
+            if (btnAuto) btnAuto.className = inactiveClass;
+        } else {
+            autoSection?.classList.remove('hidden');
+            manualSection?.classList.add('hidden');
+            if (btnAuto) btnAuto.className = activeClass;
+            if (btnManual) btnManual.className = inactiveClass;
+            populateProductSelect();
+        }
+    }
+
+    /**
+     * Populate product selector from productDB
+     */
+    function populateProductSelect() {
+        const select = document.getElementById('bundle_product_select');
+        if (!select) return;
+
+        // Try to get products from multiple sources
+        let products = [];
+
+        // Try window.productDB first (if exposed globally)
+        if (window.productDB && Array.isArray(window.productDB)) {
+            products = window.productDB;
+        }
+        // Fallback to localStorage
+        else {
+            try {
+                products = JSON.parse(localStorage.getItem('productDB') || '[]');
+            } catch (e) {
+                products = [];
+            }
+        }
+
+        if (products.length === 0) {
+            select.innerHTML = '<option value="">Belum ada produk tersimpan</option>';
+            const infoEl = document.querySelector('#bundle_auto_section p');
+            if (infoEl) {
+                infoEl.innerHTML = '<i class="fas fa-info-circle mr-1"></i>Simpan hasil kalkulasi terlebih dahulu untuk menggunakan fitur ini';
+            }
+            return;
+        }
+
+        select.innerHTML = '<option value="">-- Pilih Produk (' + products.length + ') --</option>' +
+            products.map(p => {
+                const hpp = p.cost_of_goods || p.hpp || 0;
+                const name = p.name || 'Produk';
+                return `<option value="${p.id}" data-hpp="${hpp}" data-name="${name}">
+                    ${name} (HPP: Rp ${hpp.toLocaleString('id-ID')})
+                </option>`;
+            }).join('');
+
+        const infoEl = document.querySelector('#bundle_auto_section p');
+        if (infoEl) {
+            infoEl.innerHTML = '<i class="fas fa-check-circle mr-1 text-green-500"></i>' + products.length + ' produk tersedia dari database';
+        }
+    }
+
+    /**
+     * Add product from database selection
+     */
+    function addFromDatabase() {
+        const select = document.getElementById('bundle_product_select');
+        if (!select || !select.value) {
+            if (typeof showToast === 'function') {
+                showToast('Pilih produk terlebih dahulu', 'error');
+            }
+            return;
+        }
+
+        const option = select.options[select.selectedIndex];
+        const name = option.dataset.name || 'Produk';
+        const hpp = parseFloat(option.dataset.hpp) || 0;
+
+        addProduct(name, hpp, 1);
+        select.value = ''; // Reset dropdown
+
+        if (typeof showToast === 'function') {
+            showToast(`${name} ditambahkan ke bundle`, 'success');
+        }
+    }
+
+    // ==================== MULTI-SELECT FUNCTIONS ====================
+
+    /**
+     * Toggle bundle multi-select dropdown
+     */
+    function toggleBundleMultiSelect() {
+        const dropdown = document.getElementById('bundle-multiselect-dropdown');
+        bundleMultiOpen = !bundleMultiOpen;
+
+        if (bundleMultiOpen) {
+            dropdown?.classList.add('open');
+            renderBundleMultiOptions();
+            document.getElementById('bundle-multiselect-search')?.focus();
+            setTimeout(() => {
+                document.addEventListener('click', closeBundleMultiOnOutside);
+            }, 10);
+        } else {
+            dropdown?.classList.remove('open');
+            document.removeEventListener('click', closeBundleMultiOnOutside);
+        }
+    }
+
+    /**
+     * Close on outside click
+     */
+    function closeBundleMultiOnOutside(e) {
+        const wrapper = document.getElementById('bundleMultiSelect');
+        if (wrapper && !wrapper.contains(e.target)) {
+            closeBundleMultiSelect();
+        }
+    }
+
+    /**
+     * Close multi-select dropdown
+     */
+    function closeBundleMultiSelect() {
+        const dropdown = document.getElementById('bundle-multiselect-dropdown');
+        dropdown?.classList.remove('open');
+        bundleMultiOpen = false;
+        document.removeEventListener('click', closeBundleMultiOnOutside);
+    }
+
+    /**
+     * Render multi-select options
+     */
+    function renderBundleMultiOptions(filter = '') {
+        const container = document.getElementById('bundle-multiselect-options');
+        if (!container) return;
+
+        // Get products from database
+        let products = [];
+        if (window.productDB && Array.isArray(window.productDB)) {
+            products = window.productDB;
+        } else {
+            try {
+                products = JSON.parse(localStorage.getItem('productDB') || '[]');
+            } catch (e) {
+                products = [];
+            }
+        }
+
+        const filtered = products.filter(p =>
+            (p.name || '').toLowerCase().includes(filter.toLowerCase())
+        );
+
+        if (products.length === 0) {
+            container.innerHTML = '<div class="combobox-empty">Belum ada produk tersimpan.<br>Simpan hasil kalkulasi terlebih dahulu.</div>';
+            return;
+        }
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="combobox-empty">Tidak ada produk ditemukan</div>';
+            return;
+        }
+
+        container.innerHTML = filtered.map(p => {
+            const isSelected = selectedFromDB.includes(p.id);
+            const hpp = p.cost_of_goods || p.hpp || 0;
+            const mp = p.platform || 'shopee';
+            return `
+                <label class="multiselect-option" onclick="event.stopPropagation()">
+                    <input type="checkbox" ${isSelected ? 'checked' : ''} 
+                           onchange="BundlingCalculator.toggleProductSelection(${p.id})">
+                    <span class="mp-tag ${mp}">${mp.charAt(0).toUpperCase() + mp.slice(1)}</span>
+                    <span class="flex-1 font-medium">${p.name}</span>
+                    <span class="text-xs text-slate-500">Rp ${hpp.toLocaleString('id-ID')}</span>
+                </label>
+            `;
+        }).join('');
+    }
+
+    /**
+     * Filter multi-select options
+     */
+    function filterBundleMultiOptions(query) {
+        renderBundleMultiOptions(query);
+    }
+
+    /**
+     * Toggle product selection
+     */
+    function toggleProductSelection(id) {
+        const idx = selectedFromDB.indexOf(id);
+        if (idx > -1) {
+            selectedFromDB.splice(idx, 1);
+        } else {
+            selectedFromDB.push(id);
+        }
+        updateBundleSelectedBadges();
+    }
+
+    /**
+     * Update selected badges display
+     */
+    function updateBundleSelectedBadges() {
+        const container = document.getElementById('bundle-selected-badges');
+        if (!container) return;
+
+        if (selectedFromDB.length === 0) {
+            container.innerHTML = '<span class="text-slate-400">Pilih produk dari database...</span>';
+            return;
+        }
+
+        // Get products data
+        let products = [];
+        if (window.productDB && Array.isArray(window.productDB)) {
+            products = window.productDB;
+        } else {
+            try {
+                products = JSON.parse(localStorage.getItem('productDB') || '[]');
+            } catch (e) {
+                products = [];
+            }
+        }
+
+        container.innerHTML = selectedFromDB.map(id => {
+            const product = products.find(p => p.id === id);
+            if (!product) return '';
+            const mp = product.platform || 'shopee';
+            const name = product.name || 'Produk';
+            return `
+                <span class="badge ${mp}">
+                    <span class="mp-tag ${mp} text-[8px]">${mp.charAt(0).toUpperCase()}</span>
+                    ${name.length > 12 ? name.substring(0, 12) + '...' : name}
+                    <button onclick="event.stopPropagation(); BundlingCalculator.removePendingProduct(${id})" class="badge-remove">×</button>
+                </span>
+            `;
+        }).join('');
+    }
+
+    /**
+     * Remove pending product from selection
+     */
+    function removePendingProduct(id) {
+        const idx = selectedFromDB.indexOf(id);
+        if (idx > -1) {
+            selectedFromDB.splice(idx, 1);
+        }
+        updateBundleSelectedBadges();
+        renderBundleMultiOptions(document.getElementById('bundle-multiselect-search')?.value || '');
+    }
+
+    /**
+     * Add all selected products to bundle
+     */
+    function addSelectedToBundle() {
+        if (selectedFromDB.length === 0) {
+            if (typeof showToast === 'function') {
+                showToast('Pilih produk terlebih dahulu', 'error');
+            }
+            return;
+        }
+
+        // Get products data
+        let products = [];
+        if (window.productDB && Array.isArray(window.productDB)) {
+            products = window.productDB;
+        } else {
+            try {
+                products = JSON.parse(localStorage.getItem('productDB') || '[]');
+            } catch (e) {
+                products = [];
+            }
+        }
+
+        // Add each selected product to bundle
+        let addedCount = 0;
+        selectedFromDB.forEach(id => {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                const name = product.name || 'Produk';
+                const hpp = product.cost_of_goods || product.hpp || 0;
+                addProduct(name, hpp, 1);
+                addedCount++;
+            }
+        });
+
+        // Clear selection
+        selectedFromDB = [];
+        updateBundleSelectedBadges();
+
+        if (typeof showToast === 'function') {
+            showToast(`${addedCount} produk ditambahkan ke bundle`, 'success');
+        }
     }
 
     // ==================== UI MANAGEMENT ====================
@@ -459,16 +769,31 @@ const BundlingCalculator = (function () {
     // ==================== PUBLIC API ====================
 
     return {
+        // Mode
+        switchMode,
+        getMode: () => inputMode,
+
         // Calculation
         calculateBundleProfit,
         calculateAndRender,
 
         // Product management
         addProduct,
+        addFromDatabase,
+        addSelectedToBundle,
         removeProduct,
         updateProduct,
         formatAndUpdate,
         clearAll,
+        populateProductSelect,
+
+        // Multi-select
+        toggleBundleMultiSelect,
+        renderBundleMultiOptions,
+        filterBundleMultiOptions,
+        toggleProductSelection,
+        updateBundleSelectedBadges,
+        removePendingProduct,
 
         // UI
         renderProductList,
@@ -476,11 +801,17 @@ const BundlingCalculator = (function () {
 
         // Getters
         getProducts() { return [...bundleProducts]; },
-        getProductCount() { return bundleProducts.length; }
+        getProductCount() { return bundleProducts.length; },
+        getSelectedFromDB() { return [...selectedFromDB]; }
     };
 })();
 
 // Make available globally
 if (typeof window !== 'undefined') {
     window.BundlingCalculator = BundlingCalculator;
+
+    // Backward compatible global functions
+    window.switchBundleMode = BundlingCalculator.switchMode;
+    window.toggleBundleMultiSelect = BundlingCalculator.toggleBundleMultiSelect;
+    window.filterBundleMultiOptions = BundlingCalculator.filterBundleMultiOptions;
 }

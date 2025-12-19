@@ -2102,46 +2102,188 @@
 
                 <!-- Right: Results -->
                 <div class="space-y-6">
-                    <!-- Main Result Card -->
-                    <div class="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg p-6 text-white">
-                        <h3 class="text-lg font-bold mb-4 opacity-90">Hasil Perhitungan Bundle</h3>
+                    <!-- Mode Toggle: Profit vs Price Finder -->
+                    <div class="flex bg-slate-100 dark:bg-slate-700 rounded-xl p-1 gap-1">
+                        <button onclick="BundlingCalculator.setCalculatorMode('profit')" id="btn-bundle-profit-mode"
+                            class="flex-1 py-2 text-xs font-bold rounded-lg bg-purple-500 text-white shadow transition-all">
+                            <i class="fas fa-calculator mr-1"></i> Hitung Profit
+                        </button>
+                        <button onclick="BundlingCalculator.setCalculatorMode('priceFinder')"
+                            id="btn-bundle-price-finder-mode"
+                            class="flex-1 py-2 text-xs font-bold text-slate-500 rounded-lg transition-all hover:bg-slate-200 dark:hover:bg-slate-600">
+                            <i class="fas fa-search-dollar mr-1"></i> Cari Harga
+                        </button>
+                    </div>
 
-                        <!-- Net Profit -->
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 mb-4 text-center">
-                            <div class="text-sm opacity-80 mb-1">Net Profit Bundle</div>
-                            <div class="text-4xl font-black" id="bundleNetProfit">Rp 0</div>
-                            <div class="text-lg opacity-80 mt-1" id="bundleMargin">0%</div>
+                    <!-- PROFIT MODE: Main Result Card -->
+                    <div id="bundle_profit_section">
+                        <div
+                            class="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg p-6 text-white relative overflow-hidden">
+                            <!-- Health Indicator -->
+                            <div id="bundleHealthIndicator"
+                                class="absolute top-4 right-4 w-3 h-3 rounded-full bg-slate-400" title="Status margin">
+                            </div>
+
+                            <h3 class="text-lg font-bold mb-4 opacity-90">Hasil Perhitungan Bundle</h3>
+
+                            <!-- Net Profit -->
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 mb-4 text-center">
+                                <div class="text-sm opacity-80 mb-1">Net Profit Bundle</div>
+                                <div class="text-4xl font-black" id="bundleNetProfit">Rp 0</div>
+                                <div class="text-lg opacity-80 mt-1" id="bundleMargin">0%</div>
+                            </div>
+
+                            <!-- Summary Grid -->
+                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                                    <div class="text-xs opacity-70">Total HPP</div>
+                                    <div class="text-lg font-bold" id="bundleTotalHPP">Rp 0</div>
+                                </div>
+                                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                                    <div class="text-xs opacity-70">Total Potongan</div>
+                                    <div class="text-lg font-bold" id="bundleTotalFees">Rp 0</div>
+                                </div>
+                            </div>
+
+                            <!-- Fee Breakdown -->
+                            <div class="bg-white/5 backdrop-blur-sm rounded-lg p-3 text-sm">
+                                <div class="text-xs font-bold opacity-70 mb-2 uppercase">Rincian Potongan</div>
+                                <div class="space-y-1">
+                                    <div class="flex justify-between">
+                                        <span>Biaya Admin</span>
+                                        <span id="bundleAdminFee">- Rp 0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Biaya Layanan</span>
+                                        <span id="bundleServiceFee">- Rp 0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Biaya Proses</span>
+                                        <span id="bundleProcessFee">- Rp 0</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
 
-                        <!-- Summary Grid -->
-                        <div class="grid grid-cols-2 gap-3 mb-4">
-                            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                                <div class="text-xs opacity-70">Total HPP</div>
-                                <div class="text-lg font-bold" id="bundleTotalHPP">Rp 0</div>
+                    <!-- PRICE FINDER MODE -->
+                    <div id="bundle_price_finder_section" class="hidden">
+                        <div
+                            class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl shadow-lg p-6 text-white">
+                            <h3 class="text-lg font-bold mb-4 opacity-90"><i class="fas fa-search-dollar mr-2"></i>Cari
+                                Harga Bundle</h3>
+
+                            <!-- Target Input -->
+                            <div class="space-y-4 mb-4">
+                                <div>
+                                    <label class="block text-xs font-medium opacity-80 mb-2">Target Profit</label>
+                                    <div class="flex bg-white/10 rounded-lg p-0.5 gap-1 mb-2">
+                                        <button onclick="BundlingCalculator.setPriceFinderTargetType('rupiah')"
+                                            id="bundle_pf_type_rp"
+                                            class="flex-1 py-1.5 text-[10px] font-bold rounded-md bg-white/20 text-white shadow-sm transition-all">
+                                            Rupiah
+                                        </button>
+                                        <button onclick="BundlingCalculator.setPriceFinderTargetType('percent')"
+                                            id="bundle_pf_type_pct"
+                                            class="flex-1 py-1.5 text-[10px] font-bold rounded-md text-white/70 transition-all hover:bg-white/10">
+                                            Persen (%)
+                                        </button>
+                                    </div>
+                                    <div class="relative">
+                                        <span id="bundle_pf_prefix"
+                                            class="absolute left-3 top-1/2 -translate-y-1/2 text-white/70 text-sm">Rp</span>
+                                        <input type="text" id="bundle_target_profit" placeholder="50.000"
+                                            class="w-full pl-10 pr-4 py-2.5 bg-white/20 border border-white/20 rounded-lg text-white placeholder-white/50 font-medium">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                                <div class="text-xs opacity-70">Total Potongan</div>
-                                <div class="text-lg font-bold" id="bundleTotalFees">Rp 0</div>
+
+                            <!-- Result -->
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center mb-4">
+                                <div class="text-xs opacity-80 mb-1">Harga Bundle Minimum</div>
+                                <div class="text-3xl font-black" id="bundle_pf_min_price">Rp 0</div>
+                                <div class="grid grid-cols-2 gap-2 mt-2 text-xs">
+                                    <div>
+                                        <span class="opacity-70">Profit: </span>
+                                        <span class="font-bold" id="bundle_pf_actual_profit">Rp 0</span>
+                                    </div>
+                                    <div>
+                                        <span class="opacity-70">Margin: </span>
+                                        <span class="font-bold" id="bundle_pf_actual_margin">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Suggested Prices -->
+                            <div>
+                                <div class="text-xs font-bold opacity-80 mb-2">Harga Rekomendasi</div>
+                                <div id="bundleSuggestedPrices" class="grid grid-cols-2 gap-2">
+                                    <!-- Populated by JS -->
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Fee Breakdown -->
-                        <div class="bg-white/5 backdrop-blur-sm rounded-lg p-3 text-sm">
-                            <div class="text-xs font-bold opacity-70 mb-2 uppercase">Rincian Potongan</div>
-                            <div class="space-y-1">
-                                <div class="flex justify-between">
-                                    <span>Biaya Admin</span>
-                                    <span id="bundleAdminFee">- Rp 0</span>
+                    <!-- Fee Allocation Mode Selector -->
+                    <div
+                        class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4">
+                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-3">
+                            <i class="fas fa-sliders-h mr-1 text-purple-500"></i> Alokasi Biaya
+                        </label>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <label
+                                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors flex-1">
+                                <input type="radio" name="bundleFeeAllocation" value="total" checked
+                                    class="text-purple-500 focus:ring-purple-500">
+                                <div>
+                                    <div class="text-xs font-medium text-slate-700 dark:text-white">Total Bundle</div>
+                                    <div class="text-[10px] text-slate-400">Fee dari total harga</div>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span>Biaya Layanan</span>
-                                    <span id="bundleServiceFee">- Rp 0</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors flex-1">
+                                <input type="radio" name="bundleFeeAllocation" value="proportional"
+                                    class="text-purple-500 focus:ring-purple-500">
+                                <div>
+                                    <div class="text-xs font-medium text-slate-700 dark:text-white">Proporsional</div>
+                                    <div class="text-[10px] text-slate-400">Berdasar rasio HPP</div>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span>Biaya Proses</span>
-                                    <span id="bundleProcessFee">- Rp 0</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors flex-1">
+                                <input type="radio" name="bundleFeeAllocation" value="perItem"
+                                    class="text-purple-500 focus:ring-purple-500">
+                                <div>
+                                    <div class="text-xs font-medium text-slate-700 dark:text-white">Per Item</div>
+                                    <div class="text-[10px] text-slate-400">Proses fee × qty</div>
                                 </div>
-                            </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Product Breakdown Table -->
+                    <div id="bundleProductBreakdown"
+                        class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-5 hidden">
+                        <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2 text-sm">
+                            <i class="fas fa-th-list text-purple-500"></i> Rincian Per Produk
+                        </h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs">
+                                <thead>
+                                    <tr
+                                        class="text-left text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                                        <th class="pb-2 font-medium">Produk</th>
+                                        <th class="pb-2 font-medium text-right">HPP</th>
+                                        <th class="pb-2 font-medium text-center">Qty</th>
+                                        <th class="pb-2 font-medium text-right">Alokasi Fee</th>
+                                        <th class="pb-2 font-medium text-right">Profit</th>
+                                        <th class="pb-2 font-medium text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bundleBreakdownBody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -2179,6 +2321,17 @@
                                 <span class="text-slate-600 dark:text-slate-300">Masukkan data untuk melihat
                                     rekomendasi</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Business Insights Panel -->
+                    <div id="bundleInsights"
+                        class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-5 hidden">
+                        <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2 text-sm">
+                            <i class="fas fa-lightbulb text-amber-500"></i> Insight Bisnis
+                        </h4>
+                        <div id="bundleInsightsList">
+                            <!-- Populated by JS -->
                         </div>
                     </div>
 
@@ -2507,6 +2660,7 @@
     <script src="js/state.js"></script>
 
     <!-- Feature modules -->
+    <script src="js/core/pricingEngine.js"></script>
     <script src="js/modules/bundling-calculator.js"></script>
     <script src="js/modules/price-finder.js"></script>
     <script src="js/modules/roas-calculator.js"></script>

@@ -1,6 +1,14 @@
 /**
- * BundlingCalculator - Calculate profit for bundled products
- * Using IIFE pattern for browser compatibility
+ * BundlingCalculator - Advanced bundle profit calculator
+ * 
+ * Features:
+ * - Multi-product bundle analysis
+ * - Fee allocation modes (total, proportional, per-item)
+ * - Bundle Price Finder mode
+ * - Per-product profit breakdown
+ * - Business insights generation
+ * 
+ * Uses PricingEngine for calculations (UI separated from math)
  */
 const BundlingCalculator = (function () {
     'use strict';
@@ -13,62 +21,31 @@ const BundlingCalculator = (function () {
     let selectedFromDB = []; // Products selected from database for multi-select
     let bundleMultiOpen = false; // Multi-select dropdown state
 
-    // ==================== PRIVATE METHODS ====================
+    // NEW: Advanced features state
+    let feeAllocationMode = 'total'; // 'total' | 'proportional' | 'perItem'
+    let calculatorMode = 'profit'; // 'profit' | 'priceFinder'
+    let priceFinderTargetType = 'rupiah'; // 'rupiah' | 'percent'
+    let lastBundleResult = null; // Cache for insights
 
-    /**
-     * Get platform fees from AppConstants or defaults
-     * @returns {Object}
-     */
-    function getPlatformFees() {
-        const platform = AppState?.get('platform') || 'shopee';
-        const sellerType = AppState?.get('sellerType') || 'nonstar';
-        const categoryGroup = AppState?.get('category.group') || 'A';
-
-        if (typeof AppConstants !== 'undefined') {
-            const config = AppConstants.getMarketplace(platform);
-            const adminRate = AppConstants.getAdminFeeRate(platform, sellerType, categoryGroup);
-
-            return {
-                adminRate: adminRate,
-                serviceRate: config.serviceFees?.freeShip?.rate || 4,
-                serviceCap: config.serviceFees?.freeShip?.cap || 40000,
-                processFee: config.orderProcessFee || 1250,
-                fixedFee: config.fixedFee || 0,
-                freeShipEnabled: AppState?.get('features.freeShipEnabled') || false,
-                cashbackEnabled: AppState?.get('features.cashbackEnabled') || false
-            };
-        }
-
-        // Default fallback
-        return {
-            adminRate: 8,
-            serviceRate: 4,
-            serviceCap: 40000,
-            processFee: 1250,
-            fixedFee: 0,
-            freeShipEnabled: false,
-            cashbackEnabled: false
-        };
-    }
+    // ==================== HELPER FUNCTIONS ====================
 
     /**
      * Format rupiah using Formatters or fallback
-     * @param {number} value 
-     * @returns {string}
      */
     function formatRp(value) {
         if (typeof Formatters !== 'undefined') {
             return Formatters.formatRupiah(value);
         }
-        return `Rp ${value.toLocaleString('id-ID')}`;
+        return `Rp ${Math.round(value).toLocaleString('id-ID')}`;
     }
 
     /**
      * Parse number from input
-     * @param {string|number} value 
-     * @returns {number}
      */
     function parseNum(value) {
+        if (typeof PricingEngine !== 'undefined') {
+            return PricingEngine.parseNum(value);
+        }
         if (typeof Formatters !== 'undefined') {
             return Formatters.parseNumber(value);
         }
@@ -76,129 +53,129 @@ const BundlingCalculator = (function () {
         return parseFloat(String(value).replace(/[^\d.-]/g, '')) || 0;
     }
 
-    // ==================== CALCULATION LOGIC ====================
+    // ==================== CALCULATION DELEGATION ====================
 
     /**
-     * Calculate bundle profit
-     * @param {number} bundlePrice - Total bundle price
-     * @param {Array} products - Array of {name, hpp, qty}
-     * @param {Object} options - Additional options like voucherAmount
-     * @returns {Object} Calculation results
+     * Calculate bundle profit using PricingEngine
+     * Falls back to legacy calculation if engine not loaded
      */
     function calculateBundleProfit(bundlePrice, products, options = {}) {
-        const fees = getPlatformFees();
-        const voucherAmount = options.voucherAmount || 0;
-
-        // Calculate total HPP
-        const totalHPP = products.reduce((sum, p) => {
-            return sum + (parseNum(p.hpp) * (parseInt(p.qty) || 1));
-        }, 0);
-
-        // Calculate total items
-        const totalItems = products.reduce((sum, p) => sum + (parseInt(p.qty) || 1), 0);
-
-        // Base for fee calculation (after voucher deduction)
-        const feeBase = Math.max(0, bundlePrice - voucherAmount);
-
-        // Calculate fees
-        const adminFee = feeBase * (fees.adminRate / 100);
-
-        // Service fees (with cap)
-        let serviceFee = 0;
-        if (fees.freeShipEnabled) {
-            serviceFee = Math.min(feeBase * (fees.serviceRate / 100), fees.serviceCap);
+        // Use PricingEngine if available
+        if (typeof PricingEngine !== 'undefined') {
+            const result = PricingEngine.calculateBundle(bundlePrice, products, {
+                ...options,
+                allocationMode: feeAllocationMode
+            });
+            lastBundleResult = result;
+            return result;
         }
 
-        // Cashback fee if enabled
+        // Legacy fallback (if PricingEngine not loaded)
+        return calculateBundleProfitLegacy(bundlePrice, products, options);
+    }
+
+    /**
+     * Legacy bundle calculation (fallback)
+     */
+    function calculateBundleProfitLegacy(bundlePrice, products, options = {}) {
+        const platform = AppState?.get('platform') || 'shopee';
+        const sellerType = AppState?.get('sellerType') || 'nonstar';
+        const categoryGroup = AppState?.get('category.group') || 'A';
+        const voucherAmount = options.voucherAmount || 0;
+
+        let adminRate = 8;
+        let serviceRate = 4;
+        let serviceCap = 40000;
+        let processFee = 1250;
+
+        if (typeof AppConstants !== 'undefined') {
+            const config = AppConstants.getMarketplace(platform);
+            adminRate = AppConstants.getAdminFeeRate(platform, sellerType, categoryGroup);
+            serviceRate = config.serviceFees?.freeShip?.rate || 4;
+            serviceCap = config.serviceFees?.freeShip?.cap || 40000;
+            processFee = config.orderProcessFee || 1250;
+        }
+
+        const freeShipEnabled = AppState?.get('features.freeShipEnabled') || false;
+        const cashbackEnabled = AppState?.get('features.cashbackEnabled') || false;
+
+        // Calculate totals
+        let totalHPP = 0;
+        let totalItems = 0;
+        products.forEach(p => {
+            totalHPP += parseNum(p.hpp) * (parseInt(p.qty) || 1);
+            totalItems += parseInt(p.qty) || 1;
+        });
+
+        const feeBase = Math.max(0, bundlePrice - voucherAmount);
+        const adminFee = feeBase * (adminRate / 100);
+        let serviceFee = freeShipEnabled ? Math.min(feeBase * (serviceRate / 100), serviceCap) : 0;
         let cashbackFee = 0;
-        if (fees.cashbackEnabled && typeof AppConstants !== 'undefined') {
-            const config = AppConstants.getMarketplace(AppState?.get('platform') || 'shopee');
+        if (cashbackEnabled && typeof AppConstants !== 'undefined') {
+            const config = AppConstants.getMarketplace(platform);
             const cbRate = config.serviceFees?.cashback?.rate || 4.5;
             const cbCap = config.serviceFees?.cashback?.cap || 60000;
             cashbackFee = Math.min(feeBase * (cbRate / 100), cbCap);
         }
 
-        // Total fees
-        const processFee = fees.processFee;
-        const fixedFee = fees.fixedFee;
-        const totalFees = adminFee + serviceFee + cashbackFee + processFee + fixedFee;
-
-        // Profit calculation
+        const totalFees = adminFee + serviceFee + cashbackFee + processFee;
         const netCash = bundlePrice - totalFees - voucherAmount;
         const netProfit = netCash - totalHPP;
         const margin = bundlePrice > 0 ? (netProfit / bundlePrice) * 100 : 0;
-
-        // Calculate individual totals for comparison
-        const individualProfit = calculateIndividualProfit(products, fees);
 
         return {
             bundlePrice,
             totalHPP,
             totalItems,
             voucherAmount,
-
-            // Fee breakdown
             adminFee,
             serviceFee,
             cashbackFee,
             processFee,
-            fixedFee,
+            fixedFee: 0,
             totalFees,
-
-            // Results
             netCash,
             netProfit,
             margin,
-
-            // Comparison
-            individualProfit: individualProfit.totalProfit,
-            profitDifference: netProfit - individualProfit.totalProfit,
-            profitDifferencePercent: individualProfit.totalProfit !== 0
-                ? ((netProfit - individualProfit.totalProfit) / individualProfit.totalProfit) * 100
-                : 0,
-
-            // Is bundle better?
-            isBundleBetter: netProfit > individualProfit.totalProfit
+            marginStatus: netProfit < 0 ? 'danger' : (margin < 5 ? 'warning' : 'healthy'),
+            products: [],
+            individualProfit: 0,
+            profitDifference: 0,
+            isBundleBetter: false
         };
     }
 
     /**
-     * Calculate profit if products sold individually
-     * @param {Array} products 
-     * @param {Object} fees 
-     * @returns {Object}
+     * Find minimum bundle price using PricingEngine
      */
-    function calculateIndividualProfit(products, fees) {
-        let totalProfit = 0;
-        const details = [];
+    function findBundlePrice(targetValue, targetType) {
+        if (typeof PricingEngine === 'undefined') {
+            console.warn('PricingEngine not loaded');
+            return null;
+        }
 
-        products.forEach(p => {
-            const price = parseNum(p.price) || (parseNum(p.hpp) * 2); // Assume 100% markup if no price
-            const hpp = parseNum(p.hpp);
-            const qty = parseInt(p.qty) || 1;
-
-            const adminFee = price * (fees.adminRate / 100);
-            const serviceFee = fees.freeShipEnabled
-                ? Math.min(price * (fees.serviceRate / 100), fees.serviceCap)
-                : 0;
-            const itemFees = adminFee + serviceFee + fees.processFee;
-            const itemProfit = (price - hpp - itemFees) * qty;
-
-            totalProfit += itemProfit;
-            details.push({
-                name: p.name,
-                profit: itemProfit
-            });
+        return PricingEngine.findBundlePrice(bundleProducts, {
+            type: targetType,
+            value: targetValue
+        }, {
+            allocationMode: feeAllocationMode
         });
+    }
 
-        return { totalProfit, details };
+    /**
+     * Generate business insights
+     */
+    function generateInsights() {
+        if (typeof PricingEngine === 'undefined' || !lastBundleResult) {
+            return [];
+        }
+        return PricingEngine.generateBusinessInsights(lastBundleResult);
     }
 
     // ==================== MODE SWITCHING ====================
 
     /**
      * Switch between Manual and Auto mode
-     * @param {string} newMode - 'manual' or 'auto'
      */
     function switchMode(newMode) {
         inputMode = newMode;
@@ -225,21 +202,90 @@ const BundlingCalculator = (function () {
     }
 
     /**
+     * Switch fee allocation mode
+     */
+    function setFeeAllocationMode(mode) {
+        if (!['total', 'proportional', 'perItem'].includes(mode)) return;
+
+        feeAllocationMode = mode;
+
+        // Update UI radio buttons
+        document.querySelectorAll('input[name="bundleFeeAllocation"]').forEach(radio => {
+            radio.checked = radio.value === mode;
+        });
+
+        // Recalculate
+        calculateAndRender();
+    }
+
+    /**
+     * Switch calculator mode (profit vs price finder)
+     */
+    function setCalculatorMode(mode) {
+        if (!['profit', 'priceFinder'].includes(mode)) return;
+
+        calculatorMode = mode;
+
+        const profitSection = document.getElementById('bundle_profit_section');
+        const priceFinderSection = document.getElementById('bundle_price_finder_section');
+        const btnProfit = document.getElementById('btn-bundle-profit-mode');
+        const btnPriceFinder = document.getElementById('btn-bundle-price-finder-mode');
+
+        const activeClass = 'flex-1 py-2 text-xs font-bold rounded-lg bg-purple-500 text-white shadow transition-all';
+        const inactiveClass = 'flex-1 py-2 text-xs font-bold text-slate-500 rounded-lg transition-all hover:bg-slate-200 dark:hover:bg-slate-600';
+
+        if (mode === 'profit') {
+            profitSection?.classList.remove('hidden');
+            priceFinderSection?.classList.add('hidden');
+            if (btnProfit) btnProfit.className = activeClass;
+            if (btnPriceFinder) btnPriceFinder.className = inactiveClass;
+        } else {
+            priceFinderSection?.classList.remove('hidden');
+            profitSection?.classList.add('hidden');
+            if (btnPriceFinder) btnPriceFinder.className = activeClass;
+            if (btnProfit) btnProfit.className = inactiveClass;
+        }
+    }
+
+    /**
+     * Set price finder target type
+     */
+    function setPriceFinderTargetType(type) {
+        priceFinderTargetType = type;
+        const btnRp = document.getElementById('bundle_pf_type_rp');
+        const btnPct = document.getElementById('bundle_pf_type_pct');
+        const prefix = document.getElementById('bundle_pf_prefix');
+        const input = document.getElementById('bundle_target_profit');
+
+        const activeClass = 'flex-1 py-1.5 text-[10px] font-bold rounded-md bg-white dark:bg-slate-600 text-slate-700 dark:text-white shadow-sm transition-all';
+        const inactiveClass = 'flex-1 py-1.5 text-[10px] font-bold rounded-md text-slate-500 dark:text-slate-400 transition-all hover:bg-white/50 dark:hover:bg-slate-600/50';
+
+        if (type === 'rupiah') {
+            if (btnRp) btnRp.className = activeClass;
+            if (btnPct) btnPct.className = inactiveClass;
+            if (prefix) prefix.textContent = 'Rp';
+            if (input) input.placeholder = '50.000';
+        } else {
+            if (btnPct) btnPct.className = activeClass;
+            if (btnRp) btnRp.className = inactiveClass;
+            if (prefix) prefix.textContent = '%';
+            if (input) input.placeholder = '20';
+        }
+    }
+
+    // ==================== PRODUCT DATABASE ====================
+
+    /**
      * Populate product selector from productDB
      */
     function populateProductSelect() {
         const select = document.getElementById('bundle_product_select');
         if (!select) return;
 
-        // Try to get products from multiple sources
         let products = [];
-
-        // Try window.productDB first (if exposed globally)
         if (window.productDB && Array.isArray(window.productDB)) {
             products = window.productDB;
-        }
-        // Fallback to localStorage
-        else {
+        } else {
             try {
                 products = JSON.parse(localStorage.getItem('productDB') || '[]');
             } catch (e) {
@@ -249,26 +295,16 @@ const BundlingCalculator = (function () {
 
         if (products.length === 0) {
             select.innerHTML = '<option value="">Belum ada produk tersimpan</option>';
-            const infoEl = document.querySelector('#bundle_auto_section p');
-            if (infoEl) {
-                infoEl.innerHTML = '<i class="fas fa-info-circle mr-1"></i>Simpan hasil kalkulasi terlebih dahulu untuk menggunakan fitur ini';
-            }
             return;
         }
 
         select.innerHTML = '<option value="">-- Pilih Produk (' + products.length + ') --</option>' +
             products.map(p => {
                 const hpp = p.cost_of_goods || p.hpp || 0;
-                const name = p.name || 'Produk';
-                return `<option value="${p.id}" data-hpp="${hpp}" data-name="${name}">
-                    ${name} (HPP: Rp ${hpp.toLocaleString('id-ID')})
+                return `<option value="${p.id}" data-hpp="${hpp}" data-name="${p.name}">
+                    ${p.name} (HPP: Rp ${hpp.toLocaleString('id-ID')})
                 </option>`;
             }).join('');
-
-        const infoEl = document.querySelector('#bundle_auto_section p');
-        if (infoEl) {
-            infoEl.innerHTML = '<i class="fas fa-check-circle mr-1 text-green-500"></i>' + products.length + ' produk tersedia dari database';
-        }
     }
 
     /**
@@ -277,29 +313,19 @@ const BundlingCalculator = (function () {
     function addFromDatabase() {
         const select = document.getElementById('bundle_product_select');
         if (!select || !select.value) {
-            if (typeof showToast === 'function') {
-                showToast('Pilih produk terlebih dahulu', 'error');
-            }
+            if (typeof showToast === 'function') showToast('Pilih produk terlebih dahulu', 'error');
             return;
         }
 
         const option = select.options[select.selectedIndex];
-        const name = option.dataset.name || 'Produk';
-        const hpp = parseFloat(option.dataset.hpp) || 0;
+        addProduct(option.dataset.name, parseFloat(option.dataset.hpp) || 0, 1);
+        select.value = '';
 
-        addProduct(name, hpp, 1);
-        select.value = ''; // Reset dropdown
-
-        if (typeof showToast === 'function') {
-            showToast(`${name} ditambahkan ke bundle`, 'success');
-        }
+        if (typeof showToast === 'function') showToast(`${option.dataset.name} ditambahkan ke bundle`, 'success');
     }
 
     // ==================== MULTI-SELECT FUNCTIONS ====================
 
-    /**
-     * Toggle bundle multi-select dropdown
-     */
     function toggleBundleMultiSelect() {
         const dropdown = document.getElementById('bundle-multiselect-dropdown');
         bundleMultiOpen = !bundleMultiOpen;
@@ -308,60 +334,33 @@ const BundlingCalculator = (function () {
             dropdown?.classList.add('open');
             renderBundleMultiOptions();
             document.getElementById('bundle-multiselect-search')?.focus();
-            setTimeout(() => {
-                document.addEventListener('click', closeBundleMultiOnOutside);
-            }, 10);
+            setTimeout(() => document.addEventListener('click', closeBundleMultiOnOutside), 10);
         } else {
             dropdown?.classList.remove('open');
             document.removeEventListener('click', closeBundleMultiOnOutside);
         }
     }
 
-    /**
-     * Close on outside click
-     */
     function closeBundleMultiOnOutside(e) {
         const wrapper = document.getElementById('bundleMultiSelect');
-        if (wrapper && !wrapper.contains(e.target)) {
-            closeBundleMultiSelect();
-        }
+        if (wrapper && !wrapper.contains(e.target)) closeBundleMultiSelect();
     }
 
-    /**
-     * Close multi-select dropdown
-     */
     function closeBundleMultiSelect() {
-        const dropdown = document.getElementById('bundle-multiselect-dropdown');
-        dropdown?.classList.remove('open');
+        document.getElementById('bundle-multiselect-dropdown')?.classList.remove('open');
         bundleMultiOpen = false;
         document.removeEventListener('click', closeBundleMultiOnOutside);
     }
 
-    /**
-     * Render multi-select options
-     */
     function renderBundleMultiOptions(filter = '') {
         const container = document.getElementById('bundle-multiselect-options');
         if (!container) return;
 
-        // Get products from database
-        let products = [];
-        if (window.productDB && Array.isArray(window.productDB)) {
-            products = window.productDB;
-        } else {
-            try {
-                products = JSON.parse(localStorage.getItem('productDB') || '[]');
-            } catch (e) {
-                products = [];
-            }
-        }
-
-        const filtered = products.filter(p =>
-            (p.name || '').toLowerCase().includes(filter.toLowerCase())
-        );
+        let products = window.productDB || JSON.parse(localStorage.getItem('productDB') || '[]');
+        const filtered = products.filter(p => (p.name || '').toLowerCase().includes(filter.toLowerCase()));
 
         if (products.length === 0) {
-            container.innerHTML = '<div class="combobox-empty">Belum ada produk tersimpan.<br>Simpan hasil kalkulasi terlebih dahulu.</div>';
+            container.innerHTML = '<div class="combobox-empty">Belum ada produk tersimpan</div>';
             return;
         }
 
@@ -371,14 +370,13 @@ const BundlingCalculator = (function () {
         }
 
         container.innerHTML = filtered.map(p => {
-            const isSelected = selectedFromDB.includes(p.id);
             const hpp = p.cost_of_goods || p.hpp || 0;
             const mp = p.platform || 'shopee';
             return `
                 <label class="multiselect-option" onclick="event.stopPropagation()">
-                    <input type="checkbox" ${isSelected ? 'checked' : ''} 
+                    <input type="checkbox" ${selectedFromDB.includes(p.id) ? 'checked' : ''} 
                            onchange="BundlingCalculator.toggleProductSelection(${p.id})">
-                    <span class="mp-tag ${mp}">${mp.charAt(0).toUpperCase() + mp.slice(1)}</span>
+                    <span class="mp-tag ${mp}">${mp.charAt(0).toUpperCase()}</span>
                     <span class="flex-1 font-medium">${p.name}</span>
                     <span class="text-xs text-slate-500">Rp ${hpp.toLocaleString('id-ID')}</span>
                 </label>
@@ -386,16 +384,10 @@ const BundlingCalculator = (function () {
         }).join('');
     }
 
-    /**
-     * Filter multi-select options
-     */
     function filterBundleMultiOptions(query) {
         renderBundleMultiOptions(query);
     }
 
-    /**
-     * Toggle product selection
-     */
     function toggleProductSelection(id) {
         const idx = selectedFromDB.indexOf(id);
         if (idx > -1) {
@@ -406,9 +398,6 @@ const BundlingCalculator = (function () {
         updateBundleSelectedBadges();
     }
 
-    /**
-     * Update selected badges display
-     */
     function updateBundleSelectedBadges() {
         const container = document.getElementById('bundle-selected-badges');
         if (!container) return;
@@ -418,17 +407,7 @@ const BundlingCalculator = (function () {
             return;
         }
 
-        // Get products data
-        let products = [];
-        if (window.productDB && Array.isArray(window.productDB)) {
-            products = window.productDB;
-        } else {
-            try {
-                products = JSON.parse(localStorage.getItem('productDB') || '[]');
-            } catch (e) {
-                products = [];
-            }
-        }
+        let products = window.productDB || JSON.parse(localStorage.getItem('productDB') || '[]');
 
         container.innerHTML = selectedFromDB.map(id => {
             const product = products.find(p => p.id === id);
@@ -445,71 +424,38 @@ const BundlingCalculator = (function () {
         }).join('');
     }
 
-    /**
-     * Remove pending product from selection
-     */
     function removePendingProduct(id) {
         const idx = selectedFromDB.indexOf(id);
-        if (idx > -1) {
-            selectedFromDB.splice(idx, 1);
-        }
+        if (idx > -1) selectedFromDB.splice(idx, 1);
         updateBundleSelectedBadges();
         renderBundleMultiOptions(document.getElementById('bundle-multiselect-search')?.value || '');
     }
 
-    /**
-     * Add all selected products to bundle
-     */
     function addSelectedToBundle() {
         if (selectedFromDB.length === 0) {
-            if (typeof showToast === 'function') {
-                showToast('Pilih produk terlebih dahulu', 'error');
-            }
+            if (typeof showToast === 'function') showToast('Pilih produk terlebih dahulu', 'error');
             return;
         }
 
-        // Get products data
-        let products = [];
-        if (window.productDB && Array.isArray(window.productDB)) {
-            products = window.productDB;
-        } else {
-            try {
-                products = JSON.parse(localStorage.getItem('productDB') || '[]');
-            } catch (e) {
-                products = [];
-            }
-        }
-
-        // Add each selected product to bundle
+        let products = window.productDB || JSON.parse(localStorage.getItem('productDB') || '[]');
         let addedCount = 0;
+
         selectedFromDB.forEach(id => {
             const product = products.find(p => p.id === id);
             if (product) {
-                const name = product.name || 'Produk';
-                const hpp = product.cost_of_goods || product.hpp || 0;
-                addProduct(name, hpp, 1);
+                addProduct(product.name, product.cost_of_goods || product.hpp || 0, 1);
                 addedCount++;
             }
         });
 
-        // Clear selection
         selectedFromDB = [];
         updateBundleSelectedBadges();
 
-        if (typeof showToast === 'function') {
-            showToast(`${addedCount} produk ditambahkan ke bundle`, 'success');
-        }
+        if (typeof showToast === 'function') showToast(`${addedCount} produk ditambahkan ke bundle`, 'success');
     }
 
-    // ==================== UI MANAGEMENT ====================
+    // ==================== PRODUCT MANAGEMENT ====================
 
-    /**
-     * Add product to bundle
-     * @param {string} name 
-     * @param {number} hpp 
-     * @param {number} qty 
-     * @param {number} price - Individual price (optional)
-     */
     function addProduct(name = '', hpp = 0, qty = 1, price = 0) {
         productIdCounter++;
         bundleProducts.push({
@@ -524,22 +470,12 @@ const BundlingCalculator = (function () {
         calculateAndRender();
     }
 
-    /**
-     * Remove product from bundle
-     * @param {number} id 
-     */
     function removeProduct(id) {
         bundleProducts = bundleProducts.filter(p => p.id !== id);
         renderProductList();
         calculateAndRender();
     }
 
-    /**
-     * Update product field
-     * @param {number} id 
-     * @param {string} field 
-     * @param {*} value 
-     */
     function updateProduct(id, field, value) {
         const product = bundleProducts.find(p => p.id === id);
         if (product) {
@@ -548,9 +484,6 @@ const BundlingCalculator = (function () {
         }
     }
 
-    /**
-     * Render product list in UI
-     */
     function renderProductList() {
         const container = document.getElementById('bundleProductsList');
         if (!container) return;
@@ -560,16 +493,15 @@ const BundlingCalculator = (function () {
                 <div class="text-center text-slate-400 dark:text-slate-500 py-6">
                     <i class="fas fa-box-open text-2xl mb-2 block opacity-50"></i>
                     <p class="text-xs">Belum ada produk dalam bundle</p>
-                    <p class="text-[10px] mt-1">Klik "Tambah Produk" untuk memulai</p>
                 </div>
             `;
             return;
         }
 
         container.innerHTML = bundleProducts.map(p => `
-            <div class="flex items-center gap-2 p-3 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 group">
+            <div class="flex items-center gap-2 p-3 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
                 <button onclick="BundlingCalculator.removeProduct(${p.id})" 
-                    class="w-6 h-6 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors">
+                    class="w-6 h-6 flex items-center justify-center text-red-400 hover:text-red-600 rounded transition-colors">
                     <i class="fas fa-times text-xs"></i>
                 </button>
                 
@@ -598,22 +530,20 @@ const BundlingCalculator = (function () {
         `).join('');
     }
 
-    /**
-     * Format input and update product
-     * @param {number} id 
-     * @param {string} field 
-     * @param {HTMLInputElement} input 
-     */
     function formatAndUpdate(id, field, input) {
         const value = parseNum(input.value);
         input.value = value > 0 ? value.toLocaleString('id-ID') : '';
         updateProduct(id, field, value);
     }
 
-    /**
-     * Calculate and render results
-     */
+    // ==================== CALCULATION & RENDERING ====================
+
     function calculateAndRender() {
+        if (calculatorMode === 'priceFinder') {
+            calculateAndRenderPriceFinder();
+            return;
+        }
+
         const bundlePriceInput = document.getElementById('bundlePrice');
         const bundleVoucherInput = document.getElementById('bundleVoucher');
 
@@ -625,26 +555,45 @@ const BundlingCalculator = (function () {
             return;
         }
 
-        const result = calculateBundleProfit(bundlePrice, bundleProducts, { voucherAmount });
-        renderResults(result);
+        const result = calculateBundleProfit(bundlePrice, bundleProducts, {
+            voucherAmount,
+            allocationMode: feeAllocationMode
+        });
 
-        // Store in AppState
+        renderResults(result);
+        renderProductBreakdown(result.products);
+        renderBusinessInsights(generateInsights());
+
         if (typeof AppState !== 'undefined') {
             AppState.set('bundling.lastResult', result);
         }
     }
 
-    /**
-     * Render empty results state
-     */
+    function calculateAndRenderPriceFinder() {
+        const targetInput = document.getElementById('bundle_target_profit');
+        const targetValue = targetInput ? parseNum(targetInput.value) : 0;
+
+        if (bundleProducts.length === 0 || targetValue <= 0) {
+            renderEmptyPriceFinderResults();
+            return;
+        }
+
+        const result = findBundlePrice(targetValue, priceFinderTargetType);
+        if (!result || !result.isValid) {
+            renderEmptyPriceFinderResults();
+            return;
+        }
+
+        renderPriceFinderResults(result);
+    }
+
     function renderEmptyResults() {
         const elements = {
             bundleTotalHPP: 'Rp 0',
             bundleTotalItems: '0',
             bundleTotalFees: 'Rp 0',
             bundleNetProfit: 'Rp 0',
-            bundleMargin: '0%',
-            bundleComparison: '-'
+            bundleMargin: '0%'
         };
 
         Object.entries(elements).forEach(([id, value]) => {
@@ -652,17 +601,11 @@ const BundlingCalculator = (function () {
             if (el) el.textContent = value;
         });
 
-        // Reset comparison section
-        const comparisonSection = document.getElementById('bundleComparisonSection');
-        if (comparisonSection) {
-            comparisonSection.classList.add('hidden');
-        }
+        document.getElementById('bundleComparisonSection')?.classList.add('hidden');
+        document.getElementById('bundleProductBreakdown')?.classList.add('hidden');
+        document.getElementById('bundleInsights')?.classList.add('hidden');
     }
 
-    /**
-     * Render calculation results
-     * @param {Object} result 
-     */
     function renderResults(result) {
         // Main values
         updateElement('bundleTotalHPP', formatRp(result.totalHPP));
@@ -673,15 +616,24 @@ const BundlingCalculator = (function () {
 
         // Fee breakdown
         updateElement('bundleAdminFee', `- ${formatRp(result.adminFee)}`);
-        updateElement('bundleServiceFee', `- ${formatRp(result.serviceFee + result.cashbackFee)}`);
+        updateElement('bundleServiceFee', `- ${formatRp((result.serviceFee || 0) + (result.cashbackFee || 0))}`);
         updateElement('bundleProcessFee', `- ${formatRp(result.processFee)}`);
 
         // Profit styling
         const profitEl = document.getElementById('bundleNetProfit');
         if (profitEl) {
-            profitEl.classList.remove('text-emerald-600', 'text-red-500');
-            profitEl.classList.add(result.netProfit >= 0 ? 'text-emerald-600' : 'text-red-500');
+            profitEl.classList.remove('text-emerald-600', 'text-red-500', 'text-amber-500');
+            if (result.marginStatus === 'danger') {
+                profitEl.classList.add('text-red-500');
+            } else if (result.marginStatus === 'warning') {
+                profitEl.classList.add('text-amber-500');
+            } else {
+                profitEl.classList.add('text-emerald-600');
+            }
         }
+
+        // Health indicator
+        renderHealthIndicator(result.marginStatus);
 
         // Comparison section
         const comparisonSection = document.getElementById('bundleComparisonSection');
@@ -690,7 +642,7 @@ const BundlingCalculator = (function () {
 
             updateElement('bundleIndividualProfit', formatRp(result.individualProfit));
             updateElement('bundleProfitDiff',
-                `${result.profitDifference >= 0 ? '+' : ''}${formatRp(result.profitDifference)} (${result.profitDifferencePercent.toFixed(1)}%)`
+                `${result.profitDifference >= 0 ? '+' : ''}${formatRp(result.profitDifference)}`
             );
 
             const diffEl = document.getElementById('bundleProfitDiff');
@@ -699,48 +651,143 @@ const BundlingCalculator = (function () {
                 diffEl.classList.add(result.profitDifference >= 0 ? 'text-emerald-600' : 'text-red-500');
             }
 
-            // Recommendation
             const recoEl = document.getElementById('bundleRecommendation');
             if (recoEl) {
                 if (result.isBundleBetter) {
-                    recoEl.innerHTML = `
-                        <i class="fas fa-check-circle text-emerald-500 mr-1"></i>
-                        <span class="text-emerald-700 dark:text-emerald-400">Bundle lebih menguntungkan</span>
-                    `;
+                    recoEl.innerHTML = `<i class="fas fa-check-circle text-emerald-500 mr-1"></i>
+                        <span class="text-emerald-700 dark:text-emerald-400">Bundle lebih menguntungkan</span>`;
                 } else {
-                    recoEl.innerHTML = `
-                        <i class="fas fa-exclamation-circle text-amber-500 mr-1"></i>
-                        <span class="text-amber-700 dark:text-amber-400">Jual satuan lebih menguntungkan</span>
-                    `;
+                    recoEl.innerHTML = `<i class="fas fa-exclamation-circle text-amber-500 mr-1"></i>
+                        <span class="text-amber-700 dark:text-amber-400">Jual satuan lebih menguntungkan</span>`;
                 }
             }
         }
     }
 
-    /**
-     * Helper to update element text
-     * @param {string} id 
-     * @param {string} value 
-     */
+    function renderHealthIndicator(status) {
+        const indicator = document.getElementById('bundleHealthIndicator');
+        if (!indicator) return;
+
+        indicator.classList.remove('bg-emerald-500', 'bg-amber-500', 'bg-red-500');
+
+        if (status === 'danger') {
+            indicator.classList.add('bg-red-500');
+            indicator.title = 'Rugi';
+        } else if (status === 'warning') {
+            indicator.classList.add('bg-amber-500');
+            indicator.title = 'Margin Tipis';
+        } else {
+            indicator.classList.add('bg-emerald-500');
+            indicator.title = 'Sehat';
+        }
+    }
+
+    function renderProductBreakdown(products) {
+        const container = document.getElementById('bundleProductBreakdown');
+        const tbody = document.getElementById('bundleBreakdownBody');
+        if (!container || !tbody) return;
+
+        if (!products || products.length === 0) {
+            container.classList.add('hidden');
+            return;
+        }
+
+        container.classList.remove('hidden');
+
+        tbody.innerHTML = products.map(p => {
+            const statusClass = p.marginStatus === 'danger' ? 'text-red-500' :
+                (p.marginStatus === 'warning' ? 'text-amber-500' : 'text-emerald-500');
+            const statusIcon = p.marginStatus === 'danger' ? 'times-circle' :
+                (p.marginStatus === 'warning' ? 'exclamation-circle' : 'check-circle');
+            const statusLabel = p.marginStatus === 'danger' ? 'Rugi' :
+                (p.marginStatus === 'warning' ? 'Tipis' : 'Sehat');
+
+            return `
+                <tr class="border-b border-slate-100 dark:border-slate-700">
+                    <td class="py-2 font-medium">${p.name}</td>
+                    <td class="py-2 text-right">${formatRp(p.hpp)}</td>
+                    <td class="py-2 text-center">${p.qty}</td>
+                    <td class="py-2 text-right text-red-400">-${formatRp(p.allocatedFee)}</td>
+                    <td class="py-2 text-right ${statusClass} font-medium">${formatRp(p.allocatedProfit)}</td>
+                    <td class="py-2 text-center">
+                        <span class="${statusClass}"><i class="fas fa-${statusIcon} mr-1"></i>${statusLabel}</span>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderBusinessInsights(insights) {
+        const container = document.getElementById('bundleInsights');
+        const list = document.getElementById('bundleInsightsList');
+        if (!container || !list) return;
+
+        if (!insights || insights.length === 0) {
+            container.classList.add('hidden');
+            return;
+        }
+
+        container.classList.remove('hidden');
+
+        list.innerHTML = insights.map(insight => {
+            const severityClass = insight.severity === 'danger' ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' :
+                (insight.severity === 'warning' ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800' :
+                    'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800');
+            const iconClass = insight.severity === 'danger' ? 'text-red-500' :
+                (insight.severity === 'warning' ? 'text-amber-500' : 'text-blue-500');
+
+            return `
+                <div class="p-3 rounded-lg border ${severityClass} mb-2">
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-${insight.icon} ${iconClass} mt-0.5"></i>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-slate-700 dark:text-slate-200">${insight.message}</p>
+                            ${insight.detail ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${insight.detail}</p>` : ''}
+                            ${insight.action ? `<p class="text-xs text-slate-600 dark:text-slate-300 mt-1 font-medium">💡 ${insight.action}</p>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderEmptyPriceFinderResults() {
+        updateElement('bundle_pf_min_price', 'Rp 0');
+        const container = document.getElementById('bundleSuggestedPrices');
+        if (container) container.innerHTML = '';
+    }
+
+    function renderPriceFinderResults(result) {
+        updateElement('bundle_pf_min_price', formatRp(result.minPrice));
+        updateElement('bundle_pf_actual_profit', formatRp(result.actualProfit));
+        updateElement('bundle_pf_actual_margin', `${result.actualMargin.toFixed(1)}%`);
+
+        const suggestionsContainer = document.getElementById('bundleSuggestedPrices');
+        if (suggestionsContainer && result.suggestedPrices) {
+            suggestionsContainer.innerHTML = result.suggestedPrices.map(s => `
+                <button onclick="document.getElementById('bundlePrice').value='${s.price.toLocaleString('id-ID')}'; BundlingCalculator.setCalculatorMode('profit'); BundlingCalculator.calculateAndRender();"
+                    class="px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:border-purple-400 transition-colors">
+                    <div class="text-sm font-bold text-slate-700 dark:text-white">${formatRp(s.price)}</div>
+                    <div class="text-[10px] text-slate-400">${s.label}</div>
+                </button>
+            `).join('');
+        }
+    }
+
     function updateElement(id, value) {
         const el = document.getElementById(id);
         if (el) el.textContent = value;
     }
 
-    /**
-     * Initialize the calculator
-     */
+    // ==================== INITIALIZATION ====================
+
     function init() {
-        // Add initial empty product
         addProduct('Produk 1', 0, 1);
 
-        // Setup event listeners for price input
         const bundlePriceInput = document.getElementById('bundlePrice');
         if (bundlePriceInput) {
             bundlePriceInput.addEventListener('input', function () {
-                if (typeof Formatters !== 'undefined') {
-                    Formatters.formatInputWithSeparator(this);
-                }
+                if (typeof Formatters !== 'undefined') Formatters.formatInputWithSeparator(this);
                 calculateAndRender();
             });
         }
@@ -748,20 +795,33 @@ const BundlingCalculator = (function () {
         const bundleVoucherInput = document.getElementById('bundleVoucher');
         if (bundleVoucherInput) {
             bundleVoucherInput.addEventListener('input', function () {
-                if (typeof Formatters !== 'undefined') {
+                if (typeof Formatters !== 'undefined') Formatters.formatInputWithSeparator(this);
+                calculateAndRender();
+            });
+        }
+
+        const targetProfitInput = document.getElementById('bundle_target_profit');
+        if (targetProfitInput) {
+            targetProfitInput.addEventListener('input', function () {
+                if (priceFinderTargetType === 'rupiah' && typeof Formatters !== 'undefined') {
                     Formatters.formatInputWithSeparator(this);
                 }
                 calculateAndRender();
             });
         }
+
+        // Initialize fee allocation radio buttons
+        document.querySelectorAll('input[name="bundleFeeAllocation"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                setFeeAllocationMode(this.value);
+            });
+        });
     }
 
-    /**
-     * Clear all products
-     */
     function clearAll() {
         bundleProducts = [];
         productIdCounter = 0;
+        lastBundleResult = null;
         renderProductList();
         renderEmptyResults();
     }
@@ -769,13 +829,20 @@ const BundlingCalculator = (function () {
     // ==================== PUBLIC API ====================
 
     return {
-        // Mode
+        // Mode switching
         switchMode,
+        setFeeAllocationMode,
+        setCalculatorMode,
+        setPriceFinderTargetType,
         getMode: () => inputMode,
+        getFeeAllocationMode: () => feeAllocationMode,
+        getCalculatorMode: () => calculatorMode,
 
         // Calculation
         calculateBundleProfit,
         calculateAndRender,
+        findBundlePrice,
+        generateInsights,
 
         // Product management
         addProduct,
@@ -797,12 +864,15 @@ const BundlingCalculator = (function () {
 
         // UI
         renderProductList,
+        renderProductBreakdown,
+        renderBusinessInsights,
         init,
 
         // Getters
-        getProducts() { return [...bundleProducts]; },
-        getProductCount() { return bundleProducts.length; },
-        getSelectedFromDB() { return [...selectedFromDB]; }
+        getProducts: () => [...bundleProducts],
+        getProductCount: () => bundleProducts.length,
+        getSelectedFromDB: () => [...selectedFromDB],
+        getLastResult: () => lastBundleResult
     };
 })();
 

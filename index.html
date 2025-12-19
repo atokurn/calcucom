@@ -1986,6 +1986,8 @@
                                     <span
                                         class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">Rp</span>
                                     <input type="text" id="bundlePrice" placeholder="150.000"
+                                        oninput="formatInputWithSeparator(this); BundlingCalculator.calculateAndRender()"
+                                        inputmode="numeric"
                                         class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium text-lg">
                                 </div>
                                 <p class="text-[10px] text-slate-400 mt-1">Harga jual keseluruhan bundle</p>
@@ -1999,6 +2001,8 @@
                                     <span
                                         class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">Rp</span>
                                     <input type="text" id="bundleVoucher" placeholder="0"
+                                        oninput="formatInputWithSeparator(this); BundlingCalculator.calculateAndRender()"
+                                        inputmode="numeric"
                                         class="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white">
                                 </div>
                             </div>
@@ -2078,6 +2082,9 @@
                                 </p>
                             </div>
                         </div>
+
+                        <!-- Fee Category Badge (shown when mixed categories) -->
+                        <div id="bundle-fee-category-badge" class="px-4"></div>
 
                         <div id="bundleProductsList" class="p-4 space-y-2 max-h-60 overflow-y-auto">
                             <!-- Products will be rendered here by JS -->

@@ -80,7 +80,8 @@ const BundlingCalculator = (function () {
     function calculateBundleProfitLegacy(bundlePrice, products, options = {}) {
         const platform = AppState?.get('platform') || 'shopee';
         const sellerType = AppState?.get('sellerType') || 'nonstar';
-        const categoryGroup = AppState?.get('category.group') || 'A';
+        // Use provided categoryGroup (from DB products' highest fee) or fall back to AppState
+        const categoryGroup = options.categoryGroup || AppState?.get('category.group') || 'A';
         const voucherAmount = options.voucherAmount || 0;
 
         let adminRate = 8;
@@ -187,6 +188,11 @@ const BundlingCalculator = (function () {
         const activeClass = 'px-3 py-1 text-xs font-bold rounded-md bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 shadow-sm transition-all';
         const inactiveClass = 'px-3 py-1 text-xs font-bold text-slate-400 rounded-md transition-all hover:bg-white/50 dark:hover:bg-slate-600/50';
 
+        // Clear products when switching modes to avoid confusion
+        bundleProducts = [];
+        selectedFromDB = [];
+        productIdCounter = 0;
+
         if (newMode === 'manual') {
             manualSection?.classList.remove('hidden');
             autoSection?.classList.add('hidden');
@@ -198,7 +204,11 @@ const BundlingCalculator = (function () {
             if (btnAuto) btnAuto.className = activeClass;
             if (btnManual) btnManual.className = inactiveClass;
             populateProductSelect();
+            updateBundleSelectedBadges();
         }
+
+        renderProductList();
+        calculateAndRender();
     }
 
     /**
@@ -443,7 +453,8 @@ const BundlingCalculator = (function () {
         selectedFromDB.forEach(id => {
             const product = products.find(p => p.id === id);
             if (product) {
-                addProduct(product.name, product.cost_of_goods || product.hpp || 0, 1);
+                // Add product with full metadata from database (no render yet)
+                addProductFromDB(product, false);
                 addedCount++;
             }
         });
@@ -451,7 +462,72 @@ const BundlingCalculator = (function () {
         selectedFromDB = [];
         updateBundleSelectedBadges();
 
+        // Render ONCE after all products are added
+        if (addedCount > 0) {
+            renderProductList();
+            calculateAndRender();
+        }
+
         if (typeof showToast === 'function') showToast(`${addedCount} produk ditambahkan ke bundle`, 'success');
+    }
+
+    /**
+     * Add product from database with full metadata
+     * @param {Object} dbProduct - Product from database
+     * @param {boolean} shouldRender - Whether to render immediately (default: true)
+     */
+    function addProductFromDB(dbProduct, shouldRender = true) {
+        productIdCounter++;
+        bundleProducts.push({
+            id: productIdCounter,
+            dbId: dbProduct.id,
+            name: dbProduct.name || `Produk ${productIdCounter}`,
+            hpp: dbProduct.cost_of_goods || dbProduct.hpp || 0,
+            qty: 1,
+            price: dbProduct.selling_price || dbProduct.sellingPrice || 0,
+            // NEW: Full metadata from database
+            fromDB: true,
+            categoryGroup: dbProduct.category_group || dbProduct.categoryGroup || 'A',
+            categoryName: dbProduct.category_name || dbProduct.categoryName || '',
+            platform: dbProduct.platform || 'shopee',
+            sellerType: dbProduct.seller_type || dbProduct.sellerType || 'nonstar',
+            originalProfit: dbProduct.result_profit || dbProduct.profit || 0,
+            originalMargin: dbProduct.result_margin || dbProduct.margin || 0
+        });
+
+        // Only render if explicitly requested (for single additions)
+        if (shouldRender) {
+            renderProductList();
+            calculateAndRender();
+        }
+    }
+
+    /**
+     * Get the highest fee category among all database products
+     * Returns category with highest admin fee rate
+     */
+    function getHighestFeeCategory() {
+        const dbProducts = bundleProducts.filter(p => p.fromDB && p.categoryGroup);
+        if (dbProducts.length === 0) return null;
+
+        // Category fee priority (highest to lowest for Shopee): A > B > F > C > D > E
+        const categoryPriority = { 'A': 6, 'B': 5, 'F': 4, 'C': 3, 'D': 2, 'E': 1 };
+
+        let highestCategory = dbProducts[0].categoryGroup;
+        let highestPriority = categoryPriority[highestCategory] || 0;
+
+        dbProducts.forEach(p => {
+            const priority = categoryPriority[p.categoryGroup] || 0;
+            if (priority > highestPriority) {
+                highestPriority = priority;
+                highestCategory = p.categoryGroup;
+            }
+        });
+
+        return {
+            category: highestCategory,
+            hasMixedCategories: new Set(dbProducts.map(p => p.categoryGroup)).size > 1
+        };
     }
 
     // ==================== PRODUCT MANAGEMENT ====================
@@ -488,6 +564,9 @@ const BundlingCalculator = (function () {
         const container = document.getElementById('bundleProductsList');
         if (!container) return;
 
+        // Render fee category badge if mixed categories
+        renderFeeCategoryBadge();
+
         if (bundleProducts.length === 0) {
             container.innerHTML = `
                 <div class="text-center text-slate-400 dark:text-slate-500 py-6">
@@ -498,7 +577,82 @@ const BundlingCalculator = (function () {
             return;
         }
 
-        container.innerHTML = bundleProducts.map(p => `
+        container.innerHTML = bundleProducts.map(p => {
+            if (p.fromDB) {
+                // Accordion-style card for database products (collapsed by default)
+                return renderDBProductCard(p);
+            } else {
+                // Simple inline editing for manual products
+                return renderManualProductRow(p);
+            }
+        }).join('');
+    }
+
+    /**
+     * Render accordion card for database products
+     */
+    function renderDBProductCard(p) {
+        const categoryBadgeClass = `badge-${p.categoryGroup || 'A'}`;
+        const platformTag = (p.platform || 'shopee').charAt(0).toUpperCase();
+        const profitClass = (p.originalProfit || 0) >= 0 ? 'text-emerald-500' : 'text-red-500';
+
+        return `
+            <div class="bundle-product-accordion bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 overflow-hidden">
+                <!-- Accordion Header (collapsed by default) -->
+                <div class="flex items-center gap-2 p-3 cursor-pointer" onclick="BundlingCalculator.toggleProductAccordion(${p.id})">
+                    <button onclick="event.stopPropagation(); BundlingCalculator.removeProduct(${p.id})" 
+                        class="w-6 h-6 flex items-center justify-center text-red-400 hover:text-red-600 rounded transition-colors">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                    
+                    <span class="mp-tag ${p.platform || 'shopee'} text-[8px] px-1 py-0.5 rounded font-bold">${platformTag}</span>
+                    
+                    <span class="flex-1 text-sm font-medium text-slate-700 dark:text-white truncate">${p.name}</span>
+                    
+                    <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${categoryBadgeClass}">Grup ${p.categoryGroup || 'A'}</span>
+                    
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1">
+                            <span class="text-[10px] text-slate-400">Qty</span>
+                            <input type="number" value="${p.qty}" min="1" max="99"
+                                onclick="event.stopPropagation()"
+                                onchange="BundlingCalculator.updateProduct(${p.id}, 'qty', parseInt(this.value) || 1)"
+                                class="w-12 px-1 py-1 text-xs border border-slate-200 dark:border-slate-600 rounded text-center bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-white">
+                        </div>
+                        <i class="fas fa-chevron-down text-xs text-slate-400 accordion-icon transition-transform" id="accordion-icon-${p.id}"></i>
+                    </div>
+                </div>
+                
+                <!-- Accordion Content (hidden by default) -->
+                <div class="accordion-content hidden px-3 pb-3 pt-0" id="accordion-content-${p.id}">
+                    <div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
+                        <div>
+                            <span class="text-slate-400">HPP:</span>
+                            <span class="text-slate-700 dark:text-white font-medium">${formatRp(p.hpp)}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400">Harga Jual:</span>
+                            <span class="text-slate-700 dark:text-white font-medium">${formatRp(p.price)}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400">Profit Satuan:</span>
+                            <span class="${profitClass} font-medium">${formatRp(p.originalProfit)}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400">Kategori:</span>
+                            <span class="text-slate-700 dark:text-white font-medium">${p.categoryName || '-'}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Render inline row for manual products
+     */
+    function renderManualProductRow(p) {
+        return `
             <div class="flex items-center gap-2 p-3 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
                 <button onclick="BundlingCalculator.removeProduct(${p.id})" 
                     class="w-6 h-6 flex items-center justify-center text-red-400 hover:text-red-600 rounded transition-colors">
@@ -527,7 +681,44 @@ const BundlingCalculator = (function () {
                         class="w-12 px-1 py-1 text-xs border border-slate-200 dark:border-slate-600 rounded text-center bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-white">
                 </div>
             </div>
-        `).join('');
+        `;
+    }
+
+    /**
+     * Toggle accordion expansion for a product
+     */
+    function toggleProductAccordion(productId) {
+        const content = document.getElementById(`accordion-content-${productId}`);
+        const icon = document.getElementById(`accordion-icon-${productId}`);
+
+        if (content) {
+            content.classList.toggle('hidden');
+        }
+        if (icon) {
+            icon.classList.toggle('rotate-180');
+        }
+    }
+
+    /**
+     * Render fee category badge when mixed categories exist
+     */
+    function renderFeeCategoryBadge() {
+        const badgeContainer = document.getElementById('bundle-fee-category-badge');
+        if (!badgeContainer) return;
+
+        const feeInfo = getHighestFeeCategory();
+
+        if (!feeInfo || !feeInfo.hasMixedCategories) {
+            badgeContainer.innerHTML = '';
+            return;
+        }
+
+        badgeContainer.innerHTML = `
+            <div class="flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-1 rounded-lg">
+                <i class="fas fa-info-circle"></i>
+                <span>Menggunakan fee Kategori ${feeInfo.category}</span>
+            </div>
+        `;
     }
 
     function formatAndUpdate(id, field, input) {
@@ -555,9 +746,14 @@ const BundlingCalculator = (function () {
             return;
         }
 
+        // Get highest fee category from DB products (if any)
+        const feeInfo = getHighestFeeCategory();
+        const effectiveCategoryGroup = feeInfo ? feeInfo.category : null;
+
         const result = calculateBundleProfit(bundlePrice, bundleProducts, {
             voucherAmount,
-            allocationMode: feeAllocationMode
+            allocationMode: feeAllocationMode,
+            categoryGroup: effectiveCategoryGroup  // Override with highest fee category
         });
 
         renderResults(result);
@@ -866,6 +1062,8 @@ const BundlingCalculator = (function () {
         renderProductList,
         renderProductBreakdown,
         renderBusinessInsights,
+        toggleProductAccordion,
+        getHighestFeeCategory,
         init,
 
         // Getters

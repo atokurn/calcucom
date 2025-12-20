@@ -3658,27 +3658,71 @@ function calcDashboard() {
     const sales = parseInputNumber('dashSales');
     const clicks = parseInputNumber('dashClicks');
 
+    // Calculate metrics
     let cpc = 0; if (clicks > 0) cpc = spend / clicks;
     let acos = 0; if (sales > 0) acos = (spend / sales) * 100;
     let roas = 0; if (spend > 0) roas = sales / spend;
 
+    // Calculate profit metrics (assuming ~20% margin before ads as baseline)
+    // For dashboard mode, we estimate profit as: Sales - Ad Spend - Estimated Platform Fees
+    const estimatedMarginRate = 0.20; // 20% baseline margin assumption
+    const grossProfit = sales * estimatedMarginRate; // Estimated gross profit from sales
+    const profitAfterAds = grossProfit - spend; // Profit after deducting ad spend
+    const marginAfterAds = sales > 0 ? (profitAfterAds / sales) * 100 : 0;
+
+    // Update ROAS display
     setText('actualROAS', roas.toFixed(2) + 'x');
     setText('breakEvenROAS', acos.toFixed(1) + '%');
 
+    // Update CPC display
     const elAdsCost = document.getElementById('adsCostPerSales');
     if (elAdsCost) {
         if (cpc > 0) elAdsCost.innerText = "CPC: " + formatRupiah(cpc);
         else elAdsCost.innerText = "-";
     }
 
+    // Detailed status and recommendations
     const statusBadge = document.getElementById('adsStatusBadge');
     const recText = document.getElementById('recommendationContent');
+
     if (statusBadge && recText) {
-        if (spend > 0) {
-            if (roas > 5) { statusBadge.innerText = "PROFIT"; statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-600 mb-2"; recText.innerText = "ROAS Bagus."; }
-            else { statusBadge.innerText = "ANALISA..."; statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-600 mb-2"; recText.innerText = `ROAS ${roas.toFixed(1)}x`; }
+        if (spend > 0 && sales > 0) {
+            // Calculate break-even ROAS (assuming 20% margin, need ROAS of 5x to break even)
+            const breakEvenRoas = 1 / estimatedMarginRate; // 5x for 20% margin
+
+            if (roas >= breakEvenRoas * 1.5) {
+                // Excellent: ROAS > 7.5x (1.5x of break-even)
+                statusBadge.innerText = "SANGAT PROFIT";
+                statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 mb-2";
+                recText.innerText = `ROAS ${roas.toFixed(2)}x sangat baik! Profit setelah iklan: ${formatRupiah(Math.round(profitAfterAds))} (margin ${marginAfterAds.toFixed(1)}%). Pertimbangkan scale up budget.`;
+            } else if (roas >= breakEvenRoas) {
+                // Good: ROAS >= 5x (break-even or better)
+                statusBadge.innerText = "PROFIT";
+                statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 mb-2";
+                recText.innerText = `Iklan profitable! Profit setelah iklan: ${formatRupiah(Math.round(profitAfterAds))} (ACOS ${acos.toFixed(1)}%). Margin bersih ${marginAfterAds.toFixed(1)}%.`;
+            } else if (roas >= breakEvenRoas * 0.6) {
+                // Warning: ROAS 3x-5x (close to break-even)
+                statusBadge.innerText = "PERLU OPTIMASI";
+                statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 mb-2";
+                const targetSpend = sales / breakEvenRoas;
+                const reduceBy = spend - targetSpend;
+                recText.innerText = `ROAS ${roas.toFixed(2)}x mendekati impas. ${profitAfterAds >= 0 ? 'Profit' : 'Rugi'}: ${formatRupiah(Math.round(Math.abs(profitAfterAds)))}. Kurangi spend ${formatRupiah(Math.round(reduceBy))} untuk profit optimal.`;
+            } else {
+                // Danger: ROAS < 3x (likely losing money)
+                statusBadge.innerText = "BONCOS";
+                statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 mb-2";
+                const loss = Math.abs(profitAfterAds);
+                const neededRoas = breakEvenRoas;
+                recText.innerText = `ROAS ${roas.toFixed(2)}x terlalu rendah! Estimasi rugi iklan: ${formatRupiah(Math.round(loss))}. Target ROAS minimal ${neededRoas.toFixed(1)}x untuk impas.`;
+            }
+        } else if (spend > 0) {
+            statusBadge.innerText = "DATA TIDAK LENGKAP";
+            statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-gray-200 dark:bg-slate-700 text-gray-500 dark:text-gray-400 mb-2";
+            recText.innerText = "Masukkan Total Omzet Iklan untuk analisa lengkap.";
         } else {
-            statusBadge.innerText = translations[currentLang]['noData'];
+            statusBadge.innerText = translations[currentLang]?.['noData'] || "BELUM ADA DATA";
+            statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-gray-200 dark:bg-slate-700 text-gray-500 dark:text-gray-400 mb-2";
+            recText.innerText = "Masukkan Total Biaya Iklan dan Omzet untuk melihat analisa.";
         }
     }
 }

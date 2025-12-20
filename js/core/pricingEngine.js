@@ -310,11 +310,15 @@ const PricingEngine = (function () {
         });
 
         // Calculate marketplace fees for bundle
+        // BUNDLE BUSINESS RULE: Always enable ALL service fees (conservative)
+        // This ensures sellers see worst-case scenario for fee calculations
         const feeResult = calculateMarketplaceFees(price, {
             ...options,
             voucherAmount,
             itemCount: totalItems,
-            allocationMode
+            allocationMode,
+            freeShipEnabled: true,   // Always enable for bundle (conservative)
+            cashbackEnabled: true    // Always enable for bundle (conservative)
         });
 
         // Net cash and profit for bundle
@@ -516,7 +520,12 @@ const PricingEngine = (function () {
      * @returns {Object} Price finder result
      */
     function findBundlePrice(products, targetConfig, options = {}) {
-        const fees = getPlatformFees(options);
+        // BUNDLE BUSINESS RULE: Always assume all service fees are enabled for reverse calculation
+        const fees = getPlatformFees({
+            ...options,
+            freeShipEnabled: true,
+            cashbackEnabled: true
+        });
 
         // Calculate total HPP
         let totalHPP = 0;

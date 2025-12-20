@@ -97,8 +97,11 @@ const BundlingCalculator = (function () {
             processFee = config.orderProcessFee || 1250;
         }
 
-        const freeShipEnabled = AppState?.get('features.freeShipEnabled') || false;
-        const cashbackEnabled = AppState?.get('features.cashbackEnabled') || false;
+        // BUNDLE BUSINESS RULE: Always use highest fee (all services enabled)
+        // This is conservative approach - calculate worst case for seller
+        // Regardless of individual product settings or checkbox state
+        const freeShipEnabled = true;  // Always enabled for bundle
+        const cashbackEnabled = true;  // Always enabled for bundle
 
         // Calculate totals
         let totalHPP = 0;
@@ -110,9 +113,13 @@ const BundlingCalculator = (function () {
 
         const feeBase = Math.max(0, bundlePrice - voucherAmount);
         const adminFee = feeBase * (adminRate / 100);
-        let serviceFee = freeShipEnabled ? Math.min(feeBase * (serviceRate / 100), serviceCap) : 0;
+
+        // Service fee: always calculated (conservative)
+        let serviceFee = Math.min(feeBase * (serviceRate / 100), serviceCap);
+
+        // Cashback fee: always calculated (conservative)
         let cashbackFee = 0;
-        if (cashbackEnabled && typeof AppConstants !== 'undefined') {
+        if (typeof AppConstants !== 'undefined') {
             const config = AppConstants.getMarketplace(platform);
             const cbRate = config.serviceFees?.cashback?.rate || 4.5;
             const cbCap = config.serviceFees?.cashback?.cap || 60000;
@@ -274,13 +281,24 @@ const BundlingCalculator = (function () {
             if (btnRp) btnRp.className = activeClass;
             if (btnPct) btnPct.className = inactiveClass;
             if (prefix) prefix.textContent = 'Rp';
-            if (input) input.placeholder = '50.000';
+            if (input) {
+                input.placeholder = '50.000';
+                // Clear input when switching modes to avoid confusion
+                input.value = '';
+            }
         } else {
             if (btnPct) btnPct.className = activeClass;
             if (btnRp) btnRp.className = inactiveClass;
             if (prefix) prefix.textContent = '%';
-            if (input) input.placeholder = '20';
+            if (input) {
+                input.placeholder = '20';
+                // Clear input when switching modes to avoid confusion
+                input.value = '';
+            }
         }
+
+        // Recalculate after mode switch
+        calculateAndRender();
     }
 
     // ==================== PRODUCT DATABASE ====================
@@ -874,10 +892,20 @@ const BundlingCalculator = (function () {
     // ==================== CALCULATION & RENDERING ====================
 
     function calculateAndRender() {
+        // ALWAYS calculate profit (for realtime sync even in priceFinder mode)
+        calculateProfitMode();
+
+        // If in priceFinder mode, also run price finder calculation
         if (calculatorMode === 'priceFinder') {
             calculateAndRenderPriceFinder();
-            return;
         }
+    }
+
+    /**
+     * Calculate and render profit results
+     * Separated from calculateAndRender to allow calling from both modes
+     */
+    function calculateProfitMode() {
 
         const bundlePriceInput = document.getElementById('bundlePrice');
         const bundleVoucherInput = document.getElementById('bundleVoucher');
@@ -958,6 +986,9 @@ const BundlingCalculator = (function () {
         updateElement('bundleAdminFee', `- ${formatRp(result.adminFee)}`);
         updateElement('bundleServiceFee', `- ${formatRp((result.serviceFee || 0) + (result.cashbackFee || 0))}`);
         updateElement('bundleProcessFee', `- ${formatRp(result.processFee)}`);
+
+        // Populate fee tooltips with detailed breakdown
+        populateFeeTooltips(result);
 
         // Profit styling
         const profitEl = document.getElementById('bundleNetProfit');
@@ -1231,4 +1262,85 @@ if (typeof window !== 'undefined') {
     window.switchBundleMode = BundlingCalculator.switchMode;
     window.toggleBundleMultiSelect = BundlingCalculator.toggleBundleMultiSelect;
     window.filterBundleMultiOptions = BundlingCalculator.filterBundleMultiOptions;
+
+    /**
+     * Global tooltip show/hide functions for bundle fee breakdown
+     */
+    window.showBundleTooltip = function (type, iconElement) {
+        const tooltipId = type === 'admin' ? 'bundleAdminFeeTooltip' : 'bundleServiceFeeTooltip';
+        const tooltip = document.getElementById(tooltipId);
+        if (tooltip) {
+            tooltip.classList.remove('hidden');
+        }
+    };
+
+    window.hideBundleTooltip = function (type) {
+        const tooltipId = type === 'admin' ? 'bundleAdminFeeTooltip' : 'bundleServiceFeeTooltip';
+        const tooltip = document.getElementById(tooltipId);
+        if (tooltip) {
+            tooltip.classList.add('hidden');
+        }
+    };
+}
+
+/**
+ * Populate fee tooltips with detailed breakdown information
+ * Called from renderResults() after updating fee displays
+ */
+function populateFeeTooltips(result) {
+    const feeInfo = BundlingCalculator.resolveBundleFees();
+    const formatRp = (n) => `Rp ${Math.round(n).toLocaleString('id-ID')}`;
+
+    // Admin fee tooltip content
+    const adminTooltip = document.getElementById('bundleAdminTooltipContent');
+    if (adminTooltip && feeInfo) {
+        const platformLabel = (feeInfo.platform || 'shopee').charAt(0).toUpperCase() + (feeInfo.platform || 'shopee').slice(1);
+        adminTooltip.innerHTML = `
+            <div class="space-y-1">
+                <div>Platform: <strong>${platformLabel}</strong></div>
+                <div>Kategori: <strong>${feeInfo.effectiveCategory || '-'}</strong></div>
+                <div>Rate: <strong>${feeInfo.adminRate || 0}%</strong></div>
+                <div class="pt-1 border-t border-white/20 mt-1">
+                    <span class="opacity-70">Dari harga bundle</span>
+                </div>
+            </div>
+        `;
+    } else if (adminTooltip) {
+        adminTooltip.innerHTML = '<div class="opacity-70">Tambah produk database untuk detail</div>';
+    }
+
+    // Service fee tooltip content
+    const serviceTooltip = document.getElementById('bundleServiceTooltipContent');
+    if (serviceTooltip && result) {
+        const config = typeof AppConstants !== 'undefined'
+            ? AppConstants.getMarketplace(feeInfo?.platform || 'shopee')
+            : null;
+
+        const freeShipRate = config?.serviceFees?.freeShip?.rate || 4;
+        const freeShipCap = config?.serviceFees?.freeShip?.cap || 40000;
+        const cashbackRate = config?.serviceFees?.cashback?.rate || 4.5;
+        const cashbackCap = config?.serviceFees?.cashback?.cap || 60000;
+
+        serviceTooltip.innerHTML = `
+            <div class="space-y-1">
+                <div class="flex justify-between">
+                    <span>Gratis Ongkir:</span>
+                    <strong>${formatRp(result.serviceFee || 0)}</strong>
+                </div>
+                <div class="text-[9px] opacity-70 pl-2">
+                    ${freeShipRate}% (Cap ${formatRp(freeShipCap)})
+                </div>
+                <div class="flex justify-between">
+                    <span>Cashback:</span>
+                    <strong>${formatRp(result.cashbackFee || 0)}</strong>
+                </div>
+                <div class="text-[9px] opacity-70 pl-2">
+                    ${cashbackRate}% (Cap ${formatRp(cashbackCap)})
+                </div>
+                <div class="pt-1 border-t border-white/20 mt-1 text-[9px] opacity-70">
+                    ⚠️ Bundle selalu hitung semua biaya layanan
+                </div>
+            </div>
+        `;
+    }
 }

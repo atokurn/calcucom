@@ -16,7 +16,7 @@ const Formatters = (function () {
             return withSymbol ? 'Rp 0' : '0';
         }
 
-        const absValue = Math.abs(value);
+        const absValue = Math.round(Math.abs(value));
         const formatted = absValue.toLocaleString('id-ID');
         const sign = value < 0 ? '-' : '';
 

@@ -2136,7 +2136,8 @@
                             <!-- Net Profit -->
                             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 mb-4 text-center">
                                 <div class="text-sm opacity-80 mb-1">Net Profit Bundle</div>
-                                <div class="text-4xl font-black" id="bundleNetProfit">Rp 0</div>
+                                <div class="text-4xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
+                                    id="bundleNetProfit">Rp 0</div>
                                 <div class="text-lg opacity-80 mt-1" id="bundleMargin">0%</div>
                             </div>
 
@@ -2156,13 +2157,35 @@
                             <div class="bg-white/5 backdrop-blur-sm rounded-lg p-3 text-sm">
                                 <div class="text-xs font-bold opacity-70 mb-2 uppercase">Rincian Potongan</div>
                                 <div class="space-y-1">
-                                    <div class="flex justify-between">
-                                        <span>Biaya Admin</span>
+                                    <div class="flex justify-between items-center group relative">
+                                        <span class="flex items-center gap-1">
+                                            Biaya Admin
+                                            <i class="fas fa-info-circle text-[10px] opacity-50 cursor-help hover:opacity-100 transition-opacity"
+                                                onmouseenter="showBundleTooltip('admin', this)"
+                                                onmouseleave="hideBundleTooltip('admin')"></i>
+                                        </span>
                                         <span id="bundleAdminFee">- Rp 0</span>
+                                        <!-- Admin Fee Tooltip -->
+                                        <div id="bundleAdminFeeTooltip"
+                                            class="hidden absolute bottom-full left-0 mb-2 p-2 bg-slate-900 text-white text-[10px] rounded-lg shadow-lg z-50 w-48 pointer-events-none">
+                                            <div class="font-medium mb-1 text-xs">Rincian Biaya Admin</div>
+                                            <div id="bundleAdminTooltipContent">-</div>
+                                        </div>
                                     </div>
-                                    <div class="flex justify-between">
-                                        <span>Biaya Layanan</span>
+                                    <div class="flex justify-between items-center group relative">
+                                        <span class="flex items-center gap-1">
+                                            Biaya Layanan
+                                            <i class="fas fa-info-circle text-[10px] opacity-50 cursor-help hover:opacity-100 transition-opacity"
+                                                onmouseenter="showBundleTooltip('service', this)"
+                                                onmouseleave="hideBundleTooltip('service')"></i>
+                                        </span>
                                         <span id="bundleServiceFee">- Rp 0</span>
+                                        <!-- Service Fee Tooltip -->
+                                        <div id="bundleServiceFeeTooltip"
+                                            class="hidden absolute bottom-full left-0 mb-2 p-2 bg-slate-900 text-white text-[10px] rounded-lg shadow-lg z-50 w-52 pointer-events-none">
+                                            <div class="font-medium mb-1 text-xs">Rincian Biaya Layanan</div>
+                                            <div id="bundleServiceTooltipContent">-</div>
+                                        </div>
                                     </div>
                                     <div class="flex justify-between">
                                         <span>Biaya Proses</span>

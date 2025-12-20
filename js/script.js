@@ -374,92 +374,113 @@ function calculateOptimalPrice() {
     const hpp = parseFormattedNumber(document.getElementById('pf_hpp')?.value);
     const discount = parseFloat(document.getElementById('pf_discount')?.value) || 0;
 
+    // UI Elements for Decision Support
+    const elContext = document.getElementById('pf_context_label');
+    const elTargetSum = document.getElementById('pf_target_summary');
+    const elHppSum = document.getElementById('pf_hpp_summary');
+    const elSensitivity = document.getElementById('pf_sensitivity_insight');
+    const elStatus = document.getElementById('pf_price_status');
+    const elCard = document.getElementById('pf_result_card');
+    const elOverlay = document.getElementById('pf_status_overlay');
+
+    // 1. Set Context Label & Target Summary
+    if (elContext) {
+        if (pfConfigMode === 'advanced') {
+            elContext.innerText = "SIMULASI MANUAL (CUSTOM)";
+            elContext.classList.remove('bg-blue-500/20', 'text-blue-100');
+            elContext.classList.add('bg-purple-500/20', 'text-purple-100');
+        } else {
+            elContext.innerText = "ESTIMASI MARKETPLACE (AUTO)";
+            elContext.classList.remove('bg-purple-500/20', 'text-purple-100');
+            elContext.classList.add('bg-blue-500/20', 'text-blue-100');
+        }
+    }
+
+    if (elHppSum) elHppSum.innerText = formatRupiah(hpp);
+
     let adminPct = 0;
     let servicePct = 0;
     let affiliatePct = 0;
     let totalFeePct = 0;
     let fixedCosts = 0; // Biaya Lainnya (fixed Rp costs)
 
+    // Calculate Fees (Logic same as before, just structural refactor)
     if (pfConfigMode === 'advanced') {
-        // Advanced mode: read from individual fee inputs
         adminPct = parseFloat(document.getElementById('pf_adminFeePercent')?.value) || 0;
         servicePct = parseFloat(document.getElementById('pf_serviceFeePercent')?.value) || 0;
         affiliatePct = parseFloat(document.getElementById('pf_affiliatePercent')?.value) || 0;
-
-        // Add fixed costs (Biaya Lainnya) from Advanced Mode forms
         fixedCosts = (parseFormattedNumber(document.getElementById('pf_orderProcessFee')?.value) || 0) +
             (parseFormattedNumber(document.getElementById('pf_fixedFee')?.value) || 0) +
             (parseFormattedNumber(document.getElementById('pf_operationalCost')?.value) || 0);
-    }
-    // In Simple Mode, we assume 0 from Advanced Inputs, relying on dynamic components
-
-    // Sum up Advanced Mode percentages for calculation
-    totalFeePct = adminPct + servicePct + affiliatePct;
-
-    // Add dynamic cost components from Komponen Biaya (ONLY IN SIMPLE MODE)
-    let dynamicFixedCosts = 0;
-    let dynamicVariablePct = 0;
-
-    if (pfConfigMode !== 'advanced') {
+    } else {
+        // Simple Mode Components
+        let dynamicFixedCosts = 0;
+        let dynamicVariablePct = 0;
         pfCostComponents.forEach(comp => {
-            if (comp.type === 'fixed') {
-                dynamicFixedCosts += comp.value;
-            } else if (comp.type === 'percent') {
-                dynamicVariablePct += comp.value;
-            }
+            if (comp.type === 'fixed') dynamicFixedCosts += comp.value;
+            else if (comp.type === 'percent') dynamicVariablePct += comp.value;
         });
+        fixedCosts += dynamicFixedCosts;
+        totalFeePct += dynamicVariablePct;
     }
 
-    // Add dynamic costs to totals
-    fixedCosts += dynamicFixedCosts;
-    totalFeePct += dynamicVariablePct;
+    // Advanced mode percentages
+    if (pfConfigMode === 'advanced') {
+        totalFeePct = adminPct + servicePct + affiliatePct;
+    }
 
-    // Update total fee display (total percent)
     setText('pf_total_fee_display', totalFeePct.toFixed(1) + '%');
 
     let sellingPrice = 0;
     let profit = 0;
     let margin = 0;
+    let optimalPriceFound = false;
 
     if (hpp > 0) {
-        // Adjusted HPP to include fixed costs
         const effectiveHpp = hpp + fixedCosts;
 
         if (priceFinderTarget === 'margin') {
-            // MARGIN MODE: Use margin formula
             const targetMargin = parseFloat(document.getElementById('pf_target_margin')?.value) || 0;
-            // Formula: SellingPrice = EffectiveHPP / (1 - TargetMargin% - Fee%)
+            if (elTargetSum) elTargetSum.innerText = `Margin ${targetMargin}%`;
+
+            // Check for Unrealistic Target (Margin + Fee >= 100%)
+            if ((targetMargin + totalFeePct) >= 100) {
+                renderUnrealisticState(targetMargin, totalFeePct);
+                return;
+            }
+
             const denominator = 1 - (targetMargin / 100) - (totalFeePct / 100);
             if (denominator > 0) {
                 sellingPrice = Math.ceil(effectiveHpp / denominator);
                 profit = sellingPrice - effectiveHpp - (sellingPrice * totalFeePct / 100);
                 margin = (profit / sellingPrice) * 100;
+                optimalPriceFound = true;
             }
         } else {
-            // PROFIT MODE: Get profit type from state (Rp or %)
+            // Profit Mode
             const profitType = pfProfitType;
             let targetProfitValue = parseFormattedNumber(document.getElementById('pf_target_profit')?.value) || 0;
             let targetProfitAmount = 0;
 
             if (profitType === 'rupiah') {
-                // Fixed Rupiah profit
                 targetProfitAmount = targetProfitValue;
+                if (elTargetSum) elTargetSum.innerText = `Profit ${formatRupiah(targetProfitValue)}`;
             } else {
-                // Percentage profit: profit = effectiveHpp * percent / 100
                 targetProfitAmount = effectiveHpp * (targetProfitValue / 100);
+                if (elTargetSum) elTargetSum.innerText = `Profit ${targetProfitValue}% (${formatRupiah(targetProfitAmount)})`;
             }
 
-            // Formula: SellingPrice = (EffectiveHPP + TargetProfit) / (1 - Fee%)
             const denominator = 1 - (totalFeePct / 100);
             if (denominator > 0) {
                 sellingPrice = Math.ceil((effectiveHpp + targetProfitAmount) / denominator);
                 profit = sellingPrice - effectiveHpp - (sellingPrice * totalFeePct / 100);
                 margin = (profit / sellingPrice) * 100;
+                optimalPriceFound = true;
             }
         }
     }
 
-    // Calculate strikethrough price (price before discount)
+    // Strikethrough Price
     let strikethroughPrice = 0;
     if (discount > 0 && sellingPrice > 0) {
         strikethroughPrice = Math.ceil(sellingPrice / (1 - discount / 100));
@@ -469,57 +490,213 @@ function calculateOptimalPrice() {
         document.getElementById('pf_strikethrough_container')?.classList.add('hidden');
     }
 
-    // --- Render Dynamic Fee Breakdown ---
+    // --- ENHANCED BREAKDOWN WITH CONTRIBUTION ---
     const breakdownContainer = document.getElementById('pf_result_breakdown_list');
     let breakdownHTML = '';
     let totalCalculatedFee = 0;
+    let feeBreakdownItems = [];
 
-    // Helper to add row
-    const addRow = (label, amount) => {
-        breakdownHTML += `
-                <div class="flex justify-between">
-                    <span class="opacity-80">${label}</span>
-                    <span class="font-medium">-${formatRupiah(Math.round(amount))}</span>
-                </div>`;
+    // Helper to collect fee items
+    const collectFee = (label, amount) => {
+        feeBreakdownItems.push({ label, amount });
         totalCalculatedFee += amount;
     };
 
-    // 1. Advanced Mode Fees (if active and > 0)
     if (pfConfigMode === 'advanced') {
-        if (adminPct > 0) addRow(`Biaya Admin (${adminPct}%)`, sellingPrice * adminPct / 100);
-        if (servicePct > 0) addRow(`Biaya Layanan (${servicePct}%)`, sellingPrice * servicePct / 100);
-        if (affiliatePct > 0) addRow(`Affiliate (${affiliatePct}%)`, sellingPrice * affiliatePct / 100);
+        if (adminPct > 0) collectFee(`Biaya Admin (${adminPct}%)`, sellingPrice * adminPct / 100);
+        if (servicePct > 0) collectFee(`Biaya Layanan (${servicePct}%)`, sellingPrice * servicePct / 100);
+        if (affiliatePct > 0) collectFee(`Affiliate (${affiliatePct}%)`, sellingPrice * affiliatePct / 100);
 
-        // Advanced mode fixed costs
-        const advFixed = (parseFormattedNumber(document.getElementById('pf_orderProcessFee')?.value) || 0) +
-            (parseFormattedNumber(document.getElementById('pf_fixedFee')?.value) || 0) +
-            (parseFormattedNumber(document.getElementById('pf_operationalCost')?.value) || 0);
-        if (advFixed > 0) addRow('Biaya Lain (Advanced)', advFixed);
-    }
-
-    // 2. Dynamic Component Fees (ONLY IN SIMPLE MODE)
-    if (pfConfigMode !== 'advanced') {
+        const advFixed = fixedCosts;
+        if (advFixed > 0) collectFee('Biaya Tetap', advFixed);
+    } else {
         pfCostComponents.forEach(comp => {
             let amount = 0;
             if (comp.type === 'fixed') {
                 amount = comp.value;
-                addRow(comp.name, amount);
+                collectFee(comp.name, amount);
             } else if (comp.type === 'percent') {
-                // % is calculated from selling price
                 amount = sellingPrice * comp.value / 100;
-                addRow(`${comp.name} (${comp.value}%)`, amount);
+                collectFee(`${comp.name} (${comp.value}%)`, amount);
             }
         });
     }
 
-    if (breakdownContainer) breakdownContainer.innerHTML = breakdownHTML || '<div class="text-xs text-white/50 italic text-center">Tidak ada potongan</div>';
+    // Render Breakdown with Contribution %
+    feeBreakdownItems.sort((a, b) => b.amount - a.amount); // Sort by highest impact
+    feeBreakdownItems.forEach(item => {
+        const contrib = totalCalculatedFee > 0 ? (item.amount / totalCalculatedFee) * 100 : 0;
+        breakdownHTML += `
+            <div class="flex justify-between items-center group">
+                <div class="flex flex-col">
+                    <span class="opacity-80">${item.label}</span>
+                    <div class="w-full bg-white/10 h-0.5 mt-0.5 rounded-full overflow-hidden">
+                        <div class="bg-white/50 h-full" style="width: ${contrib}%"></div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="font-bold">-${formatRupiah(Math.round(item.amount))}</div>
+                    <div class="text-[9px] opacity-60">${contrib.toFixed(0)}% dari total fee</div>
+                </div>
+            </div>`;
+    });
+
+    if (breakdownContainer) {
+        breakdownContainer.innerHTML = breakdownHTML || '<div class="text-xs text-white/50 italic text-center">Tidak ada potongan</div>';
+    }
+
+    // --- SENSITIVITY INSIGHT ---
+    if (elSensitivity && sellingPrice > 0) {
+        // Calculate price if admin fee increases by 1%
+        const currentTotalPct = totalFeePct;
+        const higherTotalPct = totalFeePct + 1;
+        let higherPrice = 0;
+
+        let sensitivityMsg = "";
+
+        // Use same formula logic based on target type
+        const denominatorHigh = priceFinderTarget === 'margin'
+            ? (1 - (parseFloat(document.getElementById('pf_target_margin')?.value || 0) / 100) - (higherTotalPct / 100))
+            : (1 - (higherTotalPct / 100));
+
+        if (denominatorHigh > 0) {
+            if (priceFinderTarget === 'margin') {
+                higherPrice = Math.ceil((hpp + fixedCosts) / denominatorHigh);
+            } else {
+                // Profit mode simple assumption
+                const effectiveHpp = hpp + fixedCosts;
+                const profitVal = pfProfitType === 'rupiah'
+                    ? (parseFormattedNumber(document.getElementById('pf_target_profit')?.value) || 0)
+                    : (effectiveHpp * (parseFormattedNumber(document.getElementById('pf_target_profit')?.value) || 0) / 100);
+                higherPrice = Math.ceil((effectiveHpp + profitVal) / denominatorHigh);
+            }
+
+            const diff = higherPrice - sellingPrice;
+            sensitivityMsg = `<i class="fas fa-info-circle mr-1"></i> Setiap kenaikan 1% biaya admin menaikkan harga jual ± <strong>${formatRupiah(diff)}</strong>`;
+        } else {
+            sensitivityMsg = "Biaya terlalu tinggi, sensitivitas tidak dapat dihitung.";
+        }
+
+        elSensitivity.innerHTML = sensitivityMsg;
+    }
+
+
+    // --- STATUS INDICATOR (Green/Yellow/Red) ---
+    if (elStatus && elOverlay && elCard) {
+        // Rules:
+        // GREEN: Fee < 15% AND Margin >= 20%
+        // YELLOW: Fee 15-25% OR Margin 10-20%
+        // RED: Fee > 25% OR Margin < 10%
+
+        // Fee Ratio (Total deducted / Selling Price)
+        const feeRatio = sellingPrice > 0 ? (totalCalculatedFee / sellingPrice) * 100 : 0;
+
+        // Base classes including the gradient trigger
+        const baseClasses = "rounded-2xl shadow-lg p-6 text-white relative overflow-hidden transition-all duration-300 bg-gradient-to-br";
+
+        if (optimalPriceFound) {
+            if (feeRatio > 25 || margin < 10) {
+                // RED - Warning
+                elStatus.innerText = "STATUS: BIAYA TINGGI / MARGIN TIPIS";
+                elStatus.className = "mt-2 text-[10px] font-bold px-2 py-0.5 inline-block rounded bg-red-900/40 text-red-100 border border-red-200/20";
+                elOverlay.className = "absolute inset-0 bg-red-900/20 transition-colors duration-300 pointer-events-none";
+                elCard.className = `${baseClasses} from-red-500 to-rose-600`;
+            } else if ((feeRatio >= 15 && feeRatio <= 25) || (margin >= 10 && margin < 20)) {
+                // YELLOW - Caution
+                elStatus.innerText = "STATUS: MARGIN STANDAR";
+                elStatus.className = "mt-2 text-[10px] font-bold px-2 py-0.5 inline-block rounded bg-amber-900/40 text-amber-100 border border-amber-200/20";
+                elOverlay.className = "absolute inset-0 bg-amber-900/10 transition-colors duration-300 pointer-events-none";
+                elCard.className = `${baseClasses} from-amber-500 to-orange-500`;
+            } else {
+                // GREEN - Healthy
+                elStatus.innerText = "STATUS: SEHAT";
+                elStatus.className = "mt-2 text-[10px] font-bold px-2 py-0.5 inline-block rounded bg-emerald-900/40 text-emerald-100 border border-emerald-200/20";
+                elOverlay.className = "absolute inset-0 bg-emerald-900/10 transition-colors duration-300 pointer-events-none";
+                elCard.className = `${baseClasses} from-emerald-500 to-teal-500`;
+            }
+        } else {
+            // Default (No Result yet) - Reset to Orange Brand Gradient
+            elCard.className = `${baseClasses} from-orange-500 to-red-500`;
+            elStatus.innerText = "STATUS: -";
+            elStatus.className = "mt-2 text-[10px] font-bold px-2 py-0.5 inline-block rounded bg-white/20";
+            elOverlay.className = "absolute inset-0 bg-transparent transition-colors duration-300 pointer-events-none";
+        }
+    }
 
     // Update Result Display
     setText('pf_result_price', formatRupiah(sellingPrice));
     setText('pf_result_profit', formatRupiah(Math.round(profit)));
     setText('pf_result_margin', margin.toFixed(1) + '%');
     setText('pf_result_total_fee', '-' + formatRupiah(Math.round(totalCalculatedFee)));
+
+    // Remove unrealistic state UI if it exists (cleanup)
+    const adviceDiv = document.getElementById('pf_unrealistic_advice');
+    if (adviceDiv) {
+        adviceDiv.remove();
+        if (elSensitivity) elSensitivity.classList.remove('hidden');
+    }
 }
+
+function renderUnrealisticState(margin, totalFee) {
+    // UI Elements
+    const elStatus = document.getElementById('pf_price_status');
+    const elCard = document.getElementById('pf_result_card');
+    const elSensitivity = document.getElementById('pf_sensitivity_insight');
+    const elOverlay = document.getElementById('pf_status_overlay');
+
+    // Base classes
+    const baseClasses = "rounded-2xl shadow-lg p-6 text-white relative overflow-hidden transition-all duration-300 bg-gradient-to-br";
+
+    // 1. Set Error State UI
+    if (elCard) elCard.className = `${baseClasses} from-gray-800 to-red-900`;
+    if (elOverlay) elOverlay.className = "absolute inset-0 bg-black/20 transition-colors duration-300 pointer-events-none";
+
+    if (elStatus) {
+        elStatus.innerText = "❌ TARGET TIDAK REALISTIS";
+        elStatus.className = "mt-2 text-[10px] font-bold px-2 py-0.5 inline-block rounded bg-black/40 text-white border border-white/20";
+    }
+
+    // 2. Set displayed values to 'Impossible' state
+    setText('pf_result_price', "Tidak Diketahui");
+    setText('pf_result_profit', "Rp 0");
+    setText('pf_result_margin', "0%");
+    setText('pf_result_total_fee', "Biaya > Harga");
+
+    // 3. Render Actionable Advice
+    // Max possible margin = 100 - fee - 1 (buffer)
+    const maxMargin = Math.max(0, 100 - totalFee - 1);
+
+    // Hide standard sensitivity, show error advice
+    if (elSensitivity) {
+        elSensitivity.classList.add('hidden');
+
+        // Check if advice container exists, if not create inside the parent of sensitivity
+        let adviceDiv = document.getElementById('pf_unrealistic_advice');
+        if (!adviceDiv) {
+            adviceDiv = document.createElement('div');
+            adviceDiv.id = 'pf_unrealistic_advice';
+            adviceDiv.className = "mt-4 bg-black/30 rounded-lg p-3 text-sm border border-white/10";
+            elSensitivity.parentElement.appendChild(adviceDiv);
+        }
+
+        adviceDiv.innerHTML = `
+            <div class="font-bold flex items-center gap-2 mb-2 text-rose-300">
+                <i class="fas fa-exclamation-triangle"></i> Mengapa ini terjadi?
+            </div>
+            <p class="mb-3 text-xs opacity-90">
+                Total biaya yang Anda set (${totalFee.toFixed(1)}%) ditambah Target Margin (${margin}%) = <strong>${(totalFee + margin).toFixed(1)}%</strong>. 
+                <br>Ini melebihi 100% harga jual, sehingga tidak mungkin dihitung.
+            </p>
+            <div class="font-bold mb-1 text-xs text-rose-200">💡 Saran Strategis:</div>
+            <ul class="list-disc pl-4 text-xs space-y-1 opacity-90">
+                <li>Turunkan target margin menjadi <strong>${maxMargin.toFixed(0)}%</strong> atau kurang.</li>
+                <li>Kurangi komponen biaya (seperti affiliate atau layanan).</li>
+                <li>Gunakan mode <strong>Target Profit (Rp)</strong> untuk simulasi yang lebih aman.</li>
+            </ul>
+        `;
+    }
+}
+
 
 // ==================== MODULE 3: ROAS CALCULATOR ====================
 

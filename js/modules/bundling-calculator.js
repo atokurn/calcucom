@@ -17,7 +17,7 @@ const BundlingCalculator = (function () {
 
     let bundleProducts = [];
     let productIdCounter = 0;
-    let inputMode = 'manual'; // 'manual' or 'auto'
+    let inputMode = 'auto'; // 'manual' or 'auto' - default to database mode
     let selectedFromDB = []; // Products selected from database for multi-select
     let bundleMultiOpen = false; // Multi-select dropdown state
 
@@ -205,6 +205,9 @@ const BundlingCalculator = (function () {
             autoSection?.classList.add('hidden');
             if (btnManual) btnManual.className = activeClass;
             if (btnAuto) btnAuto.className = inactiveClass;
+            // Show conservative badge in manual mode
+            const badge = document.getElementById('bundleConservativeBadge');
+            if (badge) badge.classList.remove('hidden');
         } else {
             autoSection?.classList.remove('hidden');
             manualSection?.classList.add('hidden');
@@ -212,6 +215,9 @@ const BundlingCalculator = (function () {
             if (btnManual) btnManual.className = inactiveClass;
             populateProductSelect();
             updateBundleSelectedBadges();
+            // Hide conservative badge in database mode (uses actual fee data)
+            const badge = document.getElementById('bundleConservativeBadge');
+            if (badge) badge.classList.add('hidden');
         }
 
         renderProductList();
@@ -1153,7 +1159,7 @@ const BundlingCalculator = (function () {
     // ==================== INITIALIZATION ====================
 
     function init() {
-        addProduct('Produk 1', 0, 1);
+        // Star with an empty product list as per user request
 
         const bundlePriceInput = document.getElementById('bundlePrice');
         if (bundlePriceInput) {

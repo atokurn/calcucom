@@ -3747,10 +3747,11 @@ function calculate() {
         const finalPrice = price - (price * disc / 100);
         const basis = Math.max(0, finalPrice - voucher);
 
-        // Admin Fee (Based on Category Group)
+        // Admin Fee (Based on Category Group and Platform)
         let adminRate = 0;
-        if (shopeeRates[sellerType] && shopeeRates[sellerType][p.categoryGroup]) {
-            adminRate = shopeeRates[sellerType][p.categoryGroup];
+        const platformRates = getPlatformRates(sellerType);
+        if (platformRates && platformRates[p.categoryGroup] !== undefined) {
+            adminRate = platformRates[p.categoryGroup];
         }
 
         // Force update Admin Fee Input in Single Mode to match calculation

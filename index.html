@@ -2018,28 +2018,45 @@
                                 <i class="fas fa-cubes text-purple-500"></i> Produk Dalam Bundle
                             </h3>
                             <!-- Mode Toggle -->
-                            <div class="flex bg-slate-100 dark:bg-slate-600 rounded-lg p-0.5 gap-1">
-                                <button onclick="switchBundleMode('manual')" id="btn-bundle-manual"
-                                    class="px-3 py-1 text-xs font-bold rounded-md bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 shadow-sm transition-all">
-                                    Manual
-                                </button>
+                            <div class="flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1 gap-1">
                                 <button onclick="switchBundleMode('auto')" id="btn-bundle-auto"
+                                    class="px-3 py-1 text-xs font-bold rounded-md bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 shadow-sm transition-all">
+                                    Otomatis
+                                </button>
+                                <button onclick="switchBundleMode('manual')" id="btn-bundle-manual"
                                     class="px-3 py-1 text-xs font-bold text-slate-400 rounded-md transition-all hover:bg-white/50 dark:hover:bg-slate-600/50">
-                                    Database
+                                    Manual
                                 </button>
                             </div>
                         </div>
 
                         <div class="p-4 space-y-3 border-b border-slate-100 dark:border-slate-700">
                             <!-- MANUAL MODE -->
-                            <div id="bundle_manual_section">
+                            <div id="bundle_manual_section" class="hidden">
                                 <button onclick="BundlingCalculator.addProduct()"
                                     class="w-full text-xs font-bold px-4 py-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-2">
                                     <i class="fas fa-plus"></i> Tambah Produk Manual
                                 </button>
+                                <!-- Conservative Mode Notice -->
+                                <div
+                                    class="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                                    <div class="flex items-start gap-2">
+                                        <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                                        <div class="text-xs text-blue-700 dark:text-blue-300">
+                                            <p class="font-semibold mb-1">Mode Manual menggunakan asumsi biaya
+                                                TERTINGGI:</p>
+                                            <ul class="list-disc list-inside space-y-0.5 opacity-90">
+                                                <li>Admin fee</li>
+                                                <li>Free shipping</li>
+                                                <li>Cashback</li>
+                                            </ul>
+                                            <p class="mt-1 opacity-75">(estimasi terburuk untuk keamanan profit)</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <!-- AUTO MODE: Multi-Select Product -->
-                            <div id="bundle_auto_section" class="hidden space-y-3">
+                            <div id="bundle_auto_section" class="space-y-3">
                                 <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
                                     Pilih Produk untuk Bundle
                                 </label>
@@ -2131,7 +2148,15 @@
                                 class="absolute top-4 right-4 w-3 h-3 rounded-full bg-slate-400" title="Status margin">
                             </div>
 
-                            <h3 class="text-lg font-bold mb-4 opacity-90">Hasil Perhitungan Bundle</h3>
+                            <h3 class="text-lg font-bold mb-2 opacity-90">Hasil Perhitungan Bundle</h3>
+                            <!-- Conservative Estimation Badge (only for Manual mode) -->
+                            <div class="mb-4 hidden" id="bundleConservativeBadge">
+                                <span
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-400/20 text-amber-200 text-[10px] font-bold rounded-full">
+                                    <i class="fas fa-shield-alt"></i>
+                                    Estimasi Konservatif (Worst Case)
+                                </span>
+                            </div>
 
                             <!-- Net Profit -->
                             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 mb-4 text-center">

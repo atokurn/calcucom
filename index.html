@@ -2319,41 +2319,74 @@
                         </div>
                     </div>
 
-                    <!-- Fee Allocation Mode Selector -->
-                    <div
-                        class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4">
-                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-3">
-                            <i class="fas fa-sliders-h mr-1 text-purple-500"></i> Alokasi Biaya
+                    <!-- Fee Allocation Mode Selector (Manual Only) -->
+                    <div id="bundle_allocation_section"
+                        class="hidden bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 relative overflow-hidden transition-all duration-300">
+                        <label
+                            class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-3 flex justify-between items-center">
+                            <span><i class="fas fa-sliders-h mr-1 text-purple-500"></i> Alokasi Biaya (Simulasi)</span>
+                            <span
+                                class="text-[10px] text-amber-500 bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded-full font-normal">
+                                <i class="fas fa-exclamation-triangle mr-1"></i> Mempengaruhi Profit
+                            </span>
                         </label>
+
                         <div class="flex flex-col sm:flex-row gap-2">
                             <label
-                                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors flex-1">
+                                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors flex-1 border border-transparent hover:border-purple-200 dark:hover:border-purple-800">
                                 <input type="radio" name="bundleFeeAllocation" value="total" checked
+                                    onclick="BundlingCalculator.setFeeAllocationMode('total')"
                                     class="text-purple-500 focus:ring-purple-500">
                                 <div>
-                                    <div class="text-xs font-medium text-slate-700 dark:text-white">Total Bundle</div>
-                                    <div class="text-[10px] text-slate-400">Fee dari total harga</div>
+                                    <div class="text-xs font-bold text-slate-700 dark:text-white">Total Bundle</div>
+                                    <div class="text-[10px] text-slate-400 leading-tight">Asumsi 1 pesanan (Standard)
+                                    </div>
                                 </div>
                             </label>
                             <label
-                                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors flex-1">
+                                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors flex-1 border border-transparent hover:border-purple-200 dark:hover:border-purple-800">
                                 <input type="radio" name="bundleFeeAllocation" value="proportional"
+                                    onclick="BundlingCalculator.setFeeAllocationMode('proportional')"
                                     class="text-purple-500 focus:ring-purple-500">
                                 <div>
-                                    <div class="text-xs font-medium text-slate-700 dark:text-white">Proporsional</div>
-                                    <div class="text-[10px] text-slate-400">Berdasar rasio HPP</div>
+                                    <div class="text-xs font-bold text-slate-700 dark:text-white">Proporsional</div>
+                                    <div class="text-[10px] text-slate-400 leading-tight">Bagi rata sdh HPP</div>
                                 </div>
                             </label>
                             <label
-                                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors flex-1">
+                                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors flex-1 border border-transparent hover:border-purple-200 dark:hover:border-purple-800">
                                 <input type="radio" name="bundleFeeAllocation" value="perItem"
+                                    onclick="BundlingCalculator.setFeeAllocationMode('perItem')"
                                     class="text-purple-500 focus:ring-purple-500">
                                 <div>
-                                    <div class="text-xs font-medium text-slate-700 dark:text-white">Per Item</div>
-                                    <div class="text-[10px] text-slate-400">Proses fee × qty</div>
+                                    <div class="text-xs font-bold text-slate-700 dark:text-white">Per Item</div>
+                                    <div class="text-[10px] text-slate-400 leading-tight">Asumsi pisah order (Mahal)
+                                    </div>
                                 </div>
                             </label>
                         </div>
+
+                        <!-- Warning/Helper Text -->
+                        <div
+                            class="mt-3 text-[10px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/50 p-2 rounded border border-slate-100 dark:border-slate-600">
+                            <i class="fas fa-info-circle mr-1 text-slate-400"></i>
+                            Gunakan "Per Item" untuk simulasi jika pembeli checkout produk secara terpisah.
+                        </div>
+                    </div>
+
+                    <!-- Fee Allocation Fixed Message (Auto Mode) -->
+                    <div id="bundle_allocation_fixed_msg"
+                        class="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-4 text-center">
+                        <div
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-400 mb-2">
+                            <i class="fas fa-lock text-xs"></i>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Alokasi Biaya Terkunci
+                        </h4>
+                        <p class="text-[10px] text-slate-400 max-w-xs mx-auto">
+                            Mode Otomatis menggunakan perhitungan worst-case standar marketplace untuk menjaga keamanan
+                            profit Anda.
+                        </p>
                     </div>
 
                     <!-- Product Breakdown Table -->

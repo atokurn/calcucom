@@ -20,6 +20,7 @@ const BundlingCalculator = (function () {
     let inputMode = 'auto'; // 'manual' or 'auto' - default to database mode
     let selectedFromDB = []; // Products selected from database for multi-select
     let bundleMultiOpen = false; // Multi-select dropdown state
+    let isInitialized = false; // Initialization state
 
     // NEW: Advanced features state
     let feeAllocationMode = 'total'; // 'total' | 'proportional' | 'perItem'
@@ -185,12 +186,19 @@ const BundlingCalculator = (function () {
     /**
      * Switch between Manual and Auto mode
      */
+    /**
+     * Switch between Manual and Auto mode
+     */
     function switchMode(newMode) {
         inputMode = newMode;
         const manualSection = document.getElementById('bundle_manual_section');
         const autoSection = document.getElementById('bundle_auto_section');
         const btnManual = document.getElementById('btn-bundle-manual');
         const btnAuto = document.getElementById('btn-bundle-auto');
+
+        // Allocation UI Elements
+        const allocationSection = document.getElementById('bundle_allocation_section');
+        const allocationFixedMsg = document.getElementById('bundle_allocation_fixed_msg');
 
         const activeClass = 'px-3 py-1 text-xs font-bold rounded-md bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 shadow-sm transition-all';
         const inactiveClass = 'px-3 py-1 text-xs font-bold text-slate-400 rounded-md transition-all hover:bg-white/50 dark:hover:bg-slate-600/50';
@@ -205,19 +213,34 @@ const BundlingCalculator = (function () {
             autoSection?.classList.add('hidden');
             if (btnManual) btnManual.className = activeClass;
             if (btnAuto) btnAuto.className = inactiveClass;
+
             // Show conservative badge in manual mode
             const badge = document.getElementById('bundleConservativeBadge');
             if (badge) badge.classList.remove('hidden');
+
+            // Show Allocation Selector (Manual Mode)
+            if (allocationSection) allocationSection.classList.remove('hidden');
+            if (allocationFixedMsg) allocationFixedMsg.classList.add('hidden');
+
         } else {
             autoSection?.classList.remove('hidden');
             manualSection?.classList.add('hidden');
             if (btnAuto) btnAuto.className = activeClass;
             if (btnManual) btnManual.className = inactiveClass;
+
             populateProductSelect();
             updateBundleSelectedBadges();
+
             // Hide conservative badge in database mode (uses actual fee data)
             const badge = document.getElementById('bundleConservativeBadge');
             if (badge) badge.classList.add('hidden');
+
+            // Hide Allocation Selector (Auto Mode - Fixed)
+            if (allocationSection) allocationSection.classList.add('hidden');
+            if (allocationFixedMsg) allocationFixedMsg.classList.remove('hidden');
+
+            // Force default allocation for Auto Mode (safe worst-case)
+            setFeeAllocationMode('total');
         }
 
         renderProductList();
@@ -236,6 +259,13 @@ const BundlingCalculator = (function () {
         document.querySelectorAll('input[name="bundleFeeAllocation"]').forEach(radio => {
             radio.checked = radio.value === mode;
         });
+
+        // Show warning if switching to perItem in Manual Mode (Scenario Simulation)
+        if (mode === 'perItem' && inputMode === 'manual') {
+            if (typeof showToast === 'function') {
+                showToast('Mode Per Item menggunakan biaya terpisah per produk (Lebih mahal)', 'info');
+            }
+        }
 
         // Recalculate
         calculateAndRender();
@@ -1159,6 +1189,12 @@ const BundlingCalculator = (function () {
     // ==================== INITIALIZATION ====================
 
     function init() {
+        if (isInitialized) {
+            // Validate UI state even if already initialized
+            switchMode(inputMode);
+            return;
+        }
+
         // Star with an empty product list as per user request
 
         const bundlePriceInput = document.getElementById('bundlePrice');
@@ -1193,6 +1229,11 @@ const BundlingCalculator = (function () {
                 setFeeAllocationMode(this.value);
             });
         });
+
+        isInitialized = true;
+
+        // Enforce initial UI state
+        switchMode(inputMode);
     }
 
     function clearAll() {
@@ -1256,9 +1297,20 @@ const BundlingCalculator = (function () {
         getProducts: () => [...bundleProducts],
         getProductCount: () => bundleProducts.length,
         getSelectedFromDB: () => [...selectedFromDB],
-        getLastResult: () => lastBundleResult
+        getLastResult: () => lastBundleResult,
+        isInitialized: () => isInitialized
     };
 })();
+
+// Initialize if module is active on load (fixes hard refresh issue)
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
+        const bundleModule = document.getElementById('module-bundling');
+        if (bundleModule && (bundleModule.classList.contains('active') || !bundleModule.classList.contains('hidden'))) {
+            BundlingCalculator.init();
+        }
+    });
+}
 
 // Make available globally
 if (typeof window !== 'undefined') {

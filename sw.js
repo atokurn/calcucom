@@ -1,13 +1,39 @@
-const CACHE_NAME = 'cekbiaya-v1';
+const CACHE_NAME = 'cekbiaya-v4';
 const ASSETS_TO_CACHE = [
     './index.html',
     './css/style.css',
+    // Core JS
     './js/script.js',
     './js/data.js',
+    './js/data-tiktok.js',
+    './js/data-tokopedia.js',
+    './js/constants.js',
+    './js/state.js',
     './js/tailwind-config.js',
+    // Core modules
+    './js/core/pricing-engine.js',
+    // Utility modules
+    './js/utils/debounce.js',
+    './js/utils/formatters.js',
+    './js/utils/storage.js',
+    './js/utils/validation.js',
+    './js/utils/ui-manager.js',
+    './js/utils/data-exporter.js',
+    // Feature Modules
+    './js/modules/category-modal.js',
+    './js/modules/bulk-mode.js',
+    './js/modules/history-manager.js',
+    './js/modules/simulation-calculator.js',
+    './js/modules/ads-analyzer.js',
+    './js/modules/bundling-calculator.js',
+    './js/modules/compare-calculator.js',
+    './js/modules/price-finder.js',
+    './js/modules/roas-calculator.js',
+    // Assets
     './manifest.json',
     './icons/icon-192.svg',
     './icons/icon-512.svg',
+    // CDN (will fail gracefully if offline)
     'https://cdn.tailwindcss.com',
     'https://cdn.jsdelivr.net/npm/chart.js',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',

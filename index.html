@@ -4,9 +4,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Profit Shopee & Marketplace</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>CekBiayaJualan - Kalkulator Profit Shopee, Tokopedia, TikTok Shop</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="Kalkulator profit gratis untuk seller Shopee, Tokopedia, TikTok Shop, dan Lazada. Hitung margin, biaya admin, ROAS, dan analisis bundling dengan akurat.">
+    <meta name="keywords"
+        content="kalkulator profit, shopee, tokopedia, tiktok shop, lazada, marketplace, seller, biaya admin, margin, ROAS, bundling">
+    <meta name="author" content="CekBiayaJualan">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cekbiayajualan.com/">
+    <meta property="og:title" content="CekBiayaJualan - Kalkulator Profit Marketplace Indonesia">
+    <meta property="og:description"
+        content="Hitung profit, margin, dan fee marketplace dengan mudah. Gratis untuk Shopee, Tokopedia, TikTok Shop, dan Lazada.">
+    <meta property="og:image" content="icons/icon-512.svg">
+    <meta property="og:locale" content="id_ID">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CekBiayaJualan - Kalkulator Profit Marketplace">
+    <meta name="twitter:description" content="Hitung profit, margin, dan fee marketplace dengan mudah. Gratis!">
+    <meta name="twitter:image" content="icons/icon-512.svg">
+
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#EE4D2D">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="CekBiaya">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg">
+    <link rel="apple-touch-icon" href="icons/icon-192.svg">
+
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+
+    <!-- CDN Scripts with Error Handling -->
+    <script src="https://cdn.tailwindcss.com" onerror="console.error('Tailwind CDN failed to load')"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.error('Chart.js CDN failed to load')"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -17,11 +57,17 @@
 <body
     class="bg-slate-50 dark:bg-slate-900 text-gray-800 dark:text-slate-200 min-h-screen flex flex-col transition-colors duration-300">
 
+    <!-- Skip to Content Link for Accessibility -->
+    <a href="#main-content"
+        class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-orange-500 focus:text-white focus:rounded-lg focus:shadow-lg">
+        Langsung ke Konten Utama
+    </a>
+
     <!-- Toast Container for Notifications -->
-    <div id="toastContainer"></div>
+    <div id="toastContainer" role="alert" aria-live="polite"></div>
 
     <!-- Navbar -->
-    <nav id="mainNav"
+    <nav id="mainNav" role="navigation" aria-label="Navigasi Utama"
         class="bg-white dark:bg-slate-800 sm:border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40 sm:shadow-sm transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             <div class="flex justify-between h-14 sm:h-16 items-center">
@@ -82,21 +128,25 @@
     <div id="desktopTabsNav"
         class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-16 z-30 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-            <div class="module-tabs">
-                <button onclick="switchModule('profit')" class="module-tab active" data-module="profit">
-                    <i class="fas fa-calculator"></i>
+            <div class="module-tabs" role="tablist" aria-label="Pilih Modul Kalkulator">
+                <button onclick="switchModule('profit')" class="module-tab active" data-module="profit" role="tab"
+                    aria-selected="true" aria-controls="module-profit">
+                    <i class="fas fa-calculator" aria-hidden="true"></i>
                     <span>Profit Calculator</span>
                 </button>
-                <button onclick="switchModule('price')" class="module-tab" data-module="price">
-                    <i class="fas fa-tags"></i>
+                <button onclick="switchModule('price')" class="module-tab" data-module="price" role="tab"
+                    aria-selected="false" aria-controls="module-price">
+                    <i class="fas fa-tags" aria-hidden="true"></i>
                     <span>Price Finder</span>
                 </button>
-                <button onclick="switchModule('roas')" class="module-tab" data-module="roas">
-                    <i class="fas fa-chart-pie"></i>
+                <button onclick="switchModule('roas')" class="module-tab" data-module="roas" role="tab"
+                    aria-selected="false" aria-controls="module-roas">
+                    <i class="fas fa-chart-pie" aria-hidden="true"></i>
                     <span>ROAS Calculator</span>
                 </button>
-                <button onclick="switchModule('compare')" class="module-tab" data-module="compare">
-                    <i class="fas fa-exchange-alt"></i>
+                <button onclick="switchModule('compare')" class="module-tab" data-module="compare" role="tab"
+                    aria-selected="false" aria-controls="module-compare">
+                    <i class="fas fa-exchange-alt" aria-hidden="true"></i>
                     <span>Compare</span>
                 </button>
                 <button onclick="switchModule('ads')" class="module-tab" data-module="ads">
@@ -112,7 +162,7 @@
     </div>
 
     <!-- Main Content -->
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-6 sm:px-6 lg:px-8">
+    <main id="main-content" role="main" class="flex-grow max-w-7xl mx-auto w-full px-4 py-6 sm:px-6 lg:px-8">
 
         <!-- MODULE 1: Profit Calculator (Existing Content) -->
         <div id="module-profit" class="module-panel active">
@@ -2782,13 +2832,22 @@
     <script src="js/utils/debounce.js"></script>
     <script src="js/utils/formatters.js"></script>
     <script src="js/utils/storage.js"></script>
+    <script src="js/utils/validation.js"></script>
 
     <!-- Core modules -->
     <script src="js/constants.js"></script>
     <script src="js/state.js"></script>
+    <script src="js/core/pricing-engine.js"></script>
+
+    <!-- Utility modules -->
+    <script src="js/utils/ui-manager.js"></script>
+    <script src="js/utils/data-exporter.js"></script>
 
     <!-- Feature modules -->
-    <script src="js/core/pricingEngine.js"></script>
+    <script src="js/modules/category-modal.js"></script>
+    <script src="js/modules/bulk-mode.js"></script>
+    <script src="js/modules/history-manager.js"></script>
+    <script src="js/modules/simulation-calculator.js"></script>
     <script src="js/modules/bundling-calculator.js"></script>
     <script src="js/modules/price-finder.js"></script>
     <script src="js/modules/roas-calculator.js"></script>

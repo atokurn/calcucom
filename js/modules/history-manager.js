@@ -14,6 +14,17 @@ const HistoryManager = (function () {
 
     let pendingDeleteId = null;
     let pendingDeleteSource = null;
+    let editingId = null; // Track which entry is being edited
+
+    // ==================== TOAST HELPER ====================
+
+    function showToast(message, type = 'info') {
+        if (typeof window.showToast === 'function') {
+            window.showToast(message, type);
+        } else if (typeof UIManager !== 'undefined') {
+            UIManager.showToast(message, type);
+        }
+    }
 
     // ==================== STORAGE ====================
 
@@ -60,6 +71,110 @@ const HistoryManager = (function () {
     }
 
     /**
+     * Update existing entry in history
+     * @param {string} id - Entry ID to update
+     * @param {Object} updates - Fields to update
+     */
+    function updateEntry(id, updates) {
+        const history = getHistory();
+        const idx = history.findIndex(h => h.id === id);
+
+        if (idx === -1) {
+            // Check productDB
+            const productDB = typeof window.productDB !== 'undefined' ? window.productDB : [];
+            const dbIdx = productDB.findIndex(p => p.id.toString() === id);
+
+            if (dbIdx > -1) {
+                // Update productDB entry
+                Object.assign(productDB[dbIdx], updates);
+                productDB[dbIdx].updated_at = new Date().toISOString();
+                localStorage.setItem('productDB', JSON.stringify(productDB));
+                showToast('Produk berhasil diupdate', 'success');
+                render();
+                return true;
+            }
+
+            showToast('Entry tidak ditemukan', 'error');
+            return false;
+        }
+
+        // Update history entry
+        Object.assign(history[idx], updates);
+        history[idx].updatedAt = new Date().toISOString();
+        saveHistory(history);
+        showToast('Entry berhasil diupdate', 'success');
+        render();
+        return true;
+    }
+
+    /**
+     * Start editing an entry
+     * @param {string} id - Entry ID to edit
+     */
+    function startEdit(id) {
+        editingId = id;
+        const entry = findEntry(id);
+        if (!entry) {
+            showToast('Entry tidak ditemukan', 'error');
+            return;
+        }
+
+        // Load entry data into form for editing
+        loadEntry(id);
+        showToast('Mode edit aktif. Ubah data lalu klik Simpan.', 'info');
+    }
+
+    /**
+     * Finish editing and save changes
+     */
+    function finishEdit() {
+        if (!editingId) return;
+
+        // Get current form values and update the entry
+        // This depends on the form structure
+        const name = document.getElementById('singleName')?.value;
+        const hpp = parseFloat(document.getElementById('hpp')?.value) || 0;
+        const price = parseFloat(document.getElementById('originalPrice')?.value) || 0;
+
+        if (name || hpp || price) {
+            updateEntry(editingId, {
+                productName: name,
+                name: name,
+                hpp: hpp,
+                cost_of_goods: hpp,
+                sellingPrice: price,
+                display_price: price
+            });
+        }
+
+        editingId = null;
+    }
+
+    /**
+     * Cancel editing mode
+     */
+    function cancelEdit() {
+        editingId = null;
+        showToast('Edit dibatalkan', 'info');
+    }
+
+    /**
+     * Check if in edit mode
+     * @returns {boolean}
+     */
+    function isEditing() {
+        return editingId !== null;
+    }
+
+    /**
+     * Get currently editing ID
+     * @returns {string|null}
+     */
+    function getEditingId() {
+        return editingId;
+    }
+
+    /**
      * Delete entry from history
      * @param {string} id 
      */
@@ -76,13 +191,35 @@ const HistoryManager = (function () {
     function clearAll() {
         localStorage.removeItem(STORAGE_KEY);
         render();
-
-        if (typeof showToast === 'function') {
-            showToast('Riwayat berhasil dihapus', 'success');
-        }
+        showToast('Riwayat berhasil dihapus', 'success');
     }
 
-    // ==================== RENDERING ====================
+    // ==================== BULK OPERATIONS ====================
+
+    /**
+     * Delete multiple entries at once
+     * @param {Array} ids - Array of IDs to delete
+     */
+    function bulkDelete(ids) {
+        if (!ids || ids.length === 0) return;
+
+        const history = getHistory();
+        const productDB = typeof window.productDB !== 'undefined' ? window.productDB : [];
+
+        // Filter history
+        const filteredHistory = history.filter(h => !ids.includes(h.id));
+        saveHistory(filteredHistory);
+
+        // Filter productDB
+        const filteredDB = productDB.filter(p => !ids.includes(p.id.toString()));
+        if (filteredDB.length !== productDB.length) {
+            window.productDB = filteredDB;
+            localStorage.setItem('productDB', JSON.stringify(filteredDB));
+        }
+
+        render();
+        showToast(`${ids.length} item dihapus`, 'success');
+    }
 
     /**
      * Render history list
@@ -387,8 +524,17 @@ const HistoryManager = (function () {
         // Storage
         getHistory,
         addEntry,
+        updateEntry,
         deleteEntry,
         clearAll,
+        bulkDelete,
+
+        // Edit mode
+        startEdit,
+        finishEdit,
+        cancelEdit,
+        isEditing,
+        getEditingId,
 
         // Rendering
         render,
@@ -420,4 +566,9 @@ if (typeof window !== 'undefined') {
     window.deleteHistoryItem = HistoryManager.confirmDelete;
     window.confirmDeleteHistoryItem = HistoryManager.executeDelete;
     window.closeDeleteDialog = HistoryManager.cancelDelete;
+
+    // New edit functions
+    window.editHistoryItem = HistoryManager.startEdit;
+    window.updateHistoryItem = HistoryManager.updateEntry;
 }
+

@@ -45,6 +45,72 @@ const ROASCalculator = (function () {
     // ==================== MODE SWITCHING ====================
 
     /**
+     * Show toast notification
+     */
+    function showToast(message, type = 'info') {
+        if (typeof window.showToast === 'function') {
+            window.showToast(message, type);
+        } else if (typeof UIManager !== 'undefined') {
+            UIManager.showToast(message, type);
+        }
+    }
+
+    /**
+     * Check if auto data is available and valid
+     * @returns {boolean}
+     */
+    function hasValidAutoData() {
+        return autoData.isActive && autoData.price > 0 && autoData.netProfit !== 0;
+    }
+
+    /**
+     * Render empty state guide for auto mode
+     */
+    function renderEmptyState() {
+        const autoSection = document.getElementById('roas_auto_section');
+        if (!autoSection) return;
+
+        // Find or create empty state container
+        let emptyState = document.getElementById('roasEmptyState');
+        if (!emptyState) {
+            emptyState = document.createElement('div');
+            emptyState.id = 'roasEmptyState';
+            autoSection.insertBefore(emptyState, autoSection.firstChild);
+        }
+
+        emptyState.className = 'text-center py-8 px-4 bg-purple-50/50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800 mb-4';
+        emptyState.innerHTML = `
+            <div class="text-purple-400 dark:text-purple-500 mb-3">
+                <i class="fas fa-chart-line text-4xl"></i>
+            </div>
+            <h3 class="font-bold text-slate-700 dark:text-slate-200 mb-2">Belum Ada Data ROAS</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                Mode Auto menggunakan data dari Profit Calculator.<br/>
+                Hitung profit produk dulu untuk melihat data ROAS otomatis.
+            </p>
+            <button onclick="switchModule('profit')" 
+                    class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium rounded-lg transition-colors">
+                <i class="fas fa-calculator mr-2"></i>
+                Ke Profit Calculator
+            </button>
+            <div class="mt-4 text-xs text-slate-400 dark:text-slate-500">
+                <i class="fas fa-lightbulb mr-1"></i>
+                Atau gunakan <button onclick="ROASCalculator.switchMode('manual')" class="text-purple-500 underline">Mode Manual</button> untuk input langsung
+            </div>
+        `;
+    }
+
+    /**
+     * Hide empty state guide
+     */
+    function hideEmptyState() {
+        const emptyState = document.getElementById('roasEmptyState');
+        if (emptyState) {
+            emptyState.remove();
+        }
+    }
+
+    /**
      * Switch between Auto and Manual mode
      * @param {string} newMode - 'auto' or 'manual'
      */
@@ -63,12 +129,20 @@ const ROASCalculator = (function () {
             manualSection?.classList.add('hidden');
             if (btnAuto) btnAuto.className = activeClass;
             if (btnManual) btnManual.className = inactiveClass;
+
+            // Check if auto data is available
+            if (!hasValidAutoData()) {
+                renderEmptyState();
+            } else {
+                hideEmptyState();
+            }
         } else {
             autoSection?.classList.add('hidden');
             manualSection?.classList.remove('hidden');
             if (btnManual) btnManual.className = activeClass;
             if (btnAuto) btnAuto.className = inactiveClass;
             autoData.isActive = false;
+            hideEmptyState();
             calculateBreakeven();
         }
     }
@@ -227,6 +301,9 @@ const ROASCalculator = (function () {
         if (typeof window.roasAutoData !== 'undefined') {
             window.roasAutoData = autoData;
         }
+
+        // Hide empty state since we now have data
+        hideEmptyState();
     }
 
     /**

@@ -62,7 +62,81 @@ const AdsAnalyzer = (function () {
     function showToast(message, type = 'info') {
         if (typeof window.showToast === 'function') {
             window.showToast(message, type);
+        } else if (typeof UIManager !== 'undefined') {
+            UIManager.showToast(message, type);
         }
+    }
+
+    // ==================== INPUT VALIDATION ====================
+
+    /**
+     * Validate CPC (Cost Per Click) input
+     * Shows warnings for unrealistic values
+     * @param {number|string} value - CPC value to validate
+     * @returns {number} - Validated CPC value
+     */
+    function validateCPC(value) {
+        const cpc = parseFloat(value) || 0;
+
+        // Warning thresholds
+        const HIGH_CPC_THRESHOLD = 50000; // Rp 50,000
+        const VERY_HIGH_CPC_THRESHOLD = 100000; // Rp 100,000
+        const LOW_CPC_THRESHOLD = 50; // Rp 50
+
+        if (cpc > VERY_HIGH_CPC_THRESHOLD) {
+            showToast('⚠️ CPC sangat tinggi (>Rp100rb). Periksa kembali input Anda.', 'warning');
+        } else if (cpc > HIGH_CPC_THRESHOLD) {
+            showToast('CPC cukup tinggi. Pastikan nilai dalam Rupiah.', 'info');
+        }
+
+        if (cpc > 0 && cpc < LOW_CPC_THRESHOLD) {
+            showToast('CPC sangat rendah (<Rp50). Pastikan input dalam Rupiah, bukan ribuan.', 'warning');
+        }
+
+        return cpc;
+    }
+
+    /**
+     * Validate CR (Conversion Rate) input
+     * @param {number|string} value - CR value to validate
+     * @returns {number} - Validated CR value (percentage)
+     */
+    function validateCR(value) {
+        const cr = parseFloat(value) || 0;
+
+        // Warning thresholds
+        const HIGH_CR_THRESHOLD = 20; // 20%
+        const LOW_CR_THRESHOLD = 0.1; // 0.1%
+
+        if (cr > HIGH_CR_THRESHOLD) {
+            showToast('CR sangat tinggi (>' + HIGH_CR_THRESHOLD + '%). Umumnya CR marketplace 1-5%.', 'info');
+        }
+
+        if (cr > 0 && cr < LOW_CR_THRESHOLD) {
+            showToast('CR sangat rendah. Pastikan dalam format persen (contoh: 2 = 2%).', 'warning');
+        }
+
+        // Clamp to reasonable range 0-100
+        return Math.min(Math.max(cr, 0), 100);
+    }
+
+    /**
+     * Validate ROAS input
+     * @param {number|string} value 
+     * @returns {number}
+     */
+    function validateROAS(value) {
+        const roas = parseFloat(value) || 0;
+
+        if (roas > 100) {
+            showToast('ROAS >100x sangat tidak realistis. Periksa kembali.', 'warning');
+        }
+
+        if (roas > 0 && roas < 1) {
+            showToast('ROAS <1x berarti rugi dari iklan.', 'info');
+        }
+
+        return Math.max(roas, 0);
     }
 
     // ==================== PRODUCT DATABASE ====================
@@ -365,6 +439,11 @@ const AdsAnalyzer = (function () {
         calculateAutoModeROAS,
         updateAdsAnalysis,
 
+        // Input validation
+        validateCPC,
+        validateCR,
+        validateROAS,
+
         // State
         isTargetProfitEnabled: () => targetProfitEnabled,
         getAdsTargetType: () => adsTargetType,
@@ -388,4 +467,9 @@ if (typeof window !== 'undefined') {
     window.calculateROASBreakeven = AdsAnalyzer.calculateROASBreakeven;
     window.calculateAutoModeROAS = AdsAnalyzer.calculateAutoModeROAS;
     window.updateAdsAnalysisFromROAS = AdsAnalyzer.updateAdsAnalysis;
+
+    // Validation functions
+    window.validateCPC = AdsAnalyzer.validateCPC;
+    window.validateCR = AdsAnalyzer.validateCR;
 }
+

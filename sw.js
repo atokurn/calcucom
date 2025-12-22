@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cekbiaya-v4';
+const CACHE_NAME = 'cekbiaya-v6';
 const ASSETS_TO_CACHE = [
     './index.html',
     './css/style.css',

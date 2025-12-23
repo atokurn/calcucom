@@ -1042,6 +1042,9 @@
             cursor: pointer;
             transition: all 0.2s;
             min-height: 44px;
+            height: auto;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .multiselect-trigger:hover {

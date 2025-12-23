@@ -3100,7 +3100,7 @@ function resetModalView() {
     document.querySelectorAll('.cat-item').forEach(el => el.classList.remove('active'));
 
     // Reset selection variables
-    selectedPath = { l1: null, l2: null, l3: null, group: 'A' };
+    selectedPath = { l1: null, l2: null, l3: null, group: null }; // Default: No Group Selected
 
     // Reset Footer Text
     const footerText = document.getElementById('modalSelectionText');
@@ -3264,7 +3264,17 @@ function recalcAfterCategoryChange() {
         const elAdmin = document.getElementById('adminFeePercent');
 
         if (elGroup && elSeller && elAdmin) {
-            const group = elGroup.value || 'A';
+            const group = elGroup.value; // Don't default to 'A' here yet
+
+            // If No Group Selected (Initial State)
+            if (!group || group === 'null' || group === '') {
+                elAdmin.value = 0;
+
+                // Show "Waiting for category" state in UI if possible
+                // For now, 0% admin fee + "Wajib" label is the signal
+                return;
+            }
+
             const seller = elSeller.value || 'nonstar';
 
             let rate = 0;
@@ -3334,9 +3344,13 @@ function confirmCategory() {
 
         const mainBadge = document.getElementById('categoryGroupBadge');
         if (mainBadge) {
-            mainBadge.innerText = `Grup ${selectedPath.group}`;
-            mainBadge.className = `text-[10px] px-1.5 py-0.5 rounded font-bold badge-${selectedPath.group}`;
-            mainBadge.classList.remove('hidden');
+            if (selectedPath.group) {
+                mainBadge.innerText = `Grup ${selectedPath.group}`;
+                mainBadge.className = `text-[10px] px-1.5 py-0.5 rounded font-bold badge-${selectedPath.group}`;
+                mainBadge.classList.remove('hidden');
+            } else {
+                mainBadge.classList.add('hidden');
+            }
         }
     }
 
@@ -3400,9 +3414,10 @@ function setQuickCategory(group) {
  * Called when category is selected from modal
  */
 function updateQuickCategoryButtons() {
-    const currentGroup = selectedPath.group || 'A';
+    const currentGroup = selectedPath.group; // Can be null
+
     document.querySelectorAll('.quick-cat-btn').forEach(btn => {
-        if (btn.dataset.group === currentGroup) {
+        if (currentGroup && btn.dataset.group === currentGroup) {
             btn.classList.add('active');
         } else {
             btn.classList.remove('active');
@@ -3410,7 +3425,13 @@ function updateQuickCategoryButtons() {
     });
 
     // Also update the category detail panel
-    updateCategoryGroupDetail(currentGroup);
+    if (currentGroup) {
+        updateCategoryGroupDetail(currentGroup);
+        document.getElementById('catDetailPanel')?.classList.remove('hidden');
+    } else {
+        // Hide details if no group selected
+        document.getElementById('catDetailPanel')?.classList.add('hidden');
+    }
 }
 
 /**
@@ -3460,6 +3481,38 @@ const CATEGORY_GROUP_INFO = {
  * @param {string} group - Category group (A-F)
  */
 function updateCategoryGroupDetail(group) {
+    const container = document.getElementById('categoryGroupDetail');
+    if (!container) return;
+
+    // Handle Placeholder State
+    if (!group || group === 'null' || group === '') {
+        container.innerHTML = `
+            <div class="flex items-center gap-2 text-slate-400">
+                <i class="fas fa-info-circle text-lg opacity-50"></i>
+                <div class="flex-1 min-w-0">
+                    <p class="text-[10px] italic">
+                        Pilih kategori di atas atau gunakan tombol cepat (A-F) untuk melihat detail biaya admin.
+                    </p>
+                </div>
+            </div>`;
+        return;
+    }
+
+    // Handle Active State - Restore structure if needed
+    if (!document.getElementById('categoryGroupTitle')) {
+        container.innerHTML = `
+            <div class="flex items-start gap-2">
+                <span id="categoryGroupIcon" class="text-lg"></span>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span id="categoryGroupTitle" class="text-xs font-bold text-slate-700 dark:text-slate-200"></span>
+                        <span id="categoryGroupFee" class="text-[10px] px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold"></span>
+                    </div>
+                    <p id="categoryGroupDesc" class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2"></p>
+                </div>
+            </div>`;
+    }
+
     const info = CATEGORY_GROUP_INFO[group] || CATEGORY_GROUP_INFO['A'];
 
     // Get fee rate based on current platform and seller type
@@ -3609,7 +3662,7 @@ function setPlatform(p) {
     }
 
     // Reset category selection when platform changes
-    selectedPath = { l1: null, l2: null, l3: null, group: 'A' };
+    selectedPath = { l1: null, l2: null, l3: null, group: null }; // Default: No Group Selected
 
     // Update category display text
     const catDisplay = document.getElementById('catDisplay');
@@ -3959,6 +4012,40 @@ function calculate() {
         itemsToCalc = products;
     }
 
+    // Check waiting state for Single Mode
+    const currentGroup = document.getElementById('currentCategoryGroup')?.value;
+    const isWaitingForCategory = inputMode === 'single' && (!currentGroup || currentGroup === 'null' || currentGroup === '');
+
+    if (isWaitingForCategory) {
+        // Show "Waiting" state in result panel
+        const netIncomeEl = document.getElementById('netIncome');
+        const netIncomeDescEl = document.getElementById('netIncomeDesc');
+
+        if (netIncomeEl) {
+            netIncomeEl.innerText = 'Pilih Kategori';
+            netIncomeEl.className = 'text-slate-400 font-bold'; // Neutral styling
+        }
+        if (netIncomeDescEl) {
+            netIncomeDescEl.innerText = 'Pilih kategori produk dahulu';
+        }
+
+        // Reset profit summary values to neutral
+        setText('valNetProfit', '-');
+        setText('valMargin', '-');
+
+        // Don't return here, let the loop run to update basic fields, but we'll zero out fees
+    } else {
+        // Restore standard color for Net Income
+        const netIncomeEl = document.getElementById('netIncome');
+        if (netIncomeEl) {
+            netIncomeEl.classList.remove('text-slate-400');
+            netIncomeEl.classList.add('text-emerald-600');
+        }
+    }
+
+    // Cleaned up duplicate logic
+
+
     itemsToCalc.forEach((p, index) => {
         let price = parseFloat(p.price) || 0; // Use 'let' for price to allow modification in reverse mode
         const disc = parseFloat(p.discount) || 0;
@@ -3970,19 +4057,21 @@ function calculate() {
 
         // Admin Fee (Based on Category Group and Platform)
         let adminRate = 0;
-        const platformRates = getPlatformRates(sellerType);
-        if (platformRates && platformRates[p.categoryGroup] !== undefined) {
-            adminRate = platformRates[p.categoryGroup];
+        if (!isWaitingForCategory) {
+            const platformRates = getPlatformRates(sellerType);
+            if (platformRates && platformRates[p.categoryGroup] !== undefined) {
+                adminRate = platformRates[p.categoryGroup];
+            }
         }
 
         // Force update Admin Fee Input in Single Mode to match calculation
         if (p.isSingle) {
             const elAdmin = document.getElementById('adminFeePercent');
-            // Only update if not currently being edited by user to avoid fighting
-            if (elAdmin && document.activeElement !== elAdmin) {
-                elAdmin.value = adminRate;
+            if (elAdmin && !elAdmin.matches(':focus')) {
+                elAdmin.value = isWaitingForCategory ? 0 : adminRate;
             }
         }
+
 
         const adminFee = basis * (adminRate / 100);
 
@@ -4074,29 +4163,31 @@ function calculate() {
     });
 
     // 4. Update Global UI (Right Column)
-    setText('finalProfit', formatRupiah(totalProfit));
-    setText('totalBulkProfit', formatRupiah(totalProfit));     // Update Bulk Tooltip Totals
-    if (inputMode === 'bulk') {
-        const elFreeShip = document.getElementById('valFreeShipTooltip');
-        const elCashback = document.getElementById('valCashbackTooltip');
-        if (elFreeShip) elFreeShip.innerText = "- " + formatRupiah(totalValFreeShip);
-        if (elCashback) elCashback.innerText = "- " + formatRupiah(totalValCashback);
+    if (!isWaitingForCategory) {
+        setText('finalProfit', formatRupiah(totalProfit));
+        setText('totalBulkProfit', formatRupiah(totalProfit));     // Update Bulk Tooltip Totals
+        if (inputMode === 'bulk') {
+            const elFreeShip = document.getElementById('valFreeShipTooltip');
+            const elCashback = document.getElementById('valCashbackTooltip');
+            if (elFreeShip) elFreeShip.innerText = "- " + formatRupiah(totalValFreeShip);
+            if (elCashback) elCashback.innerText = "- " + formatRupiah(totalValCashback);
+        }
+
+        // 4. Update UI Totals
+        setText('sumSellingPrice', formatRupiah(totalSellingPrice));
+        setText('valVoucherDeduction', "-" + formatRupiah(totalVoucher));
+        setText('valAdminFee', "-" + formatRupiah(totalAdmin));
+        setText('valServiceFee', "-" + formatRupiah(totalService));
+        setText('valAffiliate', "-" + formatRupiah(totalAffiliate));
+        setText('valFixedFee', "-" + formatRupiah(totalFixed));
+        setText('valOrderProcessFee', "-" + formatRupiah(totalProcess));
+        setText('sumCost', "-" + formatRupiah(totalHPP + totalOps + totalCustomCost));
+        setText('netIncome', formatRupiah(totalNet));
+
+        // Total Potongan Marketplace
+        const totalMarketplaceFees = totalAdmin + totalService + totalAffiliate + totalFixed + totalProcess;
+        setText('valTotalDeductions', "- " + formatRupiah(totalMarketplaceFees));
     }
-
-    // 4. Update UI Totals
-    setText('sumSellingPrice', formatRupiah(totalSellingPrice));
-    setText('valVoucherDeduction', "-" + formatRupiah(totalVoucher));
-    setText('valAdminFee', "-" + formatRupiah(totalAdmin));
-    setText('valServiceFee', "-" + formatRupiah(totalService));
-    setText('valAffiliate', "-" + formatRupiah(totalAffiliate));
-    setText('valFixedFee', "-" + formatRupiah(totalFixed));
-    setText('valOrderProcessFee', "-" + formatRupiah(totalProcess));
-    setText('sumCost', "-" + formatRupiah(totalHPP + totalOps + totalCustomCost));
-    setText('netIncome', formatRupiah(totalNet));
-
-    // Total Potongan Marketplace
-    const totalMarketplaceFees = totalAdmin + totalService + totalAffiliate + totalFixed + totalProcess;
-    setText('valTotalDeductions', "- " + formatRupiah(totalMarketplaceFees));
 
     // Tooltip Modal
     setText('tooltipHPP', "-" + formatRupiah(totalHPP));

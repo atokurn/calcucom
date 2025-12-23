@@ -138,7 +138,7 @@ const CategoryModal = (function () {
 
         // Reset selection variables (using global selectedPath for backward compatibility)
         if (typeof selectedPath !== 'undefined') {
-            selectedPath = { l1: null, l2: null, l3: null, group: 'A' };
+            selectedPath = { l1: null, l2: null, l3: null, group: null }; // Default: No Group Selected
         }
 
         // Reset Footer Text
@@ -356,7 +356,7 @@ const CategoryModal = (function () {
      * Confirm category selection and close modal
      */
     function confirm() {
-        const path = typeof selectedPath !== 'undefined' ? selectedPath : { l1: null, l2: null, l3: null, group: 'A' };
+        const path = typeof selectedPath !== 'undefined' ? selectedPath : { l1: null, l2: null, l3: null, group: null };
 
         // Check if in bulk mode with editing index
         if (typeof inputMode !== 'undefined' && inputMode === 'bulk' &&
@@ -388,9 +388,14 @@ const CategoryModal = (function () {
 
             const mainBadge = document.getElementById('categoryGroupBadge');
             if (mainBadge) {
-                mainBadge.innerText = `Grup ${path.group}`;
-                mainBadge.className = `text-[10px] px-1.5 py-0.5 rounded font-bold badge-${path.group}`;
-                mainBadge.classList.remove('hidden');
+                if (path.group) {
+                    mainBadge.innerText = `Grup ${path.group}`;
+                    // Remove all previous badge classes first to be safe
+                    mainBadge.className = `text-[10px] px-1.5 py-0.5 rounded font-bold badge-${path.group}`;
+                    mainBadge.classList.remove('hidden');
+                } else {
+                    mainBadge.classList.add('hidden');
+                }
             }
         }
 

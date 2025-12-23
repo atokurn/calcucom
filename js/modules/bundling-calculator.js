@@ -235,9 +235,9 @@ const BundlingCalculator = (function () {
             const badge = document.getElementById('bundleConservativeBadge');
             if (badge) badge.classList.add('hidden');
 
-            // Hide Allocation Selector (Auto Mode - Fixed)
+            // Hide Allocation Selector AND the fixed message in Auto Mode
             if (allocationSection) allocationSection.classList.add('hidden');
-            if (allocationFixedMsg) allocationFixedMsg.classList.remove('hidden');
+            if (allocationFixedMsg) allocationFixedMsg.classList.add('hidden');
 
             // Force default allocation for Auto Mode (safe worst-case)
             setFeeAllocationMode('total');
@@ -433,16 +433,49 @@ const BundlingCalculator = (function () {
             return;
         }
 
-        container.innerHTML = filtered.map(p => {
+        // Get locked marketplace from existing bundle products
+        const lockedMarketplace = getBundleMarketplace();
+        const lockedMarketplaceLabel = lockedMarketplace ? lockedMarketplace.charAt(0).toUpperCase() + lockedMarketplace.slice(1) : '';
+
+        // Get list of IDs already in the bundle to prevent duplicate addition
+        const alreadyAddedIds = bundleProducts.filter(p => p.fromDB).map(p => p.dbId);
+
+        // Filter out already added products (hide them completely)
+        const displayProducts = filtered.filter(p => !alreadyAddedIds.includes(p.id));
+
+        if (displayProducts.length === 0) {
+            container.innerHTML = '<div class="combobox-empty">Semua produk yang cocok sudah ditambahkan</div>';
+            return;
+        }
+
+        container.innerHTML = displayProducts.map(p => {
             const hpp = p.cost_of_goods || p.hpp || 0;
             const mp = p.platform || 'shopee';
+
+            // Check if disabled (marketplace mismatch)
+            const isMarketplaceMismatch = lockedMarketplace && mp !== lockedMarketplace;
+            const isDisabled = isMarketplaceMismatch;
+
+            let rowClass = 'multiselect-option';
+            if (isDisabled) rowClass += ' disabled opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-800';
+
+            const tooltipAttr = isMarketplaceMismatch ? `title="Tidak dapat dipilih: Bundle terkunci ke ${lockedMarketplaceLabel}"` : '';
+
+            // Handle click
+            let clickHandler = 'event.stopPropagation()';
+            if (isMarketplaceMismatch) {
+                clickHandler = `event.stopPropagation(); if(typeof showToast === 'function') showToast('Bundle hanya boleh dari 1 marketplace (${lockedMarketplaceLabel})', 'error');`;
+            }
+
+            const checkboxChange = isDisabled ? 'disabled' : `onchange="BundlingCalculator.toggleProductSelection(${p.id})"`;
+
             return `
-                <label class="multiselect-option" onclick="event.stopPropagation()">
-                    <input type="checkbox" ${selectedFromDB.includes(p.id) ? 'checked' : ''} 
-                           onchange="BundlingCalculator.toggleProductSelection(${p.id})">
+                <label class="${rowClass}" onclick="${clickHandler}" ${tooltipAttr}>
+                    <input type="checkbox" ${checkboxChange}>
                     <span class="mp-tag ${mp}">${mp.charAt(0).toUpperCase()}</span>
-                    <span class="flex-1 font-medium">${p.name}</span>
-                    <span class="text-xs text-slate-500">Rp ${hpp.toLocaleString('id-ID')}</span>
+                    <span class="flex-1 font-medium text-sm truncate">${p.name}</span>
+                    <span class="text-xs text-slate-500 whitespace-nowrap">Rp ${hpp.toLocaleString('id-ID')}</span>
+                    ${isMarketplaceMismatch ? '<i class="fas fa-lock text-xs text-slate-400 ml-2"></i>' : ''}
                 </label>
             `;
         }).join('');
@@ -453,13 +486,28 @@ const BundlingCalculator = (function () {
     }
 
     function toggleProductSelection(id) {
-        const idx = selectedFromDB.indexOf(id);
-        if (idx > -1) {
-            selectedFromDB.splice(idx, 1);
-        } else {
-            selectedFromDB.push(id);
+        // Direct ADD behavior - immediately add to bundle
+
+        let products = window.productDB || JSON.parse(localStorage.getItem('productDB') || '[]');
+        const product = products.find(p => p.id === id);
+
+        if (!product) return;
+
+        // VALIDATE: Check marketplace lock
+        const validation = validateProductMarketplace(product);
+        if (!validation.valid) {
+            if (typeof showToast === 'function') showToast(validation.message, 'error');
+            return;
         }
-        updateBundleSelectedBadges();
+
+        // Add to bundle immediately
+        addProductFromDB(product, true);
+
+        // Refresh options to hide the added product
+        const filterInput = document.getElementById('bundle-multiselect-search');
+        renderBundleMultiOptions(filterInput ? filterInput.value : '');
+
+        if (typeof showToast === 'function') showToast('Produk ditambahkan', 'success');
     }
 
     function updateBundleSelectedBadges() {

@@ -3,15 +3,12 @@
 let selectedPath = { l1: null, l2: null, l3: null, group: 'A' };
 let currentPlatform = 'shopee';
 let adsMode = 'unit';
-let inputMode = 'single'; // 'single' or 'bulk'
 let customCosts = [];
 let profitChart = null;
 let scenarioA = null;
 let adsTargetType = 'percent';
 let currentLang = 'id';
 let calculateTimeout = null; // For debounce
-let products = []; // Bulk products array
-let editingProductIndex = null; // For category modal
 let currentModule = 'profit'; // Current active module
 let priceFinderTarget = 'margin'; // 'margin' or 'profit'
 let productDB = JSON.parse(localStorage.getItem('productDB') || '[]'); // Product database for Ads Analyzer
@@ -2924,157 +2921,14 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCol1(getCategoryData());
     renderCustomCosts();
     initChart();
-    addBulkRow();
-    switchInputMode('single'); // Default to single
     applyLanguage(); // Apply language on load
 });
-
-function switchInputMode(mode) {
-    inputMode = mode;
-    const btnSingle = document.getElementById('btnInputSingle');
-    const btnBulk = document.getElementById('btnInputBulk');
-    const divSingle = document.getElementById('modeSingleContent');
-    const divBulk = document.getElementById('modeBulkContent');
-    const catSingle = document.getElementById('catSelectorSingle');
-    const catBulk = document.getElementById('catSelectorBulk');
-
-    if (mode === 'single') {
-        btnSingle.className = "px-3 py-1 text-xs font-bold rounded-md bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm transition-all";
-        btnBulk.className = "px-3 py-1 text-xs font-bold rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all";
-        divSingle.classList.remove('hidden');
-        divBulk.classList.add('hidden');
-        if (catSingle) catSingle.classList.remove('hidden');
-        if (catBulk) catBulk.classList.add('hidden');
-    } else {
-        btnBulk.className = "px-3 py-1 text-xs font-bold rounded-md bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm transition-all";
-        btnSingle.className = "px-3 py-1 text-xs font-bold rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all";
-        divBulk.classList.remove('hidden');
-        divSingle.classList.add('hidden');
-        if (catSingle) catSingle.classList.add('hidden');
-        if (catBulk) catBulk.classList.remove('hidden');
-    }
-    calculate();
-}
-
-// --- BULK PRODUCT LOGIC ---
-function addBulkRow() {
-    const id = Date.now();
-    products.push({
-        id: id,
-        name: '',
-        categoryName: 'Pilih Kategori',
-        categoryGroup: 'A',
-        price: 0,
-        discount: 0,
-        voucher: 0,
-        hpp: 0,
-        profit: 0,
-        // New fields for export
-        finalSellingPrice: 0,
-        adminFee: 0,
-        serviceFee: 0,
-        affiliateFee: 0,
-        orderProcessFee: 0,
-        fixedFee: 0,
-        operationalCost: 0,
-        customCostsTotal: 0,
-        totalDeductions: 0,
-        netIncome: 0
-    });
-    renderBulkTable();
-    calculate();
-}
-
-function renderBulkTable() {
-    const tbody = document.getElementById('bulkProductBody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-
-    products.forEach((p, index) => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group";
-        tr.innerHTML = `
-                    <td class="p-3 align-top">
-                        <input type="text" value="${p.name}" oninput="updateProduct(${index}, 'name', this.value)"
-                            class="w-full p-2 text-xs border border-slate-200 dark:border-slate-600 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white dark:bg-slate-700 text-slate-700 dark:text-white" placeholder="Nama Produk...">
-                    </td>
-                    <td class="p-3 align-top">
-                        <button onclick="openProductCategory(${index})"
-                            class="w-full text-left p-2 text-xs border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20 rounded text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/40 flex justify-between items-center transition-colors">
-                            <span class="truncate max-w-[100px] font-medium">${p.categoryName}</span>
-                            <span class="ml-1 text-[10px] px-1 rounded bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 font-bold">${p.categoryGroup}</span>
-                        </button>
-                    </td>
-                    <td class="p-3 align-top">
-                        <div class="relative">
-                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]">Rp</span>
-                            <input type="number" value="${p.price || ''}" oninput="updateProduct(${index}, 'price', this.value)"
-                                class="w-full pl-6 p-2 text-xs border border-slate-200 dark:border-slate-600 rounded font-medium text-slate-700 dark:text-white text-right bg-white dark:bg-slate-700" placeholder="0">
-                        </div>
-                    </td>
-                    <td class="p-3 align-top">
-                        <div class="relative">
-                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]">Rp</span>
-                            <input type="number" value="${p.hpp || ''}" oninput="updateProduct(${index}, 'hpp', this.value)"
-                                class="w-full pl-6 p-2 text-xs border border-slate-200 dark:border-slate-600 rounded text-right bg-white dark:bg-slate-700 text-slate-700 dark:text-white" placeholder="0">
-                        </div>
-                    </td>
-                    <td class="p-3 align-top">
-                        <div class="relative">
-                            <input type="number" value="${p.discount || ''}" oninput="updateProduct(${index}, 'discount', this.value)"
-                                class="w-full pr-6 p-2 text-xs border border-slate-200 dark:border-slate-600 rounded text-right bg-white dark:bg-slate-700 text-slate-700 dark:text-white" placeholder="0">
-                            <span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]">%</span>
-                        </div>
-                    </td>
-                    <td class="p-3 align-top">
-                        <div class="relative">
-                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]">Rp</span>
-                            <input type="number" value="${p.voucher || ''}" oninput="updateProduct(${index}, 'voucher', this.value)"
-                                class="w-full pl-6 p-2 text-xs border border-slate-200 dark:border-slate-600 rounded text-right bg-white dark:bg-slate-700 text-slate-700 dark:text-white" placeholder="0">
-                        </div>
-                    </td>
-                    <td class="p-3 align-top text-center">
-                        <div id="p-profit-${index}" class="text-right font-bold text-xs text-slate-400">Rp 0</div>
-                    </td>
-                    <td class="p-3 align-top text-center">
-                        ${products.length > 1 ? `<button onclick="deleteProduct(${index})" class="text-red-400 hover:text-red-600 p-1"><i class="fas fa-trash-alt"></i></button>` : ''}
-                    </td>
-                `;
-        tbody.appendChild(tr);
-    });
-
-    setText('productCountBadge', products.length);
-}
-
-function updateProduct(index, field, value) {
-    if (products[index]) {
-        if (field === 'name') products[index].name = value;
-        else products[index][field] = parseFloat(value) || 0;
-        calculate();
-    }
-}
-
-function deleteProduct(index) {
-    products.splice(index, 1);
-    renderBulkTable();
-    calculate();
-}
-
-function openProductCategory(index) {
-    editingProductIndex = index;
-    openCategoryModal();
-}
 
 // --- CATEGORY LOGIC (3-Column & Search) ---
 
 function openCategoryModal() {
     document.getElementById('categoryModal').classList.remove('hidden');
     resetModalView();
-}
-
-function openSingleCategoryModal() {
-    editingProductIndex = null;
-    openCategoryModal();
 }
 
 function closeCategoryModal() {
@@ -3258,51 +3112,49 @@ function selectPath(l1, l2, l3, group) {
 }
 
 function recalcAfterCategoryChange() {
-    if (inputMode === 'single') {
-        const elGroup = document.getElementById('currentCategoryGroup');
-        const elSeller = document.getElementById('sellerType');
-        const elAdmin = document.getElementById('adminFeePercent');
+    const elGroup = document.getElementById('currentCategoryGroup');
+    const elSeller = document.getElementById('sellerType');
+    const elAdmin = document.getElementById('adminFeePercent');
 
-        if (elGroup && elSeller && elAdmin) {
-            const group = elGroup.value; // Don't default to 'A' here yet
+    if (elGroup && elSeller && elAdmin) {
+        const group = elGroup.value; // Don't default to 'A' here yet
 
-            // If No Group Selected (Initial State)
-            if (!group || group === 'null' || group === '') {
-                elAdmin.value = 0;
+        // If No Group Selected (Initial State)
+        if (!group || group === 'null' || group === '') {
+            elAdmin.value = 0;
 
-                // Show "Waiting for category" state in UI if possible
-                // For now, 0% admin fee + "Wajib" label is the signal
-                return;
-            }
-
-            const seller = elSeller.value || 'nonstar';
-
-            let rate = 0;
-
-            // Get rate based on current platform
-            if (currentPlatform === 'shopee') {
-                if (shopeeRates[seller] && shopeeRates[seller][group] !== undefined) {
-                    rate = shopeeRates[seller][group];
-                }
-            } else if (currentPlatform === 'tokopedia' && typeof tokopediaRates !== 'undefined') {
-                const tType = seller === 'power' ? 'power' : (seller === 'mall' ? 'mall' : 'regular');
-                if (tokopediaRates[tType] && tokopediaRates[tType][group] !== undefined) {
-                    rate = tokopediaRates[tType][group];
-                }
-            } else if (currentPlatform === 'tiktok' && typeof tiktokRates !== 'undefined') {
-                const tType = seller === 'mall' ? 'mall' : 'regular';
-                if (tiktokRates[tType] && tiktokRates[tType][group] !== undefined) {
-                    rate = tiktokRates[tType][group];
-                }
-            } else if (currentPlatform === 'lazada') {
-                // Lazada uses similar structure to Shopee for now
-                if (shopeeRates[seller] && shopeeRates[seller][group] !== undefined) {
-                    rate = shopeeRates[seller][group] * 0.9; // Lazada typically slightly lower
-                }
-            }
-
-            elAdmin.value = rate;
+            // Show "Waiting for category" state in UI if possible
+            // For now, 0% admin fee + "Wajib" label is the signal
+            return;
         }
+
+        const seller = elSeller.value || 'nonstar';
+
+        let rate = 0;
+
+        // Get rate based on current platform
+        if (currentPlatform === 'shopee') {
+            if (shopeeRates[seller] && shopeeRates[seller][group] !== undefined) {
+                rate = shopeeRates[seller][group];
+            }
+        } else if (currentPlatform === 'tokopedia' && typeof tokopediaRates !== 'undefined') {
+            const tType = seller === 'power' ? 'power' : (seller === 'mall' ? 'mall' : 'regular');
+            if (tokopediaRates[tType] && tokopediaRates[tType][group] !== undefined) {
+                rate = tokopediaRates[tType][group];
+            }
+        } else if (currentPlatform === 'tiktok' && typeof tiktokRates !== 'undefined') {
+            const tType = seller === 'mall' ? 'mall' : 'regular';
+            if (tiktokRates[tType] && tiktokRates[tType][group] !== undefined) {
+                rate = tiktokRates[tType][group];
+            }
+        } else if (currentPlatform === 'lazada') {
+            // Lazada uses similar structure to Shopee for now
+            if (shopeeRates[seller] && shopeeRates[seller][group] !== undefined) {
+                rate = shopeeRates[seller][group] * 0.9; // Lazada typically slightly lower
+            }
+        }
+
+        elAdmin.value = rate;
     }
 
     // Sync quick category buttons
@@ -3319,38 +3171,28 @@ function updateAdminFeeFromCategory() {
 }
 
 function confirmCategory() {
-    // If editing a specific product row (Bulk Mode)
-    if (inputMode === 'bulk' && editingProductIndex !== null && products[editingProductIndex]) {
-        const p = products[editingProductIndex];
-        p.categoryName = selectedPath.l3 ? selectedPath.l3 : (selectedPath.l2 ? selectedPath.l2 : selectedPath.l1);
-        p.categoryGroup = selectedPath.group;
-        renderBulkTable();
-        editingProductIndex = null;
+    // Update Single Mode UI
+    const elText = document.getElementById('selectedCategoryText');
+    if (elText) {
+        let text = selectedPath.l1;
+        if (selectedPath.l2) text += ` > ${selectedPath.l2}`;
+        if (selectedPath.l3) text += ` > ${selectedPath.l3}`;
+        elText.innerText = text;
     }
-    // If Single Mode
-    else {
-        const elText = document.getElementById('selectedCategoryText');
-        if (elText) {
-            let text = selectedPath.l1;
-            if (selectedPath.l2) text += ` > ${selectedPath.l2}`;
-            if (selectedPath.l3) text += ` > ${selectedPath.l3}`;
-            elText.innerText = text;
-        }
 
-        const elGroup = document.getElementById('currentCategoryGroup');
-        if (elGroup) {
-            elGroup.value = selectedPath.group;
-        }
+    const elGroup = document.getElementById('currentCategoryGroup');
+    if (elGroup) {
+        elGroup.value = selectedPath.group;
+    }
 
-        const mainBadge = document.getElementById('categoryGroupBadge');
-        if (mainBadge) {
-            if (selectedPath.group) {
-                mainBadge.innerText = `Grup ${selectedPath.group}`;
-                mainBadge.className = `text-[10px] px-1.5 py-0.5 rounded font-bold badge-${selectedPath.group}`;
-                mainBadge.classList.remove('hidden');
-            } else {
-                mainBadge.classList.add('hidden');
-            }
+    const mainBadge = document.getElementById('categoryGroupBadge');
+    if (mainBadge) {
+        if (selectedPath.group) {
+            mainBadge.innerText = `Grup ${selectedPath.group}`;
+            mainBadge.className = `text-[10px] px-1.5 py-0.5 rounded font-bold badge-${selectedPath.group}`;
+            mainBadge.classList.remove('hidden');
+        } else {
+            mainBadge.classList.add('hidden');
         }
     }
 
@@ -3993,28 +3835,21 @@ function calculate() {
     const opsCost = Math.max(0, parseFloat(document.getElementById('operationalCost')?.value) || 0);
     const adsCost = Math.max(0, parseFloat(document.getElementById('adsCost')?.value) || 0);
 
-    // 3. Loop Products (OR Single Input)
-    let itemsToCalc = [];
+    // 3. Construct single item from inputs - use parseInputNumber for formatted fields
+    const price = parseInputNumber('originalPrice');
+    const disc = parseFloat(document.getElementById('discountPercent')?.value) || 0;
+    const voucher = parseFloat(document.getElementById('voucherAmount')?.value) || 0;
+    const hpp = parseInputNumber('hpp');
+    const group = document.getElementById('currentCategoryGroup')?.value || 'A';
 
-    if (inputMode === 'single') {
-        // Construct single item from inputs - use parseInputNumber for formatted fields
-        const price = parseInputNumber('originalPrice');
-        const disc = parseFloat(document.getElementById('discountPercent')?.value) || 0;
-        const voucher = parseFloat(document.getElementById('voucherAmount')?.value) || 0;
-        const hpp = parseInputNumber('hpp');
-        const group = document.getElementById('currentCategoryGroup')?.value || 'A';
+    let itemsToCalc = [{
+        isSingle: true, // Marker
+        price, discount: disc, voucher, hpp, categoryGroup: group
+    }];
 
-        itemsToCalc.push({
-            isSingle: true, // Marker
-            price, discount: disc, voucher, hpp, categoryGroup: group
-        });
-    } else {
-        itemsToCalc = products;
-    }
-
-    // Check waiting state for Single Mode
+    // Check waiting state
     const currentGroup = document.getElementById('currentCategoryGroup')?.value;
-    const isWaitingForCategory = inputMode === 'single' && (!currentGroup || currentGroup === 'null' || currentGroup === '');
+    const isWaitingForCategory = !currentGroup || currentGroup === 'null' || currentGroup === '';
 
     if (isWaitingForCategory) {
         // Show "Waiting" state in result panel
@@ -4165,13 +4000,6 @@ function calculate() {
     // 4. Update Global UI (Right Column)
     if (!isWaitingForCategory) {
         setText('finalProfit', formatRupiah(totalProfit));
-        setText('totalBulkProfit', formatRupiah(totalProfit));     // Update Bulk Tooltip Totals
-        if (inputMode === 'bulk') {
-            const elFreeShip = document.getElementById('valFreeShipTooltip');
-            const elCashback = document.getElementById('valCashbackTooltip');
-            if (elFreeShip) elFreeShip.innerText = "- " + formatRupiah(totalValFreeShip);
-            if (elCashback) elCashback.innerText = "- " + formatRupiah(totalValCashback);
-        }
 
         // 4. Update UI Totals
         setText('sumSellingPrice', formatRupiah(totalSellingPrice));
@@ -4320,48 +4148,25 @@ function exportData() {
 
     dataToExport.push(headers);
 
-    if (inputMode === 'single') {
-        const name = document.getElementById('singleName').value || 'Produk Satuan';
-        const cat = document.getElementById('selectedCategoryText').innerText;
-        const grp = document.getElementById('currentCategoryGroup').value;
-        const price = document.getElementById('originalPrice').value;
-        const disc = document.getElementById('discountPercent').value;
-        const voucher = document.getElementById('voucherAmount').value;
-        const hpp = document.getElementById('hpp').value;
+    // Export single product data
+    const name = document.getElementById('singleName').value || 'Produk Satuan';
+    const cat = document.getElementById('selectedCategoryText').innerText;
+    const grp = document.getElementById('currentCategoryGroup').value;
+    const price = document.getElementById('originalPrice').value;
+    const disc = document.getElementById('discountPercent').value;
+    const voucher = document.getElementById('voucherAmount').value;
+    const hpp = document.getElementById('hpp').value;
 
-        // Retrieve calculated values from UI
-        const admin = parseRupiah(document.getElementById('valAdminFee').innerText);
-        const service = parseRupiah(document.getElementById('valServiceFee').innerText);
-        const aff = parseRupiah(document.getElementById('valAffiliate').innerText);
-        const ded = parseRupiah(document.getElementById('valTotalDeductions').innerText);
-        const cost = parseRupiah(document.getElementById('sumCost').innerText);
-        const profit = parseRupiah(document.getElementById('finalProfit').innerText);
-        const margin = document.getElementById('finalMarginBadge').innerText.replace('Margin: ', '').replace('%', '');
+    // Retrieve calculated values from UI
+    const admin = parseRupiah(document.getElementById('valAdminFee').innerText);
+    const service = parseRupiah(document.getElementById('valServiceFee').innerText);
+    const aff = parseRupiah(document.getElementById('valAffiliate').innerText);
+    const ded = parseRupiah(document.getElementById('valTotalDeductions').innerText);
+    const cost = parseRupiah(document.getElementById('sumCost').innerText);
+    const profit = parseRupiah(document.getElementById('finalProfit').innerText);
+    const margin = document.getElementById('finalMarginBadge').innerText.replace('Margin: ', '').replace('%', '');
 
-        dataToExport.push([name, cat, grp, price, disc, voucher, hpp, admin, service, aff, '', ded, cost, profit, margin]);
-    } else {
-        products.forEach(p => {
-            const c = p.calculated || {};
-            const margin = c.finalPrice > 0 ? (p.profit / c.finalPrice * 100).toFixed(2) : 0;
-            dataToExport.push([
-                p.name,
-                p.categoryName,
-                p.categoryGroup,
-                p.price,
-                p.discount,
-                p.voucher,
-                p.hpp,
-                c.adminFee || 0,
-                c.serviceFee || 0,
-                c.affiliateFee || 0,
-                '',
-                c.totalDed || 0,
-                c.totalCost || 0,
-                p.profit,
-                margin
-            ]);
-        });
-    }
+    dataToExport.push([name, cat, grp, price, disc, voucher, hpp, admin, service, aff, '', ded, cost, profit, margin]);
 
     let csvContent = "data:text/csv;charset=utf-8,";
     dataToExport.forEach(row => {

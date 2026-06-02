@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -384,10 +385,9 @@ fun PriceFinderTab() {
         // Fee Configuration Card (Manual vs Otomatis)
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text("⚙️", style = MaterialTheme.typography.titleMedium)
@@ -396,24 +396,26 @@ fun PriceFinderTab() {
                     
                     Row(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(6.dp))
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp))
                             .padding(2.dp)
                     ) {
                         listOf("simple" to "Manual", "advanced" to "Otomatis").forEach { (mode, label) ->
                             val isSelected = configMode == mode
                             Box(
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(4.dp))
+                                    .weight(1f)
+                                    .clip(RoundedCornerShape(6.dp))
                                     .background(if (isSelected) MaterialTheme.colorScheme.surface else Color.Transparent)
                                     .clickable { configMode = mode }
-                                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                                    .padding(vertical = 10.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = label,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                    style = MaterialTheme.typography.labelSmall
+                                    color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.bodySmall
                                 )
                             }
                         }
@@ -479,9 +481,9 @@ fun PriceFinderTab() {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
-                                        .padding(8.dp),
+                                        .padding(6.dp),
                                     verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                                 ) {
                                     OutlinedTextField(
                                         value = comp.name,
@@ -489,26 +491,29 @@ fun PriceFinderTab() {
                                             costComponents[index] = comp.copy(name = it)
                                         },
                                         placeholder = { Text("Nama Biaya", style = MaterialTheme.typography.bodySmall) },
-                                        modifier = Modifier.weight(1.2f)
+                                        singleLine = true,
+                                        textStyle = LocalTextStyle.current.copy(fontSize = 12.sp),
+                                        modifier = Modifier.weight(1.3f)
                                     )
 
-                                    // Type toggle
+                                    // Type toggle (Rp vs %)
                                     Box(
                                         modifier = Modifier
-                                            .weight(0.9f)
+                                            .weight(0.5f)
                                             .clip(RoundedCornerShape(4.dp))
-                                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                                            .background(MaterialTheme.colorScheme.primaryContainer)
                                             .clickable {
                                                 val newType = if (comp.type == "fixed") "percent" else "fixed"
                                                 costComponents[index] = comp.copy(type = newType)
                                             }
-                                            .padding(vertical = 12.dp, horizontal = 4.dp),
+                                            .padding(vertical = 12.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = if (comp.type == "fixed") "Rp (Tetap)" else "% (Variabel)",
-                                            style = MaterialTheme.typography.labelSmall,
+                                            text = if (comp.type == "fixed") "Rp" else "%",
+                                            style = MaterialTheme.typography.bodyMedium,
                                             fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                                             textAlign = TextAlign.Center
                                         )
                                     }
@@ -521,7 +526,9 @@ fun PriceFinderTab() {
                                         },
                                         placeholder = { Text("0", style = MaterialTheme.typography.bodySmall) },
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                        modifier = Modifier.weight(0.9f)
+                                        singleLine = true,
+                                        textStyle = LocalTextStyle.current.copy(fontSize = 12.sp),
+                                        modifier = Modifier.weight(0.8f)
                                     )
 
                                     IconButton(
@@ -538,8 +545,10 @@ fun PriceFinderTab() {
                     // Presets
                     Divider(modifier = Modifier.padding(vertical = 4.dp))
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         // Preset 1: Kemasan
                         AssistChip(

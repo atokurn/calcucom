@@ -148,7 +148,19 @@ const CloudSync = (function () {
         const nameEl = document.getElementById('cloudUserName');
 
         const authenticated = Boolean(state?.authenticated);
+
+        // Simpan status ke localStorage untuk pre-load sinkron berikutnya
+        if (authenticated) {
+            localStorage.setItem('isAuthenticated', 'true');
+        } else {
+            localStorage.removeItem('isAuthenticated');
+        }
+
         setAppAccess(authenticated);
+
+        // Hapus kelas helper setelah kelas sebenarnya diterapkan
+        document.documentElement.classList.remove('app-loading-auth');
+
         if (loginBtn) loginBtn.classList.toggle('hidden', authenticated);
         if (logoutBtn) logoutBtn.classList.toggle('hidden', !authenticated);
         if (pushBtn) pushBtn.disabled = !authenticated;
@@ -165,7 +177,16 @@ const CloudSync = (function () {
             return state;
         } catch (error) {
             setStatus('Cloud offline', 'error');
-            return { authenticated: false, error: error.message };
+
+            // Jika offline, periksa apakah sebelumnya sudah terautentikasi
+            const isLocalAuth = localStorage.getItem('isAuthenticated') === 'true';
+            if (isLocalAuth) {
+                setAuthUi({ authenticated: true, user: { name: 'Offline' } });
+            } else {
+                setAuthUi({ authenticated: false });
+            }
+
+            return { authenticated: isLocalAuth, error: error.message };
         }
     }
 
@@ -204,7 +225,10 @@ const CloudSync = (function () {
         const pushBtn = document.getElementById('btnCloudPush');
         const pullBtn = document.getElementById('btnCloudPull');
 
-        setAppAccess(false);
+        // Gunakan status pre-auth dari localStorage agar konsisten dengan CSS
+        const isPreAuth = localStorage.getItem('isAuthenticated') === 'true';
+        setAppAccess(isPreAuth);
+
         loginBtn?.addEventListener('click', login);
         landingLoginBtn?.addEventListener('click', login);
         logoutBtn?.addEventListener('click', async () => {

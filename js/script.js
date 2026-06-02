@@ -127,6 +127,13 @@ function switchModule(moduleName) {
         }
     }
 
+    // Initialize Recipe Calculator when switching to it
+    if (moduleName === 'recipe' && typeof RecipeCalculator !== 'undefined') {
+        if (!RecipeCalculator.isInitialized()) {
+            RecipeCalculator.init();
+        }
+    }
+
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -344,7 +351,7 @@ function renderPfCostComponents() {
     }
 
     container.innerHTML = pfCostComponents.map(c => `
-                <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-white dark:bg-slate-700 p-2 rounded-lg border border-slate-200 dark:border-slate-600">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-white dark:bg-slate-700 p-2 rounded-md border border-slate-200 dark:border-slate-600">
                     <input type="text" value="${safeHtml(c.name)}" placeholder="Nama biaya" 
                         onchange="updatePfCostComponent(${c.id}, 'name', this.value)"
                         class="w-full sm:flex-1 text-xs p-1.5 border border-slate-200 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-white">
@@ -672,7 +679,7 @@ function renderUnrealisticState(margin, totalFee) {
         if (!adviceDiv) {
             adviceDiv = document.createElement('div');
             adviceDiv.id = 'pf_unrealistic_advice';
-            adviceDiv.className = "mt-4 bg-black/30 rounded-lg p-3 text-sm border border-white/10";
+            adviceDiv.className = "mt-4 bg-black/30 rounded-md p-3 text-sm border border-white/10";
             elSensitivity.parentElement.appendChild(adviceDiv);
         }
 
@@ -1016,7 +1023,7 @@ function renderMultiProductAccordion() {
         const maxCPC = safeNumber(roasData.maxCPC);
 
         return `
-                    <div class="roas-accordion-item bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 rounded-xl border border-slate-200 dark:border-slate-600 overflow-hidden">
+                    <div class="roas-accordion-item bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-600 overflow-hidden">
                         <button type="button" onclick="toggleRoasAccordion(this)" class="w-full p-4 flex items-center justify-between text-left">
                             <div class="flex items-center gap-2">
                                 <span class="mp-tag ${mp}">${safeHtml(mp.charAt(0).toUpperCase() + mp.slice(1))}</span>
@@ -1029,29 +1036,29 @@ function renderMultiProductAccordion() {
                         </button>
                         <div class="accordion-content ${isFirst ? '' : 'hidden'} px-4 pb-4">
                             <div class="grid grid-cols-2 gap-2 text-xs mb-3">
-                                <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                                <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                                     <div class="text-slate-400 dark:text-slate-300">HPP</div>
                                     <div class="font-bold text-slate-700 dark:text-white">${formatRupiah(roasData.hpp)}</div>
                                 </div>
-                                <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                                <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                                     <div class="text-slate-400 dark:text-slate-300">Harga Jual</div>
                                     <div class="font-bold text-slate-700 dark:text-white">${formatRupiah(roasData.price)}</div>
                                 </div>
-                                <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                                <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                                     <div class="text-slate-400 dark:text-slate-300">Profit</div>
                                     <div class="font-bold ${netProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'}">${formatRupiah(Math.round(netProfit))}</div>
                                 </div>
-                                <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                                <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                                     <div class="text-slate-400 dark:text-slate-300">ROAS BE</div>
                                     <div class="font-bold text-purple-600 dark:text-purple-400">${safeFixed(roasBE, 2)}x</div>
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-xs">
-                                <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                                <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                                     <div class="text-slate-400 dark:text-slate-300">ACOS Max</div>
                                     <div class="font-bold text-blue-600 dark:text-blue-400">${safeFixed(acosMax, 1)}%</div>
                                 </div>
-                                <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                                <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                                     <div class="text-slate-400 dark:text-slate-300">Max CPC</div>
                                     <div class="font-bold text-emerald-600 dark:text-emerald-400">${formatRupiah(Math.round(maxCPC))}</div>
                                 </div>
@@ -1345,18 +1352,18 @@ function renderComparisonCards() {
                         <!-- Details Grid -->
                         <div class="p-4 space-y-3">
                             <div class="grid grid-cols-2 gap-2 text-xs">
-                                <div class="bg-slate-50 dark:bg-slate-700/50 p-2 rounded-lg">
+                                <div class="bg-slate-50 dark:bg-slate-700/50 p-2 rounded-md">
                                     <div class="text-slate-400 text-[10px]">Harga Jual</div>
                                     <div class="font-bold text-slate-700 dark:text-white">${formatRupiah(sellingPrice)}</div>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-700/50 p-2 rounded-lg">
+                                <div class="bg-slate-50 dark:bg-slate-700/50 p-2 rounded-md">
                                     <div class="text-slate-400 text-[10px]">HPP</div>
                                     <div class="font-bold text-slate-700 dark:text-white">${formatRupiah(hpp)}</div>
                                 </div>
                             </div>
 
                             <!-- Fee Breakdown -->
-                            <div class="bg-slate-50 dark:bg-slate-700/50 p-2 rounded-lg text-xs">
+                            <div class="bg-slate-50 dark:bg-slate-700/50 p-2 rounded-md text-xs">
                                 <div class="text-slate-400 text-[10px] mb-1">Fee Breakdown</div>
                                 <div class="space-y-1">
                                     <div class="flex justify-between"><span class="text-slate-500">Admin</span><span class="font-medium">${formatRupiah(adminFee)}</span></div>
@@ -1371,11 +1378,11 @@ function renderComparisonCards() {
 
                             <!-- Bottom Stats -->
                             <div class="grid grid-cols-2 gap-2 text-xs">
-                                <div class="bg-purple-50 dark:bg-purple-900/20 p-2 rounded-lg text-center">
+                                <div class="bg-purple-50 dark:bg-purple-900/20 p-2 rounded-md text-center">
                                     <div class="text-purple-400 text-[10px]">ROAS BE</div>
                                     <div class="font-black text-purple-600 dark:text-purple-400">${roasBE}x</div>
                                 </div>
-                                <div class="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg text-center">
+                                <div class="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-md text-center">
                                     <div class="text-blue-400 text-[10px]">Net Cash</div>
                                     <div class="font-bold text-blue-600 dark:text-blue-400">${formatRupiah(netCash)}</div>
                                 </div>
@@ -2143,19 +2150,19 @@ function analyzeAdsData(data, platform) {
 
     let html = `
                 <div class="grid grid-cols-4 gap-3 mb-6">
-                    <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg text-center">
+                    <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-md text-center">
                         <div class="text-xs text-blue-600 mb-1">Total Omzet</div>
                         <div class="font-bold text-blue-700 dark:text-blue-300">${formatRupiah(totalRevenue)}</div>
                     </div>
-                    <div class="bg-red-50 dark:bg-red-900/30 p-3 rounded-lg text-center">
+                    <div class="bg-red-50 dark:bg-red-900/30 p-3 rounded-md text-center">
                         <div class="text-xs text-red-600 mb-1">Biaya Iklan</div>
                         <div class="font-bold text-red-700 dark:text-red-300">${formatRupiah(totalAdCost)}</div>
                     </div>
-                    <div class="bg-amber-50 dark:bg-amber-900/30 p-3 rounded-lg text-center">
+                    <div class="bg-amber-50 dark:bg-amber-900/30 p-3 rounded-md text-center">
                         <div class="text-xs text-amber-600 mb-1">Total HPP</div>
                         <div class="font-bold text-amber-700 dark:text-amber-300">${formatRupiah(totalHPP)}</div>
                     </div>
-                    <div class="${totalProfit >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/30' : 'bg-red-50 dark:bg-red-900/30'} p-3 rounded-lg text-center">
+                    <div class="${totalProfit >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/30' : 'bg-red-50 dark:bg-red-900/30'} p-3 rounded-md text-center">
                         <div class="text-xs ${totalProfit >= 0 ? 'text-emerald-600' : 'text-red-600'} mb-1">Real Profit</div>
                         <div class="font-bold ${totalProfit >= 0 ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700'}">${formatRupiah(totalProfit)}</div>
                     </div>
@@ -2597,7 +2604,7 @@ function renderHistory() {
         const safeSellingPrice = safeHtml(h.sellingPrice);
         return `
                 <div onclick="openHistoryDetail('${safeId}')"
-                    class="bg-white dark:bg-slate-700 p-3 rounded-lg border border-slate-200 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500 transition-colors cursor-pointer relative group">
+                    class="bg-white dark:bg-slate-700 p-3 rounded-md border border-slate-200 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500 transition-colors cursor-pointer relative group">
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex items-center gap-2">
                             <div class="w-6 h-6 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-600 text-xs">
@@ -2887,7 +2894,7 @@ function runMarketplaceComparison() {
     }
 
     container.innerHTML = results.map((r, idx) => `
-                <div class="flex items-center justify-between p-3 rounded-lg ${idx === 0 ? 'bg-emerald-50 dark:bg-emerald-900/30 border-2 border-emerald-200 dark:border-emerald-700' : 'bg-slate-50 dark:bg-slate-700/50'}">
+                <div class="flex items-center justify-between p-3 rounded-md ${idx === 0 ? 'bg-emerald-50 dark:bg-emerald-900/30 border-2 border-emerald-200 dark:border-emerald-700' : 'bg-slate-50 dark:bg-slate-700/50'}">
                     <div class="flex items-center gap-2">
                         ${idx === 0 ? '<span class="text-emerald-500 text-sm"><i class="fas fa-crown"></i></span>' : '<span class="text-slate-300 text-sm"><i class="fas fa-store"></i></span>'}
                         <span class="font-bold text-sm text-slate-700 dark:text-slate-200">${r.name}</span>
@@ -3449,20 +3456,55 @@ function updateModalTooltipContent() {
     }
 }
 
+function getChartColors() {
+    const isDark = document.documentElement.classList.contains('dark');
+    return {
+        modal: isDark ? '#424248' : '#d2d2d7',
+        fees: isDark ? '#86868b' : '#86868b',
+        profit: isDark ? '#2997ff' : '#0066cc',
+        legendText: isDark ? '#ffffff' : '#1d1d1f'
+    };
+}
+
 function initChart() {
     const canvas = document.getElementById('profitPieChart');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    const colors = getChartColors();
     profitChart = new Chart(ctx, {
         type: 'doughnut',
-        data: { labels: ['Modal', 'Fees', 'Profit'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#cbd5e1', '#f87171', '#10b981'], borderWidth: 0 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+        data: { 
+            labels: ['Modal', 'Fees', 'Profit'], 
+            datasets: [{ 
+                data: [0, 0, 0], 
+                backgroundColor: [colors.modal, colors.fees, colors.profit], 
+                borderWidth: 0 
+            }] 
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { 
+                    position: 'bottom', 
+                    labels: { 
+                        color: colors.legendText,
+                        font: { size: 10, family: 'Inter, sans-serif' } 
+                    } 
+                } 
+            } 
+        }
     });
 }
 function updateChart(modal, fees, profit) {
     if (!profitChart) return;
     let displayProfit = profit < 0 ? 0 : profit;
+    const colors = getChartColors();
+    profitChart.data.datasets[0].backgroundColor = [colors.modal, colors.fees, colors.profit];
     profitChart.data.datasets[0].data = [modal, fees, displayProfit];
+    if (profitChart.options.plugins.legend && profitChart.options.plugins.legend.labels) {
+        profitChart.options.plugins.legend.labels.color = colors.legendText;
+    }
     profitChart.update();
 }
 
@@ -3728,13 +3770,13 @@ function compareScenarios() {
 
     if (diff > 0) {
         elInsight.innerHTML = `<i class="fas fa-arrow-up text-emerald-500"></i> Profit <b>NAIK</b> sebesar <b>${formatRupiah(diff)}</b> pada skenario ini.`;
-        elInsight.className = "mt-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-lg text-center text-sm text-emerald-800 dark:text-emerald-400 font-medium transition-colors";
+        elInsight.className = "mt-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-md text-center text-sm text-emerald-800 dark:text-emerald-400 font-medium transition-colors";
     } else if (diff < 0) {
         elInsight.innerHTML = `<i class="fas fa-arrow-down text-red-500"></i> Profit <b>TURUN</b> sebesar <b>${formatRupiah(Math.abs(diff))}</b> pada skenario ini.`;
-        elInsight.className = "mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg text-center text-sm text-red-800 dark:text-red-400 font-medium transition-colors";
+        elInsight.className = "mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-md text-center text-sm text-red-800 dark:text-red-400 font-medium transition-colors";
     } else {
         elInsight.innerHTML = `<i class="fas fa-equals text-slate-500"></i> Profit <b>SAMA</b> dengan skenario sebelumnya.`;
-        elInsight.className = "mt-6 p-4 bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600 rounded-lg text-center text-sm text-slate-600 dark:text-slate-400 font-medium transition-colors";
+        elInsight.className = "mt-6 p-4 bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600 rounded-md text-center text-sm text-slate-600 dark:text-slate-400 font-medium transition-colors";
     }
 }
 
@@ -4087,13 +4129,13 @@ function calculate() {
 
     if (netCard && netLabel && netVal && netDesc) {
         if (totalNet < 0) {
-            netCard.className = "bg-red-50 border border-red-100 p-3 rounded-lg mt-2 transition-colors duration-300";
+            netCard.className = "bg-red-50 border border-red-100 p-3 rounded-md mt-2 transition-colors duration-300";
             netLabel.className = "text-red-800";
             netVal.className = "text-red-600";
             netDesc.className = "text-[10px] text-red-600 mt-1";
             netDesc.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Peringatan: Anda nombok ke Marketplace!";
         } else {
-            netCard.className = "bg-emerald-50 border border-emerald-100 p-3 rounded-lg mt-2 transition-colors duration-300";
+            netCard.className = "bg-emerald-50 border border-emerald-100 p-3 rounded-md mt-2 transition-colors duration-300";
             netLabel.className = "text-emerald-800";
             netVal.className = "text-emerald-600";
             netDesc.className = "text-[10px] text-emerald-600 mt-1";
@@ -4362,6 +4404,9 @@ function toggleTheme() {
     } else {
         html.classList.add('dark');
         localStorage.setItem('theme', 'dark');
+    }
+    if (typeof calculate === 'function') {
+        calculate();
     }
 }
 

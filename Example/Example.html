@@ -243,7 +243,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center gap-3">
-                    <div class="bg-gradient-to-br from-orange-500 to-red-500 text-white p-2 rounded-lg shadow-md">
+                    <div class="bg-gradient-to-br from-orange-500 to-red-500 text-white p-2 rounded-md shadow-md">
                         <i class="fas fa-calculator"></i>
                     </div>
                     <div>
@@ -255,11 +255,11 @@
                 <!-- Scenario Buttons -->
                 <div class="flex gap-2">
                     <button onclick="saveScenarioA()" id="btnSaveScenario"
-                        class="hidden sm:flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                        class="hidden sm:flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors">
                         <i class="far fa-bookmark"></i> Simpan Skenario A
                     </button>
                     <button onclick="compareScenarios()" id="btnCompare" disabled
-                        class="hidden sm:flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-indigo-500 rounded-lg hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="hidden sm:flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-indigo-500 rounded-md hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fas fa-columns"></i> Bandingkan (A vs B)
                     </button>
                 </div>
@@ -322,7 +322,7 @@
 
                         <!-- Reverse Mode Info -->
                         <div id="reverseInfo"
-                            class="hidden bg-blue-50 p-3 rounded-lg text-xs text-blue-700 border border-blue-100 mb-2">
+                            class="hidden bg-blue-50 p-3 rounded-md text-xs text-blue-700 border border-blue-100 mb-2">
                             <i class="fas fa-info-circle mr-1"></i> Masukkan <strong>Modal</strong> dan <strong>Target
                                 Profit</strong>. Aplikasi akan menghitung Harga Jual Minimum agar target tercapai.
                         </div>
@@ -331,7 +331,7 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-500 mb-1">Nama Produk / SKU</label>
                                 <input type="text"
-                                    class="w-full p-2.5 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white transition-colors"
+                                    class="w-full p-2.5 text-sm border border-slate-200 rounded-md bg-slate-50 focus:bg-white transition-colors"
                                     placeholder="Contoh: Kemeja Pria">
                             </div>
                             <div>
@@ -341,7 +341,7 @@
                                         class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
                                         Rp</div>
                                     <input type="number" id="hpp" oninput="calculate()"
-                                        class="w-full pl-10 p-2.5 text-sm border border-slate-200 rounded-lg font-semibold text-slate-700"
+                                        class="w-full pl-10 p-2.5 text-sm border border-slate-200 rounded-md font-semibold text-slate-700"
                                         placeholder="50000">
                                 </div>
                             </div>
@@ -357,7 +357,7 @@
                                         class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
                                         Rp</div>
                                     <input type="number" id="originalPrice" oninput="calculate()"
-                                        class="w-full pl-10 p-2.5 text-sm border border-slate-200 rounded-lg"
+                                        class="w-full pl-10 p-2.5 text-sm border border-slate-200 rounded-md"
                                         placeholder="100000">
                                 </div>
                             </div>
@@ -378,7 +378,7 @@
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-blue-400 text-sm hidden"
                                         id="revRpLabel">Rp</div>
                                     <input type="number" id="targetMarginInput" oninput="calculate()"
-                                        class="w-full p-2.5 text-sm border-2 border-blue-100 rounded-lg text-center font-bold text-blue-600"
+                                        class="w-full p-2.5 text-sm border-2 border-blue-100 rounded-md text-center font-bold text-blue-600"
                                         placeholder="20">
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-blue-400 text-sm"
                                         id="revPctLabel">%</div>
@@ -389,10 +389,10 @@
                                 <label class="block text-xs font-medium text-slate-500 mb-1">Diskon Toko (%)</label>
                                 <div class="flex gap-2">
                                     <input type="number" id="discountPercent" oninput="calculate()"
-                                        class="w-20 p-2.5 text-sm border border-slate-200 rounded-lg text-center"
+                                        class="w-20 p-2.5 text-sm border border-slate-200 rounded-md text-center"
                                         placeholder="0">
                                     <div
-                                        class="flex-1 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center px-3 text-sm font-semibold text-slate-700">
+                                        class="flex-1 bg-slate-50 border border-slate-200 rounded-md flex items-center justify-center px-3 text-sm font-semibold text-slate-700">
                                         Final: <span id="finalPriceDisplay" class="ml-1">Rp 0</span>
                                     </div>
                                 </div>
@@ -400,7 +400,7 @@
                         </div>
 
                         <!-- Voucher Toko (Ditanggung Penjual) -->
-                        <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+                        <div class="bg-yellow-50 p-3 rounded-md border border-yellow-100">
                             <label class="block text-xs font-bold text-yellow-800 mb-1">
                                 Voucher Toko Ditanggung Penjual (Opsional)
                             </label>
@@ -410,7 +410,7 @@
                                         class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
                                         Rp</div>
                                     <input type="number" id="voucherAmount" oninput="calculate()"
-                                        class="w-full pl-10 p-2 text-sm border border-yellow-200 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
+                                        class="w-full pl-10 p-2 text-sm border border-yellow-200 rounded-md focus:ring-yellow-500 focus:border-yellow-500"
                                         placeholder="0">
                                 </div>
                                 <div class="text-[10px] text-yellow-700 w-1/2 leading-tight">
@@ -444,7 +444,7 @@
 
                             <div class="relative">
                                 <button onclick="openCategoryModal()"
-                                    class="w-full bg-white border border-orange-200 hover:border-orange-400 text-left px-4 py-3 rounded-lg flex justify-between items-center shadow-sm transition-all group">
+                                    class="w-full bg-white border border-orange-200 hover:border-orange-400 text-left px-4 py-3 rounded-md flex justify-between items-center shadow-sm transition-all group">
                                     <div class="flex-1 overflow-hidden">
                                         <div class="flex items-center gap-2">
                                             <div id="selectedCategoryText"
@@ -639,7 +639,7 @@
                                     <div class="group relative">
                                         <i class="far fa-question-circle text-slate-400 cursor-help text-[10px]"></i>
                                         <div
-                                            class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-56 bg-white border border-slate-200 shadow-xl rounded-lg p-3 z-50 text-[10px] text-slate-600">
+                                            class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-56 bg-white border border-slate-200 shadow-xl rounded-md p-3 z-50 text-[10px] text-slate-600">
                                             <div class="font-bold mb-2 text-slate-800 border-b pb-1">Rincian Modal
                                                 Operasional</div>
                                             <div class="space-y-1.5">
@@ -664,7 +664,7 @@
                                 <p class="text-xs font-bold text-slate-400 uppercase mb-2">RINCIAN POTONGAN</p>
 
                                 <div
-                                    class="bg-white rounded-lg p-3 border border-purple-200 shadow-sm ring-1 ring-purple-100 relative">
+                                    class="bg-white rounded-md p-3 border border-purple-200 shadow-sm ring-1 ring-purple-100 relative">
 
                                     <!-- Biaya Admin -->
                                     <div class="flex justify-between items-center text-xs mb-2 relative">
@@ -691,7 +691,7 @@
                                                 <i
                                                     class="far fa-question-circle text-slate-400 cursor-help text-[10px]"></i>
                                                 <div
-                                                    class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-64 bg-white border border-slate-200 shadow-xl rounded-lg p-3 z-50 text-[10px] text-slate-600">
+                                                    class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-64 bg-white border border-slate-200 shadow-xl rounded-md p-3 z-50 text-[10px] text-slate-600">
                                                     <div class="font-bold mb-2 text-slate-800 border-b pb-1">Rincian
                                                         Biaya Layanan</div>
                                                     <div class="space-y-2">
@@ -739,7 +739,7 @@
 
                             <!-- Indikator Warna pada Net Cash -->
                             <div id="netIncomeCard"
-                                class="bg-emerald-50 border border-emerald-100 p-3 rounded-lg mt-2 transition-colors duration-300">
+                                class="bg-emerald-50 border border-emerald-100 p-3 rounded-md mt-2 transition-colors duration-300">
                                 <div class="flex justify-between items-center font-bold">
                                     <span class="text-emerald-800" id="netIncomeLabel">Net Cash Diterima</span>
                                     <span class="text-emerald-600" id="netIncome">Rp 0</span>
@@ -758,7 +758,7 @@
                                 <i class="fas fa-chart-line"></i> Analisa Kesehatan Iklan
                             </h3>
                             <!-- TABS -->
-                            <div class="flex bg-indigo-100 rounded-lg p-1 gap-1">
+                            <div class="flex bg-indigo-100 rounded-md p-1 gap-1">
                                 <button onclick="switchAdsMode('unit')" id="btn-mode-unit"
                                     class="tab-btn rounded px-3 py-1 text-[10px] font-bold bg-white text-indigo-600 shadow-sm">Per
                                     Unit</button>
@@ -769,7 +769,7 @@
                         <div class="p-5 space-y-5">
 
                             <!-- Target Profit Section -->
-                            <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 mb-4">
+                            <div class="bg-blue-50 p-3 rounded-md border border-blue-100 mb-4">
                                 <div class="flex justify-between items-center mb-2">
                                     <label class="text-xs font-bold text-blue-800">Target Profit (Setelah Iklan)</label>
                                     <div class="flex text-[10px] bg-blue-100 rounded p-0.5">
@@ -809,12 +809,12 @@
                                                 Rp</div>
                                             <input type="number" id="cpc"
                                                 oninput="updateSlider('cpc', this.value); calculate()"
-                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 rounded-lg"
+                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 rounded-md"
                                                 placeholder="0">
                                         </div>
                                         <input type="range" id="cpcSlider" min="0" max="10000" step="50" value="0"
                                             oninput="updateInput('cpc', this.value); calculate()"
-                                            class="w-full mt-2 h-1 bg-indigo-100 rounded-lg appearance-none cursor-pointer">
+                                            class="w-full mt-2 h-1 bg-indigo-100 rounded-md appearance-none cursor-pointer">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-medium text-slate-500 mb-1">Conversion
@@ -822,7 +822,7 @@
                                         <div class="relative">
                                             <input type="number" id="cr" step="0.1"
                                                 oninput="updateSlider('cr', this.value); calculate()"
-                                                class="w-full pr-7 p-2 text-sm border border-indigo-200 rounded-lg text-right"
+                                                class="w-full pr-7 p-2 text-sm border border-indigo-200 rounded-md text-right"
                                                 placeholder="2.0">
                                             <div
                                                 class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 text-xs">
@@ -830,7 +830,7 @@
                                         </div>
                                         <input type="range" id="crSlider" min="0" max="10" step="0.1" value="2.0"
                                             oninput="updateInput('cr', this.value); calculate()"
-                                            class="w-full mt-2 h-1 bg-indigo-100 rounded-lg appearance-none cursor-pointer">
+                                            class="w-full mt-2 h-1 bg-indigo-100 rounded-md appearance-none cursor-pointer">
                                     </div>
                                 </div>
                             </div>
@@ -846,7 +846,7 @@
                                                 class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-slate-400 text-xs">
                                                 Rp</div>
                                             <input type="number" id="dashAdSpend" oninput="calcDashboard()"
-                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 rounded-lg">
+                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 rounded-md">
                                         </div>
                                     </div>
                                     <div>
@@ -857,7 +857,7 @@
                                                 class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-slate-400 text-xs">
                                                 Rp</div>
                                             <input type="number" id="dashSales" oninput="calcDashboard()"
-                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 rounded-lg">
+                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 rounded-md">
                                         </div>
                                     </div>
                                 </div>
@@ -866,14 +866,14 @@
                                         <label class="block text-xs font-medium text-slate-500 mb-1">Jumlah Klik
                                             (Opsional)</label>
                                         <input type="number" id="dashClicks" oninput="calcDashboard()"
-                                            class="w-full p-2 text-sm border border-indigo-200 rounded-lg"
+                                            class="w-full p-2 text-sm border border-indigo-200 rounded-md"
                                             placeholder="Untuk hitung CPC">
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Analytical Results -->
-                            <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-md border border-slate-100">
                                 <div>
                                     <p class="text-[10px] text-slate-500">Biaya Iklan/Sales (CPO)</p>
                                     <p class="text-sm font-bold text-indigo-600" id="adsCostPerSales">Rp 0</p>
@@ -894,7 +894,7 @@
 
                             <!-- Status & Recommendation Box -->
                             <div id="adsAnalysisBox"
-                                class="bg-gray-100 p-3 rounded-lg border border-gray-200 text-center transition-colors duration-300">
+                                class="bg-gray-100 p-3 rounded-md border border-gray-200 text-center transition-colors duration-300">
                                 <span id="adsStatusBadge"
                                     class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-500 mb-2">BELUM
                                     ADA DATA</span>
@@ -942,7 +942,7 @@
                     </div>
                     <!-- Insight -->
                     <div id="compareInsight"
-                        class="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-lg text-center text-sm text-blue-800 font-medium">
+                        class="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-md text-center text-sm text-blue-800 font-medium">
                     </div>
                 </div>
             </div>
@@ -953,7 +953,7 @@
     <div id="categoryModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black bg-opacity-50" onclick="closeCategoryModal()"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4">
-            <div class="bg-white rounded-lg shadow-xl w-full max-w-5xl h-[600px] flex flex-col overflow-hidden">
+            <div class="bg-white rounded-md shadow-xl w-full max-w-5xl h-[600px] flex flex-col overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
                     <h3 class="font-bold text-lg text-slate-800">Pilih Kategori Produk</h3>
                     <button onclick="closeCategoryModal()" class="text-slate-400 hover:text-slate-600"><i
@@ -1520,14 +1520,14 @@
                 btnFixed.className = "px-2 py-0.5 rounded text-blue-500";
                 labelRp.classList.add('hidden');
                 labelPct.classList.remove('hidden');
-                input.className = "w-full p-2.5 text-sm border-2 border-blue-100 rounded-lg text-center font-bold text-blue-600";
+                input.className = "w-full p-2.5 text-sm border-2 border-blue-100 rounded-md text-center font-bold text-blue-600";
                 input.placeholder = "20";
             } else {
                 btnFixed.className = "px-2 py-0.5 rounded bg-white text-blue-700 font-bold shadow-sm";
                 btnPerc.className = "px-2 py-0.5 rounded text-blue-500";
                 labelPct.classList.add('hidden');
                 labelRp.classList.remove('hidden');
-                input.className = "w-full p-2.5 text-sm border-2 border-blue-100 rounded-lg pl-8 font-bold text-blue-600";
+                input.className = "w-full p-2.5 text-sm border-2 border-blue-100 rounded-md pl-8 font-bold text-blue-600";
                 input.placeholder = "10000";
             }
             calculate();
@@ -1764,13 +1764,13 @@
 
             if (netCard && netLabel && netVal && netDesc) {
                 if (netIncome < 0) {
-                    netCard.className = "bg-red-50 border border-red-100 p-3 rounded-lg mt-2 transition-colors duration-300";
+                    netCard.className = "bg-red-50 border border-red-100 p-3 rounded-md mt-2 transition-colors duration-300";
                     netLabel.className = "text-red-800";
                     netVal.className = "text-red-600";
                     netDesc.className = "text-[10px] text-red-600 mt-1";
                     netDesc.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Peringatan: Anda nombok ke Marketplace!";
                 } else {
-                    netCard.className = "bg-emerald-50 border border-emerald-100 p-3 rounded-lg mt-2 transition-colors duration-300";
+                    netCard.className = "bg-emerald-50 border border-emerald-100 p-3 rounded-md mt-2 transition-colors duration-300";
                     netLabel.className = "text-emerald-800";
                     netVal.className = "text-emerald-600";
                     netDesc.className = "text-[10px] text-emerald-600 mt-1";
@@ -1905,13 +1905,13 @@
             if (insightEl) {
                 if (diff > 0) {
                     insightEl.innerHTML = `<i class="fas fa-arrow-up text-emerald-500 mr-2"></i> Skenario B lebih menguntungkan <strong>${formatRupiah(diff)}</strong> per pesanan.`;
-                    insightEl.className = "mt-6 p-4 bg-emerald-50 border border-emerald-100 rounded-lg text-center text-sm text-emerald-800 font-medium";
+                    insightEl.className = "mt-6 p-4 bg-emerald-50 border border-emerald-100 rounded-md text-center text-sm text-emerald-800 font-medium";
                 } else if (diff < 0) {
                     insightEl.innerHTML = `<i class="fas fa-arrow-down text-red-500 mr-2"></i> Skenario B lebih rugi <strong>${formatRupiah(Math.abs(diff))}</strong> per pesanan.`;
-                    insightEl.className = "mt-6 p-4 bg-red-50 border border-red-100 rounded-lg text-center text-sm text-red-800 font-medium";
+                    insightEl.className = "mt-6 p-4 bg-red-50 border border-red-100 rounded-md text-center text-sm text-red-800 font-medium";
                 } else {
                     insightEl.innerHTML = `<i class="fas fa-equals text-blue-500 mr-2"></i> Kedua skenario memberikan profit yang sama.`;
-                    insightEl.className = "mt-6 p-4 bg-blue-50 border border-blue-100 rounded-lg text-center text-sm text-blue-800 font-medium";
+                    insightEl.className = "mt-6 p-4 bg-blue-50 border border-blue-100 rounded-md text-center text-sm text-blue-800 font-medium";
                 }
             }
 

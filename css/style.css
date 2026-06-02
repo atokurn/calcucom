@@ -10,9 +10,7 @@
 
         .miro-board {
             background-image:
-                linear-gradient(rgba(5, 5, 5, 0.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(5, 5, 5, 0.035) 1px, transparent 1px);
-            background-size: 28px 28px;
+                            background-size: 28px 28px;
         }
 
         .miro-btn-primary,
@@ -31,9 +29,7 @@
 
         .dark .miro-landing {
             background:
-                radial-gradient(circle at 18% 8%, rgba(255, 208, 47, 0.16), transparent 28%),
-                radial-gradient(circle at 86% 18%, rgba(126, 93, 255, 0.18), transparent 30%),
-                linear-gradient(135deg, #070a12 0%, #101827 48%, #07111f 100%) !important;
+                ;
             color: #f8fafc;
         }
 
@@ -61,9 +57,7 @@
             border-color: rgba(248, 250, 252, 0.18) !important;
             box-shadow: 0 30px 90px rgba(0, 0, 0, 0.58) !important;
             background-image:
-                linear-gradient(rgba(248, 250, 252, 0.06) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(248, 250, 252, 0.06) 1px, transparent 1px);
-        }
+                        }
 
         .dark .miro-board-canvas {
             background: #0f172a !important;
@@ -466,15 +460,13 @@
             left: 0;
             right: 0;
             z-index: 50;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            padding: 12px 16px;
+            background:             padding: 12px 16px;
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
             transition: transform 0.3s ease, background 0.3s ease;
         }
 
         #mobileProfit.negative {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        }
+            background:         }
 
         #mobileProfit.auth-hidden,
         #mobileModuleNav.auth-hidden {
@@ -630,8 +622,7 @@
             align-items: center;
             gap: 8px;
             padding: 14px 24px;
-            background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
-            color: white;
+            background:             color: white;
             font-weight: 700;
             font-size: 14px;
             border-radius: 50px;
@@ -647,8 +638,7 @@
         }
 
         .dark .sticky-save-btn {
-            background: linear-gradient(135deg, #0891b2 0%, #0d9488 100%);
-        }
+            background:         }
 
         @media (max-width: 1024px) {
             .sticky-save-btn {
@@ -672,16 +662,13 @@
         }
 
         .profit-health-fill.danger {
-            background: linear-gradient(90deg, #ef4444, #f87171);
-        }
+            background:         }
 
         .profit-health-fill.warning {
-            background: linear-gradient(90deg, #f59e0b, #fbbf24);
-        }
+            background:         }
 
         .profit-health-fill.healthy {
-            background: linear-gradient(90deg, #10b981, #34d399);
-        }
+            background:         }
 
         /* Number Transition Animation */
         .animate-value {
@@ -1600,8 +1587,7 @@
 
         /* Modern Gradient Text for Logo */
         .text-orange-500 {
-            background: linear-gradient(135deg, #EE4D2D 0%, #ff7e5f 100%);
-            -webkit-background-clip: text;
+            background:             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
@@ -1673,9 +1659,7 @@ body::before {
     pointer-events: none;
     z-index: -1;
     background:
-        radial-gradient(circle at 14% 16%, rgba(255, 208, 47, 0.20), transparent 30%),
-        radial-gradient(circle at 86% 12%, rgba(66, 98, 255, 0.12), transparent 28%),
-        radial-gradient(circle at 78% 86%, rgba(199, 240, 233, 0.24), transparent 34%);
+        ;
 }
 
 #mainNav {
@@ -1728,12 +1712,10 @@ body::before {
 }
 
 #landingPage {
-    background: linear-gradient(135deg, #fffdf6 0%, #ffffff 42%, #f5f7ff 100%) !important;
-}
+    background: }
 
 .dark #landingPage {
-    background: linear-gradient(135deg, #0f172a 0%, #111827 52%, #050038 100%) !important;
-}
+    background: }
 
 #landingPage h2 {
     max-width: 780px;
@@ -1771,6 +1753,10 @@ body::before {
     background: var(--miro-mint-light) !important;
 }
 
+#landingFeatures > div:nth-child(5) {
+    background: #e3e8ff !important;
+}
+
 /* Dark Mode Feature Cards styling override for readability and premium look */
 .dark #landingFeatures > div {
     border-width: 1px !important;
@@ -1804,6 +1790,11 @@ body::before {
     border-color: rgba(167, 139, 250, 0.3) !important;
 }
 
+.dark #landingFeatures > div:nth-child(5) {
+    background: rgba(52, 211, 153, 0.08) !important;
+    border-color: rgba(52, 211, 153, 0.3) !important;
+}
+
 /* Force readable text colors inside dark mode landing page feature cards */
 .dark #landingFeatures > div h3 {
     color: #ffffff !important;
@@ -1828,6 +1819,10 @@ body::before {
 
 .dark #landingFeatures > div:nth-child(4) i {
     color: #a78bfa !important; /* bright purple */
+}
+
+.dark #landingFeatures > div:nth-child(5) i {
+    color: #34d399 !important; /* bright green */
 }
 
 /* Platform Pills Styling for Readability (Light Mode) */
@@ -1962,8 +1957,8 @@ body::before {
 }
 
 #main-content > .module-panel > div,
-#main-content .bg-white,
-#main-content .dark\:bg-slate-800 {
+#main-content .bg-white.rounded-2xl,
+#main-content .dark\:bg-slate-800.rounded-2xl {
     border-radius: 24px !important;
 }
 
@@ -1973,10 +1968,10 @@ body::before {
     box-shadow: 0 4px 14px rgba(5, 0, 56, 0.06) !important;
 }
 
-input,
+input:not([type="checkbox"]):not([type="radio"]),
 select,
 textarea {
-    border-radius: 12px !important;
+    border-radius: 6px !important;
     border-color: var(--miro-hairline) !important;
 }
 
@@ -2039,3 +2034,596 @@ textarea:focus {
         display: none;
     }
 }
+
+/* ==========================================
+   APPLE-INSPIRED DASHBOARD STYLE OVERRIDES
+   ========================================== */
+
+/* Scoped variables for Apple theme */
+:root {
+    --apple-blue: #0066cc;
+    --apple-blue-dark: #2997ff;
+    --apple-focus: #0071e3;
+    
+    --apple-parchment: #f5f5f7;
+    --apple-white: #ffffff;
+    --apple-pearl: #fafafc;
+    --apple-ink: #1d1d1f;
+    --apple-muted: #86868b;
+    --apple-disabled: #7a7a7a;
+    --apple-divider: rgba(0, 0, 0, 0.08);
+    
+    /* Dark mode variants */
+    --apple-bg-dark: #000000;
+    --apple-card-dark: #1c1c1e;
+    --apple-card-dark-2: #272729;
+    --apple-divider-dark: rgba(255, 255, 255, 0.08);
+}
+
+/* Base body background override when authenticated */
+body[data-authenticated="true"] {
+    background: var(--apple-parchment) !important;
+    color: var(--apple-ink) !important;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+    letter-spacing: -0.015em !important;
+}
+
+body[data-authenticated="true"]::before {
+    content: none !important;
+    background: none !important;
+    display: none !important;
+}
+
+.dark body[data-authenticated="true"] {
+    background: var(--apple-bg-dark) !important;
+    color: #ffffff !important;
+}
+
+.dark body[data-authenticated="true"]::before {
+    content: none !important;
+    background: none !important;
+    display: none !important;
+}
+
+/* Global Nav (#mainNav) - Apple Black Nav Bar */
+body[data-authenticated="true"] #mainNav {
+    display: block !important; /* Ensure it is visible if authenticated */
+    background-color: var(--apple-bg-dark) !important;
+    height: 48px !important;
+    border-bottom: 1px solid var(--apple-divider-dark) !important;
+    box-shadow: none !important;
+}
+
+body[data-authenticated="true"] #mainNav .h-14,
+body[data-authenticated="true"] #mainNav .h-16 {
+    height: 48px !important;
+}
+
+body[data-authenticated="true"] #mainNav h1 {
+    color: #ffffff !important;
+    font-size: 16px !important;
+    letter-spacing: -0.02em !important;
+    font-weight: 600 !important;
+}
+
+body[data-authenticated="true"] #mainNav h1 span {
+    color: var(--apple-blue-dark) !important;
+}
+
+body[data-authenticated="true"] #mainNav p {
+    color: var(--apple-muted) !important;
+    font-size: 10px !important;
+}
+
+/* Nav Buttons inside Global Nav */
+body[data-authenticated="true"] #mainNav button:not(#btnCloudLogin),
+body[data-authenticated="true"] #mainNav #cloudSyncControls button {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    color: #ffffff !important;
+    border-radius: 6px !important;
+    padding: 6px 12px !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    box-shadow: none !important;
+    min-height: 32px !important;
+    transition: transform 0.15s ease, background-color 0.15s ease !important;
+}
+
+body[data-authenticated="true"] #mainNav button:not(#btnCloudLogin):hover,
+body[data-authenticated="true"] #mainNav #cloudSyncControls button:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+body[data-authenticated="true"] #mainNav button:not(#btnCloudLogin):active,
+body[data-authenticated="true"] #mainNav #cloudSyncControls button:active {
+    transform: scale(0.95) !important;
+}
+
+body[data-authenticated="true"] #mainNav #btnCloudLogin {
+    background-color: var(--apple-blue) !important;
+    border: none !important;
+    border-radius: 6px !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+/* Frosted Sub-Nav (#desktopTabsNav) */
+body[data-authenticated="true"] #desktopTabsNav {
+    background-color: rgba(245, 245, 247, 0.8) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border-bottom: 1px solid var(--apple-divider) !important;
+    top: 48px !important;
+    box-shadow: none !important;
+    transition: background-color 0.3s ease, border-color 0.3s ease !important;
+    padding: 0 !important;
+}
+
+.dark body[data-authenticated="true"] #desktopTabsNav {
+    background-color: rgba(22, 22, 23, 0.8) !important;
+    border-bottom: 1px solid var(--apple-divider-dark) !important;
+}
+
+/* Module Tabs Links in Sub-Nav */
+body[data-authenticated="true"] .module-tabs {
+    gap: 8px !important;
+    padding: 6px 0 !important;
+    background: transparent !important;
+}
+
+body[data-authenticated="true"] .module-tab {
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: var(--apple-ink) !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    letter-spacing: -0.015em !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important; /* Consistent rounded-md */
+    box-shadow: none !important;
+    min-height: 28px !important;
+    transition: all 0.2s ease !important;
+}
+
+.dark body[data-authenticated="true"] .module-tab {
+    color: #cbd5e1 !important;
+}
+
+body[data-authenticated="true"] .module-tab:hover {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+    color: var(--apple-ink) !important;
+}
+
+.dark body[data-authenticated="true"] .module-tab:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+}
+
+body[data-authenticated="true"] .module-tab.active {
+    background-color: var(--apple-blue) !important;
+    color: #ffffff !important;
+}
+
+.dark body[data-authenticated="true"] .module-tab.active {
+    background-color: var(--apple-blue-dark) !important;
+    color: #000000 !important;
+    font-weight: 600 !important;
+}
+
+body[data-authenticated="true"] .module-tab.active i {
+    color: inherit !important;
+}
+
+/* Dashboard Cards Layout Override */
+body[data-authenticated="true"] #main-content {
+    background-color: transparent !important;
+    padding-top: 24px !important;
+}
+
+body[data-authenticated="true"] #main-content .bg-white.rounded-2xl,
+body[data-authenticated="true"] #main-content .dark\:bg-slate-800.rounded-2xl {
+    background-color: var(--apple-white) !important;
+    border: 1px solid var(--apple-divider) !important;
+    border-radius: 12px !important; /* Consistent rounded-xl for card containers */
+    box-shadow: none !important;
+    padding: 24px !important;
+    transition: background-color 0.3s ease, border-color 0.3s ease !important;
+}
+
+.dark body[data-authenticated="true"] #main-content .bg-white.rounded-2xl,
+.dark body[data-authenticated="true"] #main-content .dark\:bg-slate-800.rounded-2xl {
+    background-color: var(--apple-card-dark) !important;
+    border: 1px solid var(--apple-divider-dark) !important;
+}
+
+/* Remove margin defaults that cause gaps */
+body[data-authenticated="true"] #main-content > .module-panel > div {
+    border-radius: 12px !important;
+}
+
+/* Header Sections within cards */
+body[data-authenticated="true"] #main-content h3 {
+    font-weight: 600 !important;
+    font-size: 18px !important;
+    letter-spacing: -0.02em !important;
+    color: var(--apple-ink) !important;
+}
+
+.dark body[data-authenticated="true"] #main-content h3 {
+    color: #ffffff !important;
+}
+
+/* Clean Header Card Strip (Remove gray headers) */
+body[data-authenticated="true"] #main-content .bg-slate-50.px-6.py-4,
+body[data-authenticated="true"] #main-content .bg-slate-50.dark\:bg-slate-700\/50.px-6.py-4,
+body[data-authenticated="true"] #main-content .border-b.px-6.py-4 {
+    background: transparent !important;
+    border-bottom: 1px solid var(--apple-divider) !important;
+    padding: 0 0 16px 0 !important;
+    margin-bottom: 20px !important;
+}
+
+.dark body[data-authenticated="true"] #main-content .bg-slate-50.px-6.py-4,
+.dark body[data-authenticated="true"] #main-content .bg-slate-50.dark\:bg-slate-700\/50.px-6.py-4,
+.dark body[data-authenticated="true"] #main-content .border-b.px-6.py-4 {
+    border-bottom: 1px solid var(--apple-divider-dark) !important;
+}
+
+/* Inputs, Selects, and Textareas */
+body[data-authenticated="true"] input[type="text"],
+body[data-authenticated="true"] input[type="number"],
+body[data-authenticated="true"] input[type="email"],
+body[data-authenticated="true"] input[type="password"],
+body[data-authenticated="true"] input[type="tel"],
+body[data-authenticated="true"] input[type="search"],
+body[data-authenticated="true"] input:not([type]),
+body[data-authenticated="true"] select {
+    background-color: var(--apple-white) !important;
+    border: 1px solid var(--apple-divider) !important;
+    color: var(--apple-ink) !important;
+    border-radius: 6px !important; /* Consistent rounded-md */
+    font-weight: 400 !important;
+ /* Min touch target */
+    box-shadow: none !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+/* Force horizontal padding overrides for input prefixes and suffixes to prevent layout overlap */
+body[data-authenticated="true"] input.pl-10 { padding-left: 2.5rem !important; }
+body[data-authenticated="true"] input.pl-9 { padding-left: 2.25rem !important; }
+body[data-authenticated="true"] input.pl-8 { padding-left: 2rem !important; }
+body[data-authenticated="true"] input.pl-7 { padding-left: 1.75rem !important; }
+body[data-authenticated="true"] input.pl-6 { padding-left: 1.5rem !important; }
+body[data-authenticated="true"] input.pr-10 { padding-right: 2.5rem !important; }
+body[data-authenticated="true"] input.pr-7 { padding-right: 1.75rem !important; }
+body[data-authenticated="true"] input.pr-6 { padding-right: 1.5rem !important; }
+body[data-authenticated="true"] input.pr-4 { padding-right: 1rem !important; }
+
+
+body[data-authenticated="true"] textarea {
+    background-color: var(--apple-white) !important;
+    border: 1px solid var(--apple-divider) !important;
+    color: var(--apple-ink) !important;
+    border-radius: 6px !important; /* Consistent rounded-md */
+    padding: 10px 12px !important;
+    font-weight: 400 !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.dark body[data-authenticated="true"] input[type="text"],
+.dark body[data-authenticated="true"] input[type="number"],
+.dark body[data-authenticated="true"] input[type="email"],
+.dark body[data-authenticated="true"] input[type="password"],
+.dark body[data-authenticated="true"] input[type="tel"],
+.dark body[data-authenticated="true"] input[type="search"],
+.dark body[data-authenticated="true"] input:not([type]),
+.dark body[data-authenticated="true"] select {
+    background-color: var(--apple-card-dark-2) !important;
+    border: 1px solid var(--apple-divider-dark) !important;
+    color: #ffffff !important;
+}
+
+.dark body[data-authenticated="true"] textarea {
+    background-color: var(--apple-card-dark-2) !important;
+    border: 1px solid var(--apple-divider-dark) !important;
+    color: #ffffff !important;
+}
+
+body[data-authenticated="true"] input:focus,
+body[data-authenticated="true"] select:focus,
+body[data-authenticated="true"] textarea:focus {
+    border-color: var(--apple-focus) !important;
+    box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.15) !important;
+    outline: none !important;
+}
+
+/* Configurator Marketplace Option Chips */
+body[data-authenticated="true"] .platform-btn {
+    background-color: var(--apple-white) !important;
+    border: 1px solid var(--apple-divider) !important;
+    border-radius: 6px !important; /* Consistent rounded-md */
+    padding: 8px 16px !important;
+    color: var(--apple-ink) !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.dark body[data-authenticated="true"] .platform-btn {
+    background-color: var(--apple-card-dark) !important;
+    border: 1px solid var(--apple-divider-dark) !important;
+    color: #ffffff !important;
+}
+
+body[data-authenticated="true"] .platform-btn:hover {
+    background-color: var(--apple-pearl) !important;
+}
+
+.dark body[data-authenticated="true"] .platform-btn:hover {
+    background-color: var(--apple-card-dark-2) !important;
+}
+
+body[data-authenticated="true"] .platform-btn.active {
+    background-color: var(--apple-white) !important;
+    border: 2px solid var(--apple-blue) !important;
+    color: var(--apple-ink) !important;
+    font-weight: 600 !important;
+}
+
+.dark body[data-authenticated="true"] .platform-btn.active {
+    background-color: var(--apple-card-dark) !important;
+    border: 2px solid var(--apple-blue-dark) !important;
+    color: #ffffff !important;
+}
+
+/* Primary Capsule Buttons (Simpan Data / Aksi Utama) */
+body[data-authenticated="true"] .sticky-save-btn,
+body[data-authenticated="true"] button.miro-btn-primary,
+body[data-authenticated="true"] #main-content button.bg-\[\#050505\],
+body[data-authenticated="true"] #main-content button.bg-slate-900,
+body[data-authenticated="true"] #main-content button.bg-blue-600,
+body[data-authenticated="true"] #main-content button#btnSaveScenario,
+body[data-authenticated="true"] #main-content button[type="submit"] {
+    background-color: var(--apple-blue) !important;
+    color: #ffffff !important;
+    border-radius: 6px !important; /* Consistent rounded-md */
+    padding: 12px 24px !important;
+    font-weight: 600 !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: transform 0.15s ease, background-color 0.15s ease !important;
+}
+
+.dark body[data-authenticated="true"] .sticky-save-btn,
+.dark body[data-authenticated="true"] button.miro-btn-primary,
+.dark body[data-authenticated="true"] #main-content button.bg-\[\#050505\],
+.dark body[data-authenticated="true"] #main-content button.bg-slate-900,
+.dark body[data-authenticated="true"] #main-content button.bg-blue-600,
+.dark body[data-authenticated="true"] #main-content button#btnSaveScenario,
+.dark body[data-authenticated="true"] #main-content button[type="submit"] {
+    background-color: var(--apple-blue-dark) !important;
+    color: #000000 !important;
+}
+
+body[data-authenticated="true"] .sticky-save-btn:active,
+body[data-authenticated="true"] button.miro-btn-primary:active {
+    transform: scale(0.95) !important;
+}
+
+/* Secondary Button / Pearl Button (Export / Copy / Batal) */
+body[data-authenticated="true"] #main-content button.share-btn,
+body[data-authenticated="true"] #main-content button[onclick="exportData()"] {
+    background-color: var(--apple-pearl) !important;
+    border: 1px solid var(--apple-divider) !important;
+    color: var(--apple-ink) !important;
+    border-radius: 6px !important; /* Consistent rounded-md */
+    padding: 8px 16px !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+}
+
+.dark body[data-authenticated="true"] #main-content button.share-btn,
+.dark body[data-authenticated="true"] #main-content button[onclick="exportData()"] {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid var(--apple-divider-dark) !important;
+    color: #ffffff !important;
+}
+
+body[data-authenticated="true"] #main-content button.share-btn:hover,
+body[data-authenticated="true"] #main-content button[onclick="exportData()"]:hover {
+    background-color: #f1f1f4 !important;
+}
+
+.dark body[data-authenticated="true"] #main-content button.share-btn:hover,
+.dark body[data-authenticated="true"] #main-content button[onclick="exportData()"]:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+body[data-authenticated="true"] #main-content button.share-btn:active,
+body[data-authenticated="true"] #main-content button[onclick="exportData()"]:active {
+    transform: scale(0.95) !important;
+}
+
+/* Ringkasan Profit Card Styling */
+body[data-authenticated="true"] #main-content #finalProfit {
+    font-size: 40px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.03em !important;
+    color: var(--apple-ink) !important;
+}
+
+.dark body[data-authenticated="true"] #main-content #finalProfit {
+    color: #ffffff !important;
+}
+
+/* Margin Badge Action Blue Pill */
+body[data-authenticated="true"] #main-content #finalMarginBadge {
+    background-color: rgba(0, 102, 204, 0.1) !important;
+    color: var(--apple-blue) !important;
+    border-radius: 6px !important; /* Consistent rounded-md */
+    font-weight: 600 !important;
+    padding: 4px 12px !important;
+}
+
+.dark body[data-authenticated="true"] #main-content #finalMarginBadge {
+    background-color: rgba(41, 151, 255, 0.15) !important;
+    color: var(--apple-blue-dark) !important;
+}
+
+/* Breakdown Body Card (Parchment background style) */
+body[data-authenticated="true"] #main-content .p-5.bg-slate-50,
+body[data-authenticated="true"] #main-content .bg-slate-50.dark\:bg-slate-700\/50.space-y-3 {
+    background-color: var(--apple-pearl) !important;
+    border: 1px solid var(--apple-divider) !important;
+    border-radius: 12px !important;
+    margin-top: 16px !important;
+}
+
+.dark body[data-authenticated="true"] #main-content .p-5.bg-slate-50,
+.dark body[data-authenticated="true"] #main-content .bg-slate-50.dark\:bg-slate-700\/50.space-y-3 {
+    background-color: var(--apple-card-dark-2) !important;
+    border: 1px solid var(--apple-divider-dark) !important;
+}
+
+/* Divider lines inside Breakdown card */
+body[data-authenticated="true"] #main-content .border-b,
+body[data-authenticated="true"] #main-content .border-t {
+    border-color: var(--apple-divider) !important;
+}
+
+.dark body[data-authenticated="true"] #main-content .border-b,
+.dark body[data-authenticated="true"] #main-content .border-t {
+    border-color: var(--apple-divider-dark) !important;
+}
+
+/* Alert / Warning Banner for Tombok */
+body[data-authenticated="true"] #main-content .bg-red-50,
+body[data-authenticated="true"] #main-content .bg-yellow-50 {
+    background-color: rgba(255, 59, 48, 0.08) !important;
+    border: 1px solid rgba(255, 59, 48, 0.15) !important;
+    border-radius: 12px !important;
+    color: #ff3b30 !important;
+}
+
+.dark body[data-authenticated="true"] #main-content .bg-red-50,
+.dark body[data-authenticated="true"] #main-content .bg-yellow-50 {
+    background-color: rgba(255, 69, 58, 0.12) !important;
+    border: 1px solid rgba(255, 69, 58, 0.25) !important;
+    color: #ff453a !important;
+}
+
+/* Health status progress bar */
+body[data-authenticated="true"] .profit-health-bar {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+    border-radius: 9999px !important;
+    height: 6px !important;
+}
+
+.dark body[data-authenticated="true"] .profit-health-bar {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body[data-authenticated="true"] .profit-health-fill {
+    border-radius: 9999px !important;
+}
+
+body[data-authenticated="true"] .profit-health-fill.success {
+    background-color: var(--apple-blue) !important;
+}
+
+.dark body[data-authenticated="true"] .profit-health-fill.success {
+    background-color: var(--apple-blue-dark) !important;
+}
+
+/* Force all other rounded controls (like toggles, switches, chip containers) to be consistently rounded-md (6px) */
+.rounded-md,
+[class*="rounded-md"] {
+    border-radius: 6px !important;
+}
+.rounded-md,
+[class*="rounded-md"] {
+    border-radius: 6px !important;
+}
+
+/* Force dynamic status badges, slot labels, and cost badges to be rounded-md (6px) */
+#main-content .rounded-full:not(.toggle-label):not(.profit-health-bar):not(.profit-health-fill) {
+    border-radius: 6px !important;
+}
+
+/* Specific input fields override to ensure absolute consistency and prevent pill-shape issues */
+#hpp,
+#originalPrice,
+#discountPercent,
+#voucherAmount,
+#pf_hpp,
+#pf_target_margin,
+#pf_target_profit,
+#pf_discount,
+#pf_orderProcessFee,
+#pf_fixedFee,
+#pf_operationalCost,
+#roas_hpp,
+#roas_price,
+#roas_fee,
+#roas_cr,
+#roas_target_margin,
+#roas_ad_cost,
+#targetProfitMargin,
+#cpc,
+#cr,
+#dashAdSpend,
+#dashSales,
+#dashClicks,
+#cmp_hpp,
+#cmp_price,
+#bundlePrice,
+#bundleVoucher,
+.final-price-display {
+    border-radius: 6px !important;
+}
+
+/* Specific padding overrides for prefix inputs to prevent overlapping text (e.g. 'Rp') */
+input.pl-10,
+#hpp,
+#originalPrice,
+#voucherAmount,
+#pf_hpp,
+#pf_target_profit,
+#roas_hpp,
+#roas_price,
+#cmp_hpp,
+#cmp_price,
+#bundlePrice,
+#bundleVoucher {
+    padding-left: 2.5rem !important; /* Ensure 40px left padding */
+}
+
+/* --- Pre-auth Flash Prevention --- */
+html.app-loading-auth #landingPage {
+    display: none !important;
+}
+
+html.app-loading-auth #mainNav,
+html.app-loading-auth #desktopTabsNav,
+html.app-loading-auth #main-content {
+    display: block !important;
+}
+
+@media (max-width: 767.9px) {
+    html.app-loading-auth #desktopTabsNav {
+        display: none !important;
+    }
+    html.app-loading-auth #mobileModuleNav {
+        display: flex !important;
+    }
+}
+
+
+

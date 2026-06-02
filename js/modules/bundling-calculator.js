@@ -300,8 +300,8 @@ const BundlingCalculator = (function () {
         const btnProfit = document.getElementById('btn-bundle-profit-mode');
         const btnPriceFinder = document.getElementById('btn-bundle-price-finder-mode');
 
-        const activeClass = 'flex-1 py-2 text-xs font-bold rounded-lg bg-purple-500 text-white shadow transition-all';
-        const inactiveClass = 'flex-1 py-2 text-xs font-bold text-slate-500 rounded-lg transition-all hover:bg-slate-200 dark:hover:bg-slate-600';
+        const activeClass = 'flex-1 py-2 text-xs font-bold rounded-md bg-purple-500 text-white shadow transition-all';
+        const inactiveClass = 'flex-1 py-2 text-xs font-bold text-slate-500 rounded-md transition-all hover:bg-slate-200 dark:hover:bg-slate-600';
 
         if (mode === 'profit') {
             profitSection?.classList.remove('hidden');
@@ -843,7 +843,7 @@ const BundlingCalculator = (function () {
         const profitClass = (p.originalProfit || 0) >= 0 ? 'text-emerald-500' : 'text-red-500';
 
         return `
-            <div class="bundle-product-accordion bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 overflow-hidden">
+            <div class="bundle-product-accordion bg-white dark:bg-slate-700 rounded-md border border-slate-200 dark:border-slate-600 overflow-hidden">
                 <!-- Accordion Header (collapsed by default) -->
                 <div class="flex items-center gap-2 p-3 cursor-pointer" onclick="BundlingCalculator.toggleProductAccordion(${p.id})">
                     <button onclick="event.stopPropagation(); BundlingCalculator.removeProduct(${p.id})" 
@@ -871,7 +871,7 @@ const BundlingCalculator = (function () {
                 
                 <!-- Accordion Content (hidden by default) -->
                 <div class="accordion-content hidden px-3 pb-3 pt-0" id="accordion-content-${p.id}">
-                    <div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
+                    <div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-800 rounded-md p-2">
                         <div>
                             <span class="text-slate-400">HPP:</span>
                             <span class="text-slate-700 dark:text-white font-medium">${formatRp(p.hpp)}</span>
@@ -899,7 +899,7 @@ const BundlingCalculator = (function () {
      */
     function renderManualProductRow(p) {
         return `
-            <div class="flex items-center gap-2 p-3 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
+            <div class="flex items-center gap-2 p-3 bg-white dark:bg-slate-700 rounded-md border border-slate-200 dark:border-slate-600">
                 <button onclick="BundlingCalculator.removeProduct(${p.id})" 
                     class="w-6 h-6 flex items-center justify-center text-red-400 hover:text-red-600 rounded transition-colors">
                     <i class="fas fa-times text-xs"></i>
@@ -968,14 +968,14 @@ const BundlingCalculator = (function () {
         // Different styling for mixed vs single category
         if (feeInfo.hasMixedCategories) {
             badgeContainer.innerHTML = `
-                <div class="flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-1.5 rounded-lg mb-2">
+                <div class="flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-1.5 rounded-md mb-2">
                     <i class="fas fa-exclamation-triangle"></i>
                     <span>Kategori campuran → Menggunakan fee tertinggi: <strong>${categoryLabel} (${feeLabel})</strong></span>
                 </div>
             `;
         } else {
             badgeContainer.innerHTML = `
-                <div class="flex items-center gap-1 text-[10px] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-lg mb-2">
+                <div class="flex items-center gap-1 text-[10px] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-md mb-2">
                     <i class="fas fa-tag"></i>
                     <span>Fee ${categoryLabel}: ${feeLabel}</span>
                 </div>
@@ -1209,7 +1209,7 @@ const BundlingCalculator = (function () {
 
             const safeIcon = String(insight.icon || 'info-circle').replace(/[^a-z0-9-]/gi, '');
             return `
-                <div class="p-3 rounded-lg border ${severityClass} mb-2">
+                <div class="p-3 rounded-md border ${severityClass} mb-2">
                     <div class="flex items-start gap-2">
                         <i class="fas fa-${safeIcon} ${iconClass} mt-0.5"></i>
                         <div class="flex-1">
@@ -1238,7 +1238,7 @@ const BundlingCalculator = (function () {
         if (suggestionsContainer && result.suggestedPrices) {
             suggestionsContainer.innerHTML = result.suggestedPrices.map(s => `
                 <button onclick="document.getElementById('bundlePrice').value='${s.price.toLocaleString('id-ID')}'; BundlingCalculator.setCalculatorMode('profit'); BundlingCalculator.calculateAndRender();"
-                    class="px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:border-purple-400 transition-colors">
+                    class="px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md hover:border-purple-400 transition-colors">
                     <div class="text-sm font-bold text-slate-700 dark:text-white">${formatRp(s.price)}</div>
                     <div class="text-[10px] text-slate-400">${safeHtml(s.label)}</div>
                 </button>

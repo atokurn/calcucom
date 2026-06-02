@@ -330,7 +330,7 @@ const HistoryManager = (function () {
             const safeSellingPrice = safeHtml(h.sellingPrice);
             return `
                 <div onclick="HistoryManager.openDetail('${safeId}')"
-                    class="bg-white dark:bg-slate-700 p-3 rounded-lg border border-slate-200 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500 transition-colors cursor-pointer relative group"
+                    class="bg-white dark:bg-slate-700 p-3 rounded-md border border-slate-200 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500 transition-colors cursor-pointer relative group"
                     role="button" tabindex="0" aria-label="Lihat detail ${safeName}">
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex items-center gap-2">

@@ -1074,7 +1074,7 @@
                 <!-- Logo - Compact on Mobile -->
                 <div class="flex items-center gap-2">
                     <div
-                        class="bg-gradient-to-br from-orange-500 to-red-500 text-white p-1.5 sm:p-2 rounded-lg shadow-md">
+                        class="bg-gradient-to-br from-orange-500 to-red-500 text-white p-1.5 sm:p-2 rounded-md shadow-md">
                         <i class="fas fa-calculator text-sm sm:text-base"></i>
                     </div>
                     <div>
@@ -1091,7 +1091,7 @@
                 <div class="flex gap-1 sm:gap-2 items-center">
                     <!-- Simpan Skenario Button - Icon only on mobile -->
                     <button onclick="saveScenarioA()" id="btnSaveScenario"
-                        class="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-all shadow-sm"
+                        class="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md hover:bg-slate-50 dark:hover:bg-slate-600 transition-all shadow-sm"
                         title="Simpan Skenario A">
                         <i class="far fa-bookmark"></i>
                         <span class="hidden sm:inline">Simpan A</span>
@@ -1099,7 +1099,7 @@
 
                     <!-- Bandingkan Button - Icon only on mobile -->
                     <button onclick="compareScenarios()" id="btnCompare" disabled
-                        class="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-600 rounded-md hover:from-indigo-600 hover:to-purple-700 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Bandingkan A vs B">
                         <i class="fas fa-columns"></i>
                         <span class="hidden sm:inline">A vs B</span>
@@ -1107,7 +1107,7 @@
 
                     <!-- Theme Toggle -->
                     <button onclick="toggleTheme()"
-                        class="p-1.5 sm:p-2 rounded-lg text-slate-500 dark:text-yellow-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                        class="p-1.5 sm:p-2 rounded-md text-slate-500 dark:text-yellow-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                         title="Toggle Theme">
                         <i class="fas fa-moon dark:hidden"></i>
                         <i class="fas fa-sun hidden dark:block"></i>
@@ -1169,22 +1169,22 @@
                         Marketplace</label>
                     <div class="grid grid-cols-4 gap-2">
                         <button onclick="setPlatform('shopee')" id="btn-shopee"
-                            class="platform-btn active transition-all duration-200 border border-transparent bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 p-2 rounded-lg flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400">
+                            class="platform-btn active transition-all duration-200 border border-transparent bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 p-2 rounded-md flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400">
                             <i class="fas fa-shopping-bag text-lg text-[#EE4D2D]"></i>
                             <span class="text-xs font-bold dark:text-slate-200">Shopee</span>
                         </button>
                         <button onclick="setPlatform('tokopedia')" id="btn-tokopedia"
-                            class="platform-btn transition-all duration-200 border border-transparent bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 p-2 rounded-lg flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400">
+                            class="platform-btn transition-all duration-200 border border-transparent bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 p-2 rounded-md flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400">
                             <i class="fas fa-store text-lg text-[#03AC0E]"></i>
                             <span class="text-xs font-bold dark:text-slate-200">Tokopedia</span>
                         </button>
                         <button onclick="setPlatform('tiktok')" id="btn-tiktok"
-                            class="platform-btn transition-all duration-200 border border-transparent bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 p-2 rounded-lg flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400">
+                            class="platform-btn transition-all duration-200 border border-transparent bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 p-2 rounded-md flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400">
                             <i class="fab fa-tiktok text-lg text-black dark:text-white"></i>
                             <span class="text-xs font-bold dark:text-slate-200">TikTok</span>
                         </button>
                         <button onclick="setPlatform('lazada')" id="btn-lazada"
-                            class="platform-btn transition-all duration-200 border border-transparent bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 p-2 rounded-lg flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400">
+                            class="platform-btn transition-all duration-200 border border-transparent bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 p-2 rounded-md flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400">
                             <i class="fas fa-heart text-lg text-[#10156F] dark:text-blue-400"></i>
                             <span class="text-xs font-bold dark:text-slate-200">Lazada</span>
                         </button>
@@ -1208,7 +1208,7 @@
                             </h3>
 
                             <!-- Input Mode Switcher -->
-                            <div class="flex bg-slate-200 dark:bg-slate-600 rounded-lg p-1 gap-1">
+                            <div class="flex bg-slate-200 dark:bg-slate-600 rounded-md p-1 gap-1">
                                 <button onclick="switchInputMode('single')" id="btnInputSingle"
                                     class="px-3 py-1 text-xs font-bold rounded-md bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm transition-all"
                                     data-i18n="single">Satuan</button>
@@ -1225,7 +1225,7 @@
                             <div id="modeSingleContent" class="p-6 space-y-5">
                                 <!-- Reverse Mode Info -->
                                 <div id="reverseInfo"
-                                    class="hidden bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg text-xs text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800 mb-2">
+                                    class="hidden bg-blue-50 dark:bg-blue-900/30 p-3 rounded-md text-xs text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800 mb-2">
                                     <i class="fas fa-info-circle mr-1"></i> Masukkan <strong
                                         data-i18n="modal">Modal</strong> dan
                                     <strong data-i18n="targetProfit">Target Profit</strong>. Aplikasi akan menghitung
@@ -1240,7 +1240,7 @@
                                             Produk /
                                             SKU</label>
                                         <input type="text" id="singleName"
-                                            class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-600 text-slate-800 dark:text-white transition-colors"
+                                            class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-600 text-slate-800 dark:text-white transition-colors"
                                             placeholder="Contoh: Kemeja Pria">
                                     </div>
                                     <div>
@@ -1255,7 +1255,7 @@
                                             <input type="text" id="hpp"
                                                 oninput="formatInputWithSeparator(this); calculate()"
                                                 inputmode="numeric"
-                                                class="w-full pl-10 p-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg font-semibold text-slate-700 dark:text-white bg-white dark:bg-slate-700"
+                                                class="w-full pl-10 p-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-md font-semibold text-slate-700 dark:text-white bg-white dark:bg-slate-700"
                                                 placeholder="50.000">
                                         </div>
                                     </div>
@@ -1275,7 +1275,7 @@
                                             <input type="text" id="originalPrice"
                                                 oninput="formatInputWithSeparator(this); calculate()"
                                                 inputmode="numeric"
-                                                class="w-full pl-10 p-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-white"
+                                                class="w-full pl-10 p-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-slate-700 dark:text-white"
                                                 placeholder="100.000">
                                         </div>
                                     </div>
@@ -1296,7 +1296,7 @@
                                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-blue-400 text-sm hidden"
                                                 id="revRpLabel">Rp</div>
                                             <input type="number" id="targetMarginInput" oninput="calculate()"
-                                                class="w-full p-2.5 text-sm border-2 border-blue-100 rounded-lg text-center font-bold text-blue-600"
+                                                class="w-full p-2.5 text-sm border-2 border-blue-100 rounded-md text-center font-bold text-blue-600"
                                                 placeholder="20">
                                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-blue-400 text-sm"
                                                 id="revPctLabel">%</div>
@@ -1309,10 +1309,10 @@
                                             Toko (%)</label>
                                         <div class="flex gap-2">
                                             <input type="number" id="discountPercent" oninput="calculate()"
-                                                class="w-20 p-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg text-center bg-white dark:bg-slate-700 text-slate-700 dark:text-white"
+                                                class="w-20 p-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-md text-center bg-white dark:bg-slate-700 text-slate-700 dark:text-white"
                                                 placeholder="0">
                                             <div
-                                                class="flex-1 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg flex items-center justify-center px-3 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                                class="flex-1 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-md flex items-center justify-center px-3 text-sm font-semibold text-slate-700 dark:text-slate-300">
                                                 Final: <span id="finalPriceDisplay" class="ml-1">Rp 0</span>
                                             </div>
                                         </div>
@@ -1321,7 +1321,7 @@
 
                                 <!-- Voucher Toko -->
                                 <div
-                                    class="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg border border-yellow-100 dark:border-yellow-800">
+                                    class="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-md border border-yellow-100 dark:border-yellow-800">
                                     <label class="block text-xs font-bold text-yellow-800 dark:text-yellow-500 mb-1"
                                         data-i18n="sellerVoucher">Voucher
                                         Toko Ditanggung
@@ -1332,7 +1332,7 @@
                                                 class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
                                                 Rp</div>
                                             <input type="number" id="voucherAmount" oninput="calculate()"
-                                                class="w-full pl-10 p-2 text-sm border border-yellow-200 dark:border-yellow-700 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-slate-800 text-slate-700 dark:text-white"
+                                                class="w-full pl-10 p-2 text-sm border border-yellow-200 dark:border-yellow-700 rounded-md focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-slate-800 text-slate-700 dark:text-white"
                                                 placeholder="0">
                                         </div>
                                         <div class="text-[10px] text-yellow-700 dark:text-yellow-600 w-1/2 leading-tight"
@@ -1385,7 +1385,7 @@
                                     class="p-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex justify-between items-center">
                                     <div class="flex items-center gap-3">
                                         <button onclick="addBulkRow()"
-                                            class="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors shadow-sm">
+                                            class="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-md font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors shadow-sm">
                                             <i class="fas fa-plus mr-1 text-slate-400"></i> <span
                                                 data-i18n="addRow">Tambah
                                                 Baris</span>
@@ -1421,7 +1421,7 @@
                                     data-i18n="sellerType">Tipe
                                     Penjual</label>
                                 <select id="sellerType" onchange="recalcAfterCategoryChange()"
-                                    class="w-full p-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white">
+                                    class="w-full p-2 text-sm border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white">
                                     <option value="nonstar" data-i18n="nonstar">Non-Star (Regular)</option>
                                     <option value="star" data-i18n="star">Star Seller / Star+</option>
                                     <option value="mall" data-i18n="mall">Shopee Mall</option>
@@ -1443,7 +1443,7 @@
                                 <div id="catSelectorSingle">
                                     <div class="relative">
                                         <button onclick="openSingleCategoryModal()"
-                                            class="w-full bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-700 hover:border-orange-400 text-left px-4 py-3 rounded-lg flex justify-between items-center shadow-sm transition-all group">
+                                            class="w-full bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-700 hover:border-orange-400 text-left px-4 py-3 rounded-md flex justify-between items-center shadow-sm transition-all group">
                                             <div class="flex-1 overflow-hidden">
                                                 <div class="flex items-center gap-2">
                                                     <div id="selectedCategoryText"
@@ -1655,7 +1655,7 @@
                                 <div class="flex justify-between items-center mb-6">
                                     <h3 class="font-bold text-slate-800" data-i18n="profitSummary">Ringkasan Profit</h3>
                                     <button onclick="exportData()"
-                                        class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1 rounded-lg transition-colors">
+                                        class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1 rounded-md transition-colors">
                                         <i class="fas fa-file-export mr-1"></i> <span data-i18n="export">Export</span>
                                     </button>
                                 </div>
@@ -1725,7 +1725,7 @@
                                             <i
                                                 class="far fa-question-circle text-slate-400 cursor-help text-[10px]"></i>
                                             <div
-                                                class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-56 bg-white border border-slate-200 shadow-xl rounded-lg p-3 z-50 text-[10px] text-slate-600">
+                                                class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-56 bg-white border border-slate-200 shadow-xl rounded-md p-3 z-50 text-[10px] text-slate-600">
                                                 <div class="font-bold mb-2 text-slate-800 border-b pb-1"
                                                     data-i18n="operationalModalDetails">Rincian Modal
                                                     Operasional</div>
@@ -1755,7 +1755,7 @@
                                         POTONGAN</p>
 
                                     <div
-                                        class="bg-white dark:bg-slate-800 rounded-lg p-3 border border-purple-200 dark:border-purple-900 shadow-sm ring-1 ring-purple-100 dark:ring-purple-900/50 relative transition-colors duration-300">
+                                        class="bg-white dark:bg-slate-800 rounded-md p-3 border border-purple-200 dark:border-purple-900 shadow-sm ring-1 ring-purple-100 dark:ring-purple-900/50 relative transition-colors duration-300">
 
                                         <!-- Biaya Admin -->
                                         <div class="flex justify-between items-center text-xs mb-2 relative">
@@ -1784,7 +1784,7 @@
                                                     <i
                                                         class="far fa-question-circle text-slate-400 cursor-help text-[10px]"></i>
                                                     <div
-                                                        class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-64 bg-white border border-slate-200 shadow-xl rounded-lg p-3 z-50 text-[10px] text-slate-600">
+                                                        class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-64 bg-white border border-slate-200 shadow-xl rounded-md p-3 z-50 text-[10px] text-slate-600">
                                                         <div class="font-bold mb-2 text-slate-800 border-b pb-1"
                                                             data-i18n="serviceFeeDetails">Rincian
                                                             Biaya Layanan</div>
@@ -1839,7 +1839,7 @@
 
                                 <!-- Indikator Warna pada Net Cash -->
                                 <div id="netIncomeCard"
-                                    class="bg-emerald-50 border border-emerald-100 p-3 rounded-lg mt-2 transition-colors duration-300">
+                                    class="bg-emerald-50 border border-emerald-100 p-3 rounded-md mt-2 transition-colors duration-300">
                                     <div class="flex justify-between items-center font-bold">
                                         <span class="text-emerald-800" id="netIncomeLabel"
                                             data-i18n="netCashReceived">Net
@@ -1871,10 +1871,10 @@
                                         Penjualan / Bulan</label>
                                     <input type="number" id="monthlySalesInput" oninput="calculateMonthlyProjection()"
                                         placeholder="Contoh: 100"
-                                        class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
+                                        class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
                                 </div>
                                 <div class="grid grid-cols-3 gap-3">
-                                    <div class="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg text-center">
+                                    <div class="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-md text-center">
                                         <div class="text-[10px] text-slate-400 uppercase tracking-wider mb-1">
                                             Omzet/Bulan
                                         </div>
@@ -1883,13 +1883,13 @@
                                             0
                                         </div>
                                     </div>
-                                    <div class="bg-emerald-50 dark:bg-emerald-900/30 p-3 rounded-lg text-center">
+                                    <div class="bg-emerald-50 dark:bg-emerald-900/30 p-3 rounded-md text-center">
                                         <div class="text-[10px] text-emerald-600 uppercase tracking-wider mb-1">
                                             Profit/Bulan
                                         </div>
                                         <div class="text-sm font-bold text-emerald-600" id="monthlyProfit">Rp 0</div>
                                     </div>
-                                    <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg text-center">
+                                    <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-md text-center">
                                         <div class="text-[10px] text-blue-600 uppercase tracking-wider mb-1">Profit/Hari
                                         </div>
                                         <div class="text-sm font-bold text-blue-600" id="dailyProfit">Rp 0</div>
@@ -1913,7 +1913,7 @@
                     <div class="flex items-center gap-2">
                         <!-- Sort Dropdown -->
                         <select id="historySortSelect" onchange="renderHistory()"
-                            class="text-xs px-2 py-1 border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                            class="text-xs px-2 py-1 border border-slate-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                             <option value="newest">Terbaru</option>
                             <option value="oldest">Terlama</option>
                             <option value="profit-high">Profit ↓</option>
@@ -1924,7 +1924,7 @@
                             <option value="name-za">Nama Z-A</option>
                         </select>
                         <button onclick="clearHistory()"
-                            class="text-xs font-medium px-2 py-1 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"
+                            class="text-xs font-medium px-2 py-1 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"
                             title="Hapus semua riwayat">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -1959,7 +1959,7 @@
                             <div class="relative">
                                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">Rp</span>
                                 <input type="number" id="pf_hpp" oninput="calculateOptimalPrice()" placeholder="50000"
-                                    class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
+                                    class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
                             </div>
                         </div>
 
@@ -1968,16 +1968,16 @@
                                 class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Target</label>
                             <div class="flex gap-2 mb-2">
                                 <button onclick="setPriceFinderTarget('margin')" id="pf_btn_margin"
-                                    class="flex-1 py-2 text-xs font-bold rounded-lg bg-orange-500 text-white">Target
+                                    class="flex-1 py-2 text-xs font-bold rounded-md bg-orange-500 text-white">Target
                                     Margin (%)</button>
                                 <button onclick="setPriceFinderTarget('profit')" id="pf_btn_profit"
-                                    class="flex-1 py-2 text-xs font-bold rounded-lg bg-slate-100 dark:bg-slate-600 text-slate-600 dark:text-slate-300">Target
+                                    class="flex-1 py-2 text-xs font-bold rounded-md bg-slate-100 dark:bg-slate-600 text-slate-600 dark:text-slate-300">Target
                                     Profit (Rp)</button>
                             </div>
                             <div id="pf_margin_input">
                                 <input type="number" id="pf_target_margin" oninput="calculateOptimalPrice()"
                                     placeholder="20"
-                                    class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium text-center"
+                                    class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium text-center"
                                     value="20">
                             </div>
                             <div id="pf_profit_input" class="hidden">
@@ -1986,7 +1986,7 @@
                                         class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">Rp</span>
                                     <input type="number" id="pf_target_profit" oninput="calculateOptimalPrice()"
                                         placeholder="20000"
-                                        class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
+                                        class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
                                 </div>
                             </div>
                         </div>
@@ -1997,7 +1997,7 @@
                                 (%)</label>
                             <input type="number" id="pf_discount" oninput="calculateOptimalPrice()" placeholder="0"
                                 value="0"
-                                class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium text-center">
+                                class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium text-center">
                         </div>
 
                         <!-- Fee Configuration Card with Simple/Advanced Toggle -->
@@ -2009,7 +2009,7 @@
                                     class="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                                     <i class="fas fa-sliders-h text-orange-500"></i> Konfigurasi Potongan
                                 </h4>
-                                <div class="flex bg-slate-200 dark:bg-slate-700 rounded-lg p-0.5 gap-0.5">
+                                <div class="flex bg-slate-200 dark:bg-slate-700 rounded-md p-0.5 gap-0.5">
                                     <button onclick="setPfConfigMode('simple')" id="pf_mode_simple"
                                         class="px-3 py-1 text-[10px] font-bold rounded bg-white dark:bg-slate-600 text-slate-700 dark:text-white shadow-sm transition-all">
                                         Sederhana
@@ -2024,13 +2024,13 @@
                             <!-- Simple Mode -->
                             <div id="pf_simple_config">
                                 <div
-                                    class="bg-white dark:bg-slate-700 p-3 rounded-lg border border-slate-200 dark:border-slate-600">
+                                    class="bg-white dark:bg-slate-700 p-3 rounded-md border border-slate-200 dark:border-slate-600">
                                     <label
                                         class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">Total
                                         Fee Marketplace (%)</label>
                                     <input type="number" id="pf_total_fee_simple" oninput="calculateOptimalPrice()"
                                         placeholder="12" value="12"
-                                        class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-white font-bold text-center text-lg">
+                                        class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-white font-bold text-center text-lg">
                                     <p class="text-[10px] text-slate-400 mt-2 text-center">Masukkan total potongan
                                         marketplace (Admin + Layanan + Affiliate)</p>
                                 </div>
@@ -2040,12 +2040,12 @@
                             <div id="pf_advanced_config" class="hidden space-y-4">
                                 <!-- Seller Type -->
                                 <div
-                                    class="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border border-purple-100 dark:border-purple-800">
+                                    class="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-md border border-purple-100 dark:border-purple-800">
                                     <label
                                         class="block text-xs font-bold text-purple-800 dark:text-purple-400 mb-2">Tipe
                                         Penjual</label>
                                     <select id="pf_sellerType" onchange="calculateOptimalPrice()"
-                                        class="w-full p-2 text-sm border border-purple-200 dark:border-purple-700 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-white">
+                                        class="w-full p-2 text-sm border border-purple-200 dark:border-purple-700 rounded-md bg-white dark:bg-slate-800 text-slate-700 dark:text-white">
                                         <option value="nonstar">Non-Star (Regular)</option>
                                         <option value="star">Star Seller / Star+</option>
                                         <option value="mall">Shopee Mall</option>
@@ -2054,11 +2054,11 @@
 
                                 <!-- Category Selector -->
                                 <div
-                                    class="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg border border-orange-100 dark:border-orange-800">
+                                    class="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-md border border-orange-100 dark:border-orange-800">
                                     <label class="block text-xs font-bold text-orange-800 dark:text-orange-400 mb-2">1.
                                         Kategori Produk</label>
                                     <button onclick="openSingleCategoryModal()"
-                                        class="w-full bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-700 hover:border-orange-400 text-left px-3 py-2 rounded-lg flex justify-between items-center transition-all group">
+                                        class="w-full bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-700 hover:border-orange-400 text-left px-3 py-2 rounded-md flex justify-between items-center transition-all group">
                                         <div class="flex-1 overflow-hidden">
                                             <div class="flex items-center gap-2">
                                                 <div id="pf_selectedCategoryText"
@@ -2078,7 +2078,7 @@
 
                                 <!-- Program Toggles -->
                                 <div
-                                    class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-100 dark:border-blue-800">
+                                    class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md border border-blue-100 dark:border-blue-800">
                                     <label class="block text-xs font-bold text-blue-800 dark:text-blue-400 mb-2">2.
                                         Program & Layanan</label>
                                     <div class="space-y-2">
@@ -2199,7 +2199,7 @@
                                 </div>
 
                                 <!-- Total Fee Display -->
-                                <div class="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-lg text-center">
+                                <div class="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-md text-center">
                                     <span class="text-xs text-orange-700 dark:text-orange-400 font-medium">Total Fee:
                                         <span id="pf_total_fee_display" class="font-bold">0%</span></span>
                                 </div>
@@ -2227,18 +2227,18 @@
 
                     <!-- Profit & Margin -->
                     <div class="grid grid-cols-2 gap-3 mb-4">
-                        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                        <div class="bg-white/10 backdrop-blur-sm rounded-md p-3">
                             <div class="text-xs opacity-70">Profit per Item</div>
                             <div class="text-lg font-bold" id="pf_result_profit">Rp 0</div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                        <div class="bg-white/10 backdrop-blur-sm rounded-md p-3">
                             <div class="text-xs opacity-70">Margin Aktual</div>
                             <div class="text-lg font-bold" id="pf_result_margin">0%</div>
                         </div>
                     </div>
 
                     <!-- Fee Breakdown -->
-                    <div class="bg-white/5 backdrop-blur-sm rounded-lg p-3 text-sm">
+                    <div class="bg-white/5 backdrop-blur-sm rounded-md p-3 text-sm">
                         <div class="text-xs font-bold opacity-70 mb-2 uppercase">Rincian Potongan</div>
                         <div class="space-y-1">
                             <div class="flex justify-between">
@@ -2275,7 +2275,7 @@
                             <i class="fas fa-chart-pie text-purple-500"></i> ROAS Break-even
                         </h2>
                         <!-- Mode Toggle -->
-                        <div class="flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1 gap-1">
+                        <div class="flex bg-slate-100 dark:bg-slate-700 rounded-md p-1 gap-1">
                             <button onclick="switchROASMode('auto')" id="btn-roas-auto"
                                 class="px-3 py-1 text-xs font-bold rounded-md bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 shadow-sm transition-all">
                                 Otomatis
@@ -2328,21 +2328,21 @@
                                 <span id="roas_card_name" class="font-bold text-slate-800 dark:text-white"></span>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-xs">
-                                <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                                <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                                     <div class="text-slate-400 dark:text-slate-300">HPP</div>
                                     <div id="roas_card_hpp" class="font-bold text-slate-700 dark:text-white">-</div>
                                 </div>
-                                <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                                <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                                     <div class="text-slate-400 dark:text-slate-300">Harga Jual</div>
                                     <div id="roas_card_price" class="font-bold text-slate-700 dark:text-white">-</div>
                                 </div>
-                                <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                                <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                                     <div class="text-slate-400 dark:text-slate-300">Profit</div>
                                     <div id="roas_card_profit" class="font-bold text-emerald-600 dark:text-emerald-400">
                                         -
                                     </div>
                                 </div>
-                                <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                                <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                                     <div class="text-slate-400 dark:text-slate-300">Margin</div>
                                     <div id="roas_card_margin" class="font-bold text-blue-600 dark:text-blue-400">-
                                     </div>
@@ -2403,7 +2403,7 @@
                                         class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">Rp</span>
                                     <input type="number" id="roas_hpp" oninput="calculateROASBreakeven()"
                                         placeholder="50000"
-                                        class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
+                                        class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
                                 </div>
                             </div>
                             <div>
@@ -2414,7 +2414,7 @@
                                         class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">Rp</span>
                                     <input type="number" id="roas_price" oninput="calculateROASBreakeven()"
                                         placeholder="100000"
-                                        class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
+                                        class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
                                 </div>
                             </div>
                             <div>
@@ -2423,7 +2423,7 @@
                                     Marketplace (%)</label>
                                 <input type="number" id="roas_fee" oninput="calculateROASBreakeven()" placeholder="12"
                                     value="12"
-                                    class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium text-center">
+                                    class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium text-center">
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
@@ -2432,7 +2432,7 @@
                                         Rate (%)</label>
                                     <input type="number" id="roas_cr" oninput="calculateROASBreakeven()" placeholder="2"
                                         value="2" step="0.1"
-                                        class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium text-center">
+                                        class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium text-center">
                                 </div>
                                 <div>
                                     <label
@@ -2440,7 +2440,7 @@
                                         Margin (%)</label>
                                     <input type="number" id="roas_target_margin" oninput="calculateROASBreakeven()"
                                         placeholder="15" value="15" step="1"
-                                        class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium text-center">
+                                        class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium text-center">
                                 </div>
                             </div>
                             <div>
@@ -2452,7 +2452,7 @@
                                         class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">Rp</span>
                                     <input type="number" id="roas_ad_cost" oninput="calculateROASBreakeven()"
                                         placeholder="0"
-                                        class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
+                                        class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
                                 </div>
                                 <p class="text-[10px] text-slate-400 mt-1">Optional: Untuk menghitung profit setelah
                                     iklan
@@ -2472,11 +2472,11 @@
                             <div class="text-sm opacity-80 mt-1">Minimum ROAS agar impas</div>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
-                            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+                            <div class="bg-white/10 backdrop-blur-sm rounded-md p-3 text-center">
                                 <div class="text-xs opacity-70">ACOS Max</div>
                                 <div class="text-lg font-bold" id="roas_result_acos">0%</div>
                             </div>
-                            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+                            <div class="bg-white/10 backdrop-blur-sm rounded-md p-3 text-center">
                                 <div class="text-xs opacity-70">Net Profit/Item</div>
                                 <div class="text-lg font-bold" id="roas_result_profit">Rp 0</div>
                             </div>
@@ -2504,7 +2504,7 @@
                                 <i class="fas fa-chart-line"></i> Analisa Kesehatan Iklan
                             </h3>
                             <!-- TABS -->
-                            <div class="flex bg-indigo-100 dark:bg-indigo-900/50 rounded-lg p-1 gap-1">
+                            <div class="flex bg-indigo-100 dark:bg-indigo-900/50 rounded-md p-1 gap-1">
                                 <button onclick="switchAdsMode('unit')" id="btn-mode-unit"
                                     class="tab-btn rounded px-3 py-1 text-[10px] font-bold bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-300 shadow-sm transition-all"
                                     data-i18n="perUnit">Per Unit</button>
@@ -2533,7 +2533,7 @@
                                     </div>
                                 </div>
                                 <div id="targetProfitContent"
-                                    class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-100 dark:border-blue-800 mb-4">
+                                    class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md border border-blue-100 dark:border-blue-800 mb-4">
                                     <div class="flex items-center gap-2 mb-2">
                                         <div class="relative w-24">
                                             <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-blue-400 text-xs hidden"
@@ -2567,12 +2567,12 @@
                                                 Rp</div>
                                             <input type="number" id="cpc"
                                                 oninput="updateSlider('cpc', this.value); calculateROASBreakeven()"
-                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 dark:border-indigo-800 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-white"
+                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 dark:border-indigo-800 rounded-md bg-white dark:bg-slate-700 text-slate-700 dark:text-white"
                                                 placeholder="0">
                                         </div>
                                         <input type="range" id="cpcSlider" min="0" max="10000" step="50" value="0"
                                             oninput="updateInput('cpc', this.value); calculateROASBreakeven()"
-                                            class="w-full mt-2 h-1 bg-indigo-100 dark:bg-indigo-900 rounded-lg appearance-none cursor-pointer">
+                                            class="w-full mt-2 h-1 bg-indigo-100 dark:bg-indigo-900 rounded-md appearance-none cursor-pointer">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1"
@@ -2580,7 +2580,7 @@
                                         <div class="relative">
                                             <input type="number" id="cr" step="0.1"
                                                 oninput="updateSlider('cr', this.value); calculateROASBreakeven()"
-                                                class="w-full pr-7 p-2 text-sm border border-indigo-200 dark:border-indigo-800 rounded-lg text-right bg-white dark:bg-slate-700 text-slate-700 dark:text-white"
+                                                class="w-full pr-7 p-2 text-sm border border-indigo-200 dark:border-indigo-800 rounded-md text-right bg-white dark:bg-slate-700 text-slate-700 dark:text-white"
                                                 placeholder="2.0">
                                             <div
                                                 class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 text-xs">
@@ -2588,7 +2588,7 @@
                                         </div>
                                         <input type="range" id="crSlider" min="0" max="10" step="0.1" value="2.0"
                                             oninput="updateInput('cr', this.value); calculateROASBreakeven()"
-                                            class="w-full mt-2 h-1 bg-indigo-100 dark:bg-indigo-900 rounded-lg appearance-none cursor-pointer">
+                                            class="w-full mt-2 h-1 bg-indigo-100 dark:bg-indigo-900 rounded-md appearance-none cursor-pointer">
                                     </div>
                                 </div>
                             </div>
@@ -2606,7 +2606,7 @@
                                             <input type="text" id="dashAdSpend"
                                                 oninput="formatInputWithSeparator(this); calcDashboard()"
                                                 inputmode="numeric"
-                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 dark:border-indigo-800 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-white">
+                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 dark:border-indigo-800 rounded-md bg-white dark:bg-slate-700 text-slate-700 dark:text-white">
                                         </div>
                                     </div>
                                     <div>
@@ -2619,7 +2619,7 @@
                                             <input type="text" id="dashSales"
                                                 oninput="formatInputWithSeparator(this); calcDashboard()"
                                                 inputmode="numeric"
-                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 dark:border-indigo-800 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-white">
+                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 dark:border-indigo-800 rounded-md bg-white dark:bg-slate-700 text-slate-700 dark:text-white">
                                         </div>
                                     </div>
                                 </div>
@@ -2630,7 +2630,7 @@
                                         <input type="text" id="dashClicks"
                                             oninput="formatInputWithSeparator(this); calcDashboard()"
                                             inputmode="numeric"
-                                            class="w-full p-2 text-sm border border-indigo-200 dark:border-indigo-800 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-white"
+                                            class="w-full p-2 text-sm border border-indigo-200 dark:border-indigo-800 rounded-md bg-white dark:bg-slate-700 text-slate-700 dark:text-white"
                                             placeholder="Untuk hitung CPC">
                                     </div>
                                 </div>
@@ -2638,7 +2638,7 @@
 
                             <!-- Analytical Results -->
                             <div
-                                class="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
+                                class="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-700/50 p-3 rounded-md border border-slate-100 dark:border-slate-700">
                                 <div>
                                     <p class="text-[10px] text-slate-500 dark:text-slate-400"
                                         data-i18n="adsCostPerSales">Biaya Iklan/Sales (CPO)</p>
@@ -2666,7 +2666,7 @@
 
                             <!-- Status & Recommendation Box -->
                             <div id="adsAnalysisBox"
-                                class="bg-gray-100 dark:bg-slate-700 p-3 rounded-lg border border-gray-200 dark:border-slate-600 text-center transition-colors duration-300">
+                                class="bg-gray-100 dark:bg-slate-700 p-3 rounded-md border border-gray-200 dark:border-slate-600 text-center transition-colors duration-300">
                                 <span id="adsStatusBadge"
                                     class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-gray-200 dark:bg-slate-600 text-gray-500 dark:text-slate-400 mb-2"
                                     data-i18n="noData">BELUM ADA DATA</span>
@@ -2723,7 +2723,7 @@
                 <div class="mb-4 flex items-center gap-3">
                     <label class="text-xs font-medium text-slate-500 dark:text-slate-400">Urutkan:</label>
                     <select id="cmpSortBy" onchange="renderComparisonCards()"
-                        class="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white">
+                        class="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white">
                         <option value="profit_desc">Profit Tertinggi</option>
                         <option value="profit_asc">Profit Terendah</option>
                         <option value="margin_desc">Margin Tertinggi</option>
@@ -2742,16 +2742,16 @@
                         <span id="cmp_card_name" class="font-bold text-slate-800 dark:text-white"></span>
                     </div>
                     <div class="grid grid-cols-3 gap-2 text-xs">
-                        <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                        <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                             <div class="text-slate-400 dark:text-slate-300">HPP</div>
                             <div id="cmp_card_hpp" class="font-bold text-slate-700 dark:text-white">-</div>
                         </div>
-                        <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                        <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                             <div class="text-slate-400 dark:text-slate-300">Profit</div>
                             <div id="cmp_card_profit" class="font-bold text-emerald-600 dark:text-emerald-400">-
                             </div>
                         </div>
-                        <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
+                        <div class="bg-white dark:bg-slate-600 rounded-md p-2">
                             <div class="text-slate-400 dark:text-slate-300">Margin</div>
                             <div id="cmp_card_margin" class="font-bold text-blue-600 dark:text-blue-400">-</div>
                         </div>
@@ -2764,7 +2764,7 @@
                         <div class="relative">
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">Rp</span>
                             <input type="number" id="cmp_hpp" oninput="compareMarketplaceFull()" placeholder="50000"
-                                class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
+                                class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
                         </div>
                     </div>
                     <div>
@@ -2773,14 +2773,14 @@
                         <div class="relative">
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">Rp</span>
                             <input type="number" id="cmp_price" oninput="compareMarketplaceFull()" placeholder="100000"
-                                class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
+                                class="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Kategori
                             Fee</label>
                         <select id="cmp_category" onchange="compareMarketplaceFull()"
-                            class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
+                            class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white font-medium">
                             <option value="A">Kategori A (8%)</option>
                             <option value="B">Kategori B (7.5%)</option>
                             <option value="C">Kategori C (5.75%)</option>
@@ -2821,7 +2821,7 @@
                                 <i class="fas fa-upload"></i>
                             </button>
                             <button onclick="openAddProductModal()"
-                                class="text-xs font-bold px-3 py-1 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors">
+                                class="text-xs font-bold px-3 py-1 bg-cyan-500 text-white rounded-md hover:bg-cyan-600 transition-colors">
                                 <i class="fas fa-plus mr-1"></i> Tambah
                             </button>
                         </div>
@@ -2886,7 +2886,7 @@
         </div>
         <!-- Mobile Save Button -->
         <button onclick="saveCurrentProduct()"
-            class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+            class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-md transition-colors flex items-center gap-2">
             <i class="fas fa-save"></i>
             <span class="text-xs font-medium">Simpan</span>
         </button>
@@ -2998,7 +2998,7 @@
                     </div>
                     <!-- Insight -->
                     <div id="compareInsight"
-                        class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg text-center text-sm text-blue-800 dark:text-blue-300 font-medium">
+                        class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-md text-center text-sm text-blue-800 dark:text-blue-300 font-medium">
                     </div>
                 </div>
             </div>
@@ -3010,7 +3010,7 @@
         <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeCategoryModal()"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4">
             <div
-                class="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-5xl h-[600px] flex flex-col overflow-hidden transition-colors duration-300">
+                class="bg-white dark:bg-slate-800 rounded-md shadow-xl w-full max-w-5xl h-[600px] flex flex-col overflow-hidden transition-colors duration-300">
                 <div
                     class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                     <h3 class="font-bold text-lg text-slate-800 dark:text-white" data-i18n="selectProductCategory">Pilih
@@ -3809,18 +3809,18 @@
                         <!-- Details Grid -->
                         <div class="p-4 space-y-3">
                             <div class="grid grid-cols-2 gap-2 text-xs">
-                                <div class="bg-slate-50 dark:bg-slate-700/50 p-2 rounded-lg">
+                                <div class="bg-slate-50 dark:bg-slate-700/50 p-2 rounded-md">
                                     <div class="text-slate-400 text-[10px]">Harga Jual</div>
                                     <div class="font-bold text-slate-700 dark:text-white">${formatRupiah(sellingPrice)}</div>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-700/50 p-2 rounded-lg">
+                                <div class="bg-slate-50 dark:bg-slate-700/50 p-2 rounded-md">
                                     <div class="text-slate-400 text-[10px]">HPP</div>
                                     <div class="font-bold text-slate-700 dark:text-white">${formatRupiah(hpp)}</div>
                                 </div>
                             </div>
 
                             <!-- Fee Breakdown -->
-                            <div class="bg-slate-50 dark:bg-slate-700/50 p-2 rounded-lg text-xs">
+                            <div class="bg-slate-50 dark:bg-slate-700/50 p-2 rounded-md text-xs">
                                 <div class="text-slate-400 text-[10px] mb-1">Fee Breakdown</div>
                                 <div class="space-y-1">
                                     <div class="flex justify-between"><span class="text-slate-500">Admin</span><span class="font-medium">${formatRupiah(adminFee)}</span></div>
@@ -3835,11 +3835,11 @@
 
                             <!-- Bottom Stats -->
                             <div class="grid grid-cols-2 gap-2 text-xs">
-                                <div class="bg-purple-50 dark:bg-purple-900/20 p-2 rounded-lg text-center">
+                                <div class="bg-purple-50 dark:bg-purple-900/20 p-2 rounded-md text-center">
                                     <div class="text-purple-400 text-[10px]">ROAS BE</div>
                                     <div class="font-black text-purple-600 dark:text-purple-400">${roasBE}x</div>
                                 </div>
-                                <div class="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg text-center">
+                                <div class="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-md text-center">
                                     <div class="text-blue-400 text-[10px]">Net Cash</div>
                                     <div class="font-bold text-blue-600 dark:text-blue-400">${formatRupiah(netCash)}</div>
                                 </div>
@@ -4548,19 +4548,19 @@
 
             let html = `
                 <div class="grid grid-cols-4 gap-3 mb-6">
-                    <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg text-center">
+                    <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-md text-center">
                         <div class="text-xs text-blue-600 mb-1">Total Omzet</div>
                         <div class="font-bold text-blue-700 dark:text-blue-300">${formatRupiah(totalRevenue)}</div>
                     </div>
-                    <div class="bg-red-50 dark:bg-red-900/30 p-3 rounded-lg text-center">
+                    <div class="bg-red-50 dark:bg-red-900/30 p-3 rounded-md text-center">
                         <div class="text-xs text-red-600 mb-1">Biaya Iklan</div>
                         <div class="font-bold text-red-700 dark:text-red-300">${formatRupiah(totalAdCost)}</div>
                     </div>
-                    <div class="bg-amber-50 dark:bg-amber-900/30 p-3 rounded-lg text-center">
+                    <div class="bg-amber-50 dark:bg-amber-900/30 p-3 rounded-md text-center">
                         <div class="text-xs text-amber-600 mb-1">Total HPP</div>
                         <div class="font-bold text-amber-700 dark:text-amber-300">${formatRupiah(totalHPP)}</div>
                     </div>
-                    <div class="${totalProfit >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/30' : 'bg-red-50 dark:bg-red-900/30'} p-3 rounded-lg text-center">
+                    <div class="${totalProfit >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/30' : 'bg-red-50 dark:bg-red-900/30'} p-3 rounded-md text-center">
                         <div class="text-xs ${totalProfit >= 0 ? 'text-emerald-600' : 'text-red-600'} mb-1">Real Profit</div>
                         <div class="font-bold ${totalProfit >= 0 ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700'}">${formatRupiah(totalProfit)}</div>
                     </div>
@@ -5091,7 +5091,7 @@
             }
 
             container.innerHTML = results.map((r, idx) => `
-                <div class="flex items-center justify-between p-3 rounded-lg ${idx === 0 ? 'bg-emerald-50 dark:bg-emerald-900/30 border-2 border-emerald-200 dark:border-emerald-700' : 'bg-slate-50 dark:bg-slate-700/50'}">
+                <div class="flex items-center justify-between p-3 rounded-md ${idx === 0 ? 'bg-emerald-50 dark:bg-emerald-900/30 border-2 border-emerald-200 dark:border-emerald-700' : 'bg-slate-50 dark:bg-slate-700/50'}">
                     <div class="flex items-center gap-2">
                         ${idx === 0 ? '<span class="text-emerald-500 text-sm"><i class="fas fa-crown"></i></span>' : '<span class="text-slate-300 text-sm"><i class="fas fa-store"></i></span>'}
                         <span class="font-bold text-sm text-slate-700 dark:text-slate-200">${r.name}</span>
@@ -5878,14 +5878,14 @@
                 btnFixed.className = "px-2 py-0.5 rounded text-blue-500 dark:text-blue-400";
                 labelRp.classList.add('hidden');
                 labelPct.classList.remove('hidden');
-                input.className = "w-full p-2.5 text-sm border-2 border-blue-100 dark:border-blue-800 rounded-lg text-center font-bold text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-800";
+                input.className = "w-full p-2.5 text-sm border-2 border-blue-100 dark:border-blue-800 rounded-md text-center font-bold text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-800";
                 input.placeholder = "20";
             } else {
                 btnFixed.className = "px-2 py-0.5 rounded bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-bold shadow-sm transition-colors";
                 btnPerc.className = "px-2 py-0.5 rounded text-blue-500 dark:text-blue-400";
                 labelPct.classList.add('hidden');
                 labelRp.classList.remove('hidden');
-                input.className = "w-full p-2.5 text-sm border-2 border-blue-100 dark:border-blue-800 rounded-lg pl-8 font-bold text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-800";
+                input.className = "w-full p-2.5 text-sm border-2 border-blue-100 dark:border-blue-800 rounded-md pl-8 font-bold text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-800";
                 input.placeholder = "10000";
             }
             calculate();
@@ -5975,13 +5975,13 @@
 
             if (diff > 0) {
                 elInsight.innerHTML = `<i class="fas fa-arrow-up text-emerald-500"></i> Profit <b>NAIK</b> sebesar <b>${formatRupiah(diff)}</b> pada skenario ini.`;
-                elInsight.className = "mt-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-lg text-center text-sm text-emerald-800 dark:text-emerald-400 font-medium transition-colors";
+                elInsight.className = "mt-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-md text-center text-sm text-emerald-800 dark:text-emerald-400 font-medium transition-colors";
             } else if (diff < 0) {
                 elInsight.innerHTML = `<i class="fas fa-arrow-down text-red-500"></i> Profit <b>TURUN</b> sebesar <b>${formatRupiah(Math.abs(diff))}</b> pada skenario ini.`;
-                elInsight.className = "mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg text-center text-sm text-red-800 dark:text-red-400 font-medium transition-colors";
+                elInsight.className = "mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-md text-center text-sm text-red-800 dark:text-red-400 font-medium transition-colors";
             } else {
                 elInsight.innerHTML = `<i class="fas fa-equals text-slate-500"></i> Profit <b>SAMA</b> dengan skenario sebelumnya.`;
-                elInsight.className = "mt-6 p-4 bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600 rounded-lg text-center text-sm text-slate-600 dark:text-slate-400 font-medium transition-colors";
+                elInsight.className = "mt-6 p-4 bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600 rounded-md text-center text-sm text-slate-600 dark:text-slate-400 font-medium transition-colors";
             }
         }
 
@@ -6300,13 +6300,13 @@
 
             if (netCard && netLabel && netVal && netDesc) {
                 if (totalNet < 0) {
-                    netCard.className = "bg-red-50 border border-red-100 p-3 rounded-lg mt-2 transition-colors duration-300";
+                    netCard.className = "bg-red-50 border border-red-100 p-3 rounded-md mt-2 transition-colors duration-300";
                     netLabel.className = "text-red-800";
                     netVal.className = "text-red-600";
                     netDesc.className = "text-[10px] text-red-600 mt-1";
                     netDesc.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Peringatan: Anda nombok ke Marketplace!";
                 } else {
-                    netCard.className = "bg-emerald-50 border border-emerald-100 p-3 rounded-lg mt-2 transition-colors duration-300";
+                    netCard.className = "bg-emerald-50 border border-emerald-100 p-3 rounded-md mt-2 transition-colors duration-300";
                     netLabel.className = "text-emerald-800";
                     netVal.className = "text-emerald-600";
                     netDesc.className = "text-[10px] text-emerald-600 mt-1";

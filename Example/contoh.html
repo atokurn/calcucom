@@ -203,7 +203,7 @@
 
         /* View Switcher */
         .view-switch-btn {
-            @apply px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200;
+            @apply px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200;
         }
 
         .view-switch-btn.active {
@@ -237,7 +237,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center gap-3">
-                    <div class="bg-gradient-to-br from-orange-500 to-red-500 text-white p-2 rounded-lg shadow-md">
+                    <div class="bg-gradient-to-br from-orange-500 to-red-500 text-white p-2 rounded-md shadow-md">
                         <i class="fas fa-calculator"></i>
                     </div>
                     <div>
@@ -248,7 +248,7 @@
                 </div>
 
                 <!-- View Switcher (Single vs Bulk) - Keeping this hidden as requested to move to card -->
-                <div class="hidden sm:flex bg-slate-100 p-1 rounded-lg" style="display:none;">
+                <div class="hidden sm:flex bg-slate-100 p-1 rounded-md" style="display:none;">
                     <button onclick="switchMainView('single')" id="viewBtnSingle"
                         class="view-switch-btn active">Satuan</button>
                     <button onclick="switchMainView('bulk')" id="viewBtnBulk"
@@ -258,17 +258,17 @@
                 <!-- Scenario Buttons -->
                 <div class="flex gap-2" id="scenarioButtons">
                     <button onclick="saveScenarioA()" id="btnSaveScenario"
-                        class="hidden sm:flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                        class="hidden sm:flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors">
                         <i class="far fa-bookmark"></i> Simpan A
                     </button>
                     <button onclick="compareScenarios()" id="btnCompare" disabled
-                        class="hidden sm:flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-indigo-500 rounded-lg hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="hidden sm:flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-indigo-500 rounded-md hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fas fa-columns"></i> Bandingkan
                     </button>
                 </div>
                 <!-- Bulk Exit (Shown in Bulk Mode) -->
                 <button onclick="switchMainView('single')" id="btnExitBulk"
-                    class="hidden flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                    class="hidden flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </button>
             </div>
@@ -325,7 +325,7 @@
                             </div>
                             <!-- NEW: Bulk Calculation Button -->
                             <button onclick="switchMainView('bulk')"
-                                class="ml-2 px-3 py-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors flex items-center gap-1 shadow-sm">
+                                class="ml-2 px-3 py-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-md hover:bg-indigo-100 transition-colors flex items-center gap-1 shadow-sm">
                                 <i class="fas fa-table"></i> Hitung Masal
                             </button>
                         </div>
@@ -334,7 +334,7 @@
 
                         <!-- Reverse Mode Info -->
                         <div id="reverseInfo"
-                            class="hidden bg-blue-50 p-3 rounded-lg text-xs text-blue-700 border border-blue-100 mb-2">
+                            class="hidden bg-blue-50 p-3 rounded-md text-xs text-blue-700 border border-blue-100 mb-2">
                             <i class="fas fa-info-circle mr-1"></i> Masukkan <strong>Modal</strong> dan <strong>Target
                                 Profit</strong>. Aplikasi akan menghitung Harga Jual Minimum agar target tercapai.
                         </div>
@@ -343,7 +343,7 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-500 mb-1">Nama Produk / SKU</label>
                                 <input type="text"
-                                    class="w-full p-2.5 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white transition-colors"
+                                    class="w-full p-2.5 text-sm border border-slate-200 rounded-md bg-slate-50 focus:bg-white transition-colors"
                                     placeholder="Contoh: Kemeja Pria">
                             </div>
                             <div>
@@ -353,7 +353,7 @@
                                         class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
                                         Rp</div>
                                     <input type="number" id="hpp" oninput="calculate()"
-                                        class="w-full pl-10 p-2.5 text-sm border border-slate-200 rounded-lg font-semibold text-slate-700"
+                                        class="w-full pl-10 p-2.5 text-sm border border-slate-200 rounded-md font-semibold text-slate-700"
                                         placeholder="50000">
                                 </div>
                             </div>
@@ -369,7 +369,7 @@
                                         class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
                                         Rp</div>
                                     <input type="number" id="originalPrice" oninput="calculate()"
-                                        class="w-full pl-10 p-2.5 text-sm border border-slate-200 rounded-lg"
+                                        class="w-full pl-10 p-2.5 text-sm border border-slate-200 rounded-md"
                                         placeholder="100000">
                                 </div>
                             </div>
@@ -389,7 +389,7 @@
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-blue-400 text-sm hidden"
                                         id="revRpLabel">Rp</div>
                                     <input type="number" id="targetMarginInput" oninput="calculate()"
-                                        class="w-full p-2.5 text-sm border-2 border-blue-100 rounded-lg text-center font-bold text-blue-600"
+                                        class="w-full p-2.5 text-sm border-2 border-blue-100 rounded-md text-center font-bold text-blue-600"
                                         placeholder="20">
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-blue-400 text-sm"
                                         id="revPctLabel">%</div>
@@ -400,10 +400,10 @@
                                 <label class="block text-xs font-medium text-slate-500 mb-1">Diskon Toko (%)</label>
                                 <div class="flex gap-2">
                                     <input type="number" id="discountPercent" oninput="calculate()"
-                                        class="w-20 p-2.5 text-sm border border-slate-200 rounded-lg text-center"
+                                        class="w-20 p-2.5 text-sm border border-slate-200 rounded-md text-center"
                                         placeholder="0">
                                     <div
-                                        class="flex-1 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center px-3 text-sm font-semibold text-slate-700">
+                                        class="flex-1 bg-slate-50 border border-slate-200 rounded-md flex items-center justify-center px-3 text-sm font-semibold text-slate-700">
                                         Final: <span id="finalPriceDisplay" class="ml-1">Rp 0</span>
                                     </div>
                                 </div>
@@ -411,7 +411,7 @@
                         </div>
 
                         <!-- Voucher Toko -->
-                        <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+                        <div class="bg-yellow-50 p-3 rounded-md border border-yellow-100">
                             <label class="block text-xs font-bold text-yellow-800 mb-1">Voucher Toko Ditanggung Penjual
                                 (Opsional)</label>
                             <div class="flex items-center gap-3">
@@ -420,7 +420,7 @@
                                         class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
                                         Rp</div>
                                     <input type="number" id="voucherAmount" oninput="calculate()"
-                                        class="w-full pl-10 p-2 text-sm border border-yellow-200 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
+                                        class="w-full pl-10 p-2 text-sm border border-yellow-200 rounded-md focus:ring-yellow-500 focus:border-yellow-500"
                                         placeholder="0">
                                 </div>
                                 <div class="text-[10px] text-yellow-700 w-1/2 leading-tight">*Mengurangi dasar
@@ -448,7 +448,7 @@
                                 Admin)</label>
                             <div class="relative">
                                 <button onclick="openCategoryModal()"
-                                    class="w-full bg-white border border-orange-200 hover:border-orange-400 text-left px-4 py-3 rounded-lg flex justify-between items-center shadow-sm transition-all group">
+                                    class="w-full bg-white border border-orange-200 hover:border-orange-400 text-left px-4 py-3 rounded-md flex justify-between items-center shadow-sm transition-all group">
                                     <div class="flex-1 overflow-hidden">
                                         <div class="flex items-center gap-2">
                                             <div id="selectedCategoryText"
@@ -595,7 +595,7 @@
                                     <div class="group relative"><i
                                             class="far fa-question-circle text-slate-400 cursor-help text-[10px]"></i>
                                         <div
-                                            class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-56 bg-white border border-slate-200 shadow-xl rounded-lg p-3 z-50 text-[10px] text-slate-600">
+                                            class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-56 bg-white border border-slate-200 shadow-xl rounded-md p-3 z-50 text-[10px] text-slate-600">
                                             <div class="font-bold mb-2 text-slate-800 border-b pb-1">Rincian Modal</div>
                                             <div class="space-y-1.5">
                                                 <div class="flex justify-between"><span>HPP Produk</span><span
@@ -614,7 +614,7 @@
                             <div class="mt-2">
                                 <p class="text-xs font-bold text-slate-400 uppercase mb-2">RINCIAN POTONGAN</p>
                                 <div
-                                    class="bg-white rounded-lg p-3 border border-purple-200 shadow-sm ring-1 ring-purple-100 relative">
+                                    class="bg-white rounded-md p-3 border border-purple-200 shadow-sm ring-1 ring-purple-100 relative">
                                     <div class="flex justify-between items-center text-xs mb-2 relative">
                                         <div class="flex items-center gap-1">
                                             <div><span class="text-slate-700 font-medium block">Biaya Admin</span></div>
@@ -633,7 +633,7 @@
                                             <div class="group relative"><i
                                                     class="far fa-question-circle text-slate-400 cursor-help text-[10px]"></i>
                                                 <div
-                                                    class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-64 bg-white border border-slate-200 shadow-xl rounded-lg p-3 z-50 text-[10px] text-slate-600">
+                                                    class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-64 bg-white border border-slate-200 shadow-xl rounded-md p-3 z-50 text-[10px] text-slate-600">
                                                     <div class="font-bold mb-2 text-slate-800 border-b pb-1">Rincian
                                                         Biaya Layanan</div>
                                                     <div class="space-y-2">
@@ -673,7 +673,7 @@
                                     Iklan</span><span class="font-medium text-indigo-500" id="sumAdsCost">- Rp 0</span>
                             </div>
                             <div id="netIncomeCard"
-                                class="bg-emerald-50 border border-emerald-100 p-3 rounded-lg mt-2 transition-colors duration-300">
+                                class="bg-emerald-50 border border-emerald-100 p-3 rounded-md mt-2 transition-colors duration-300">
                                 <div class="flex justify-between items-center font-bold"><span class="text-emerald-800"
                                         id="netIncomeLabel">Net Cash Diterima</span><span class="text-emerald-600"
                                         id="netIncome">Rp 0</span></div>
@@ -689,7 +689,7 @@
                             class="bg-indigo-50 px-6 py-3 border-b border-indigo-100 flex justify-between items-center">
                             <h3 class="font-bold text-indigo-900 flex items-center gap-2 text-sm"><i
                                     class="fas fa-chart-line"></i> Analisa Iklan</h3>
-                            <div class="flex bg-indigo-100 rounded-lg p-1 gap-1">
+                            <div class="flex bg-indigo-100 rounded-md p-1 gap-1">
                                 <button onclick="switchAdsMode('unit')" id="btn-mode-unit"
                                     class="tab-btn rounded px-3 py-1 text-[10px] font-bold bg-white text-indigo-600 shadow-sm">Per
                                     Unit</button>
@@ -698,7 +698,7 @@
                             </div>
                         </div>
                         <div class="p-5 space-y-5">
-                            <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 mb-4">
+                            <div class="bg-blue-50 p-3 rounded-md border border-blue-100 mb-4">
                                 <div class="flex justify-between items-center mb-2">
                                     <label class="text-xs font-bold text-blue-800">Target Profit (Setelah Iklan)</label>
                                     <div class="flex text-[10px] bg-blue-100 rounded p-0.5">
@@ -732,22 +732,22 @@
                                                 class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-slate-400 text-xs">
                                                 Rp</div><input type="number" id="cpc"
                                                 oninput="updateSlider('cpc', this.value); calculate()"
-                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 rounded-lg"><input
+                                                class="w-full pl-7 p-2 text-sm border border-indigo-200 rounded-md"><input
                                                 type="range" id="cpcSlider" min="0" max="10000" step="50" value="0"
                                                 oninput="updateInput('cpc', this.value); calculate()"
-                                                class="w-full mt-2 h-1 bg-indigo-100 rounded-lg">
+                                                class="w-full mt-2 h-1 bg-indigo-100 rounded-md">
                                         </div>
                                     </div>
                                     <div><label class="block text-xs font-medium text-slate-500 mb-1">Conversion
                                             Rate</label>
                                         <div class="relative"><input type="number" id="cr" step="0.1"
                                                 oninput="updateSlider('cr', this.value); calculate()"
-                                                class="w-full pr-7 p-2 text-sm border border-indigo-200 rounded-lg text-right">
+                                                class="w-full pr-7 p-2 text-sm border border-indigo-200 rounded-md text-right">
                                             <div
                                                 class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 text-xs">
                                                 %</div><input type="range" id="crSlider" min="0" max="10" step="0.1"
                                                 value="0" oninput="updateInput('cr', this.value); calculate()"
-                                                class="w-full mt-2 h-1 bg-indigo-100 rounded-lg">
+                                                class="w-full mt-2 h-1 bg-indigo-100 rounded-md">
                                         </div>
                                     </div>
                                 </div>
@@ -756,19 +756,19 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div><label class="block text-xs font-medium text-slate-500 mb-1">Total
                                             Biaya</label><input type="number" id="dashAdSpend" oninput="calcDashboard()"
-                                            class="w-full p-2 text-sm border border-indigo-200 rounded-lg"></div>
+                                            class="w-full p-2 text-sm border border-indigo-200 rounded-md"></div>
                                     <div><label class="block text-xs font-medium text-slate-500 mb-1">Total
                                             Omzet</label><input type="number" id="dashSales" oninput="calcDashboard()"
-                                            class="w-full p-2 text-sm border border-indigo-200 rounded-lg"></div>
+                                            class="w-full p-2 text-sm border border-indigo-200 rounded-md"></div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div><label class="block text-xs font-medium text-slate-500 mb-1">Jumlah
                                             Klik</label><input type="number" id="dashClicks" oninput="calcDashboard()"
-                                            class="w-full p-2 text-sm border border-indigo-200 rounded-lg"
+                                            class="w-full p-2 text-sm border border-indigo-200 rounded-md"
                                             placeholder="Opsional"></div>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-md border border-slate-100">
                                 <div>
                                     <p class="text-[10px] text-slate-500">CPO/ACOS</p>
                                     <p class="text-sm font-bold text-indigo-600" id="adsCostPerSales">-</p>
@@ -779,7 +779,7 @@
                                 </div>
                             </div>
                             <div id="adsAnalysisBox"
-                                class="bg-gray-100 p-3 rounded-lg border border-gray-200 text-center">
+                                class="bg-gray-100 p-3 rounded-md border border-gray-200 text-center">
                                 <span id="adsStatusBadge"
                                     class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-500 mb-2">BELUM
                                     ADA DATA</span>
@@ -801,14 +801,14 @@
                         Kalkulasi Massal</h3>
                     <div class="flex gap-2">
                         <button onclick="addBulkRow()"
-                            class="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg text-sm font-bold transition-colors"><i
+                            class="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-md text-sm font-bold transition-colors"><i
                                 class="fas fa-plus"></i> Tambah Produk</button>
                         <button onclick="clearBulkTable()"
-                            class="px-4 py-2 bg-slate-100 text-slate-500 hover:bg-slate-200 rounded-lg text-sm font-bold transition-colors"><i
+                            class="px-4 py-2 bg-slate-100 text-slate-500 hover:bg-slate-200 rounded-md text-sm font-bold transition-colors"><i
                                 class="fas fa-trash"></i> Reset</button>
                     </div>
                 </div>
-                <div class="overflow-x-auto rounded-lg border border-slate-200">
+                <div class="overflow-x-auto rounded-md border border-slate-200">
                     <table class="w-full text-sm text-left">
                         <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
                             <tr>
@@ -871,7 +871,7 @@
                         </div>
                     </div>
                     <div id="compareInsight"
-                        class="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-lg text-center text-sm text-blue-800 font-medium">
+                        class="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-md text-center text-sm text-blue-800 font-medium">
                     </div>
                 </div>
             </div>
@@ -882,7 +882,7 @@
     <div id="categoryModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black bg-opacity-50" onclick="closeCategoryModal()"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4">
-            <div class="bg-white rounded-lg shadow-xl w-full max-w-5xl h-[600px] flex flex-col overflow-hidden">
+            <div class="bg-white rounded-md shadow-xl w-full max-w-5xl h-[600px] flex flex-col overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
                     <h3 class="font-bold text-lg text-slate-800">Pilih Kategori Produk</h3>
                     <button onclick="closeCategoryModal()" class="text-slate-400 hover:text-slate-600"><i

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cekbiaya-v9';
+const CACHE_NAME = 'cekbiaya-v12';
 
 const LOCAL_ASSETS = [
     './',

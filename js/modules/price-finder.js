@@ -345,7 +345,7 @@ const PriceFinder = (function () {
         }
 
         container.innerHTML = costComponents.map(c => `
-            <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-white dark:bg-slate-700 p-2 rounded-lg border border-slate-200 dark:border-slate-600">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-white dark:bg-slate-700 p-2 rounded-md border border-slate-200 dark:border-slate-600">
                 <input type="text" value="${safeHtml(c.name)}" placeholder="Nama biaya" 
                     onchange="PriceFinder.updateCostComponent(${c.id}, 'name', this.value)"
                     class="w-full sm:flex-1 text-xs p-1.5 border border-slate-200 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-white">

@@ -113,7 +113,7 @@ const ROASCalculator = (function () {
 
         const profitButton = document.createElement('button');
         profitButton.type = 'button';
-        profitButton.className = 'px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium rounded-lg transition-colors';
+        profitButton.className = 'px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium rounded-md transition-colors';
         profitButton.appendChild(createIcon('fas fa-calculator mr-2'));
         profitButton.append('Ke Profit Calculator');
         profitButton.addEventListener('click', () => {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -485,14 +486,12 @@ fun PriceFinderTab() {
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                                 ) {
-                                    OutlinedTextField(
+                                    CompactTextField(
                                         value = comp.name,
                                         onValueChange = {
                                             costComponents[index] = comp.copy(name = it)
                                         },
-                                        placeholder = { Text("Nama Biaya", style = MaterialTheme.typography.bodySmall) },
-                                        singleLine = true,
-                                        textStyle = LocalTextStyle.current.copy(fontSize = 12.sp),
+                                        placeholder = "Nama Biaya",
                                         modifier = Modifier.weight(1.3f)
                                     )
 
@@ -500,42 +499,41 @@ fun PriceFinderTab() {
                                     Box(
                                         modifier = Modifier
                                             .weight(0.5f)
+                                            .height(30.dp)
                                             .clip(RoundedCornerShape(4.dp))
                                             .background(MaterialTheme.colorScheme.primaryContainer)
                                             .clickable {
                                                 val newType = if (comp.type == "fixed") "percent" else "fixed"
                                                 costComponents[index] = comp.copy(type = newType)
-                                            }
-                                            .padding(vertical = 12.dp),
+                                            },
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
                                             text = if (comp.type == "fixed") "Rp" else "%",
-                                            style = MaterialTheme.typography.bodyMedium,
+                                            style = MaterialTheme.typography.bodySmall,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                                             textAlign = TextAlign.Center
                                         )
                                     }
 
-                                    OutlinedTextField(
+                                    CompactTextField(
                                         value = if (comp.value == 0.0) "" else comp.value.toInt().toString(),
                                         onValueChange = {
                                             val v = it.toDoubleOrNull() ?: 0.0
                                             costComponents[index] = comp.copy(value = v)
                                         },
-                                        placeholder = { Text("0", style = MaterialTheme.typography.bodySmall) },
+                                        placeholder = "0",
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                        singleLine = true,
-                                        textStyle = LocalTextStyle.current.copy(fontSize = 12.sp),
-                                        modifier = Modifier.weight(0.8f)
+                                        modifier = Modifier.weight(0.8f),
+                                        textAlign = TextAlign.End
                                     )
 
                                     IconButton(
                                         onClick = { costComponents.removeAt(index) },
-                                        modifier = Modifier.size(36.dp)
+                                        modifier = Modifier.size(30.dp)
                                     ) {
-                                        Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
+                                        Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(18.dp))
                                     }
                                 }
                             }
@@ -1011,3 +1009,45 @@ data class Quadruple<A, B, C, D>(
     val third: C,
     val fourth: D
 )
+
+@Composable
+fun CompactTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    textAlign: TextAlign = TextAlign.Start
+) {
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier
+            .height(30.dp)
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.4f), RoundedCornerShape(4.dp)),
+        textStyle = MaterialTheme.typography.bodySmall.copy(
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = textAlign
+        ),
+        keyboardOptions = keyboardOptions,
+        singleLine = true,
+        decorationBox = { innerTextField ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 6.dp),
+                contentAlignment = if (textAlign == TextAlign.End) Alignment.CenterEnd else Alignment.CenterStart
+            ) {
+                if (value.isEmpty()) {
+                    Text(
+                        text = placeholder,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                    )
+                }
+                innerTextField()
+            }
+        }
+    )
+}

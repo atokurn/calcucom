@@ -31,3 +31,4 @@ plugins {
 
 rootProject.name = "Calcucom"
 include(":app")
+include(":shared")

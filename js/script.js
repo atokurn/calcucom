@@ -345,7 +345,7 @@ function renderPfCostComponents() {
 
     container.innerHTML = pfCostComponents.map(c => `
                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-white dark:bg-slate-700 p-2 rounded-lg border border-slate-200 dark:border-slate-600">
-                    <input type="text" value="${c.name}" placeholder="Nama biaya" 
+                    <input type="text" value="${safeHtml(c.name)}" placeholder="Nama biaya" 
                         onchange="updatePfCostComponent(${c.id}, 'name', this.value)"
                         class="w-full sm:flex-1 text-xs p-1.5 border border-slate-200 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-white">
                     <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -777,11 +777,14 @@ function renderProductOptions(filter = '') {
     container.innerHTML = filtered.map(p => {
         const isSelected = selectedProductId == p.id;
         const profit = p.result_profit || p.profit || 0;
+        const safeName = safeHtml(p.name);
+        const jsName = safeJsString(p.name);
+        const safeId = safeJsString(p.id);
         return `
                     <div class="combobox-option ${isSelected ? 'selected' : ''}" 
-                         onclick="selectProduct('${p.id}', '${p.name.replace(/'/g, "\\'")}')">
+                         onclick="selectProduct('${safeId}', '${jsName}')">
                         <div class="flex justify-between items-center">
-                            <span class="font-medium">${p.name}</span>
+                            <span class="font-medium">${safeName}</span>
                             <span class="text-xs ${profit >= 0 ? 'text-emerald-600' : 'text-red-500'}">${formatRupiah(profit)}</span>
                         </div>
                     </div>
@@ -881,12 +884,15 @@ function renderRoasMultiOptions(filter = '') {
         const isSelected = roasSelectedProducts.includes(p.id);
         const profit = p.result_profit || p.profit || 0;
         const mp = p.platform || 'shopee';
+        const safePlatform = safeHtml(mp);
+        const safeName = safeHtml(p.name);
+        const safeId = Number(p.id) || 0;
         return `
                     <label class="multiselect-option" onclick="event.stopPropagation()">
                         <input type="checkbox" ${isSelected ? 'checked' : ''} 
-                               onchange="toggleRoasProductSelection(${p.id})">
-                        <span class="mp-tag ${mp}">${mp.charAt(0).toUpperCase() + mp.slice(1)}</span>
-                        <span class="flex-1 font-medium">${p.name}</span>
+                               onchange="toggleRoasProductSelection(${safeId})">
+                        <span class="mp-tag ${safePlatform}">${safeHtml(mp.charAt(0).toUpperCase() + mp.slice(1))}</span>
+                        <span class="flex-1 font-medium">${safeName}</span>
                         <span class="text-xs ${profit >= 0 ? 'text-emerald-600' : 'text-red-500'}">${formatRupiah(profit)}</span>
                     </label>
                 `;
@@ -926,12 +932,15 @@ function updateRoasSelectedBadges() {
     container.innerHTML = roasSelectedProducts.map(id => {
         const product = productDB.find(p => p.id === id);
         if (!product) return '';
-        const mp = product.platform || 'shopee';
+        const mp = safeToken(product.platform || 'shopee');
+        const safeId = Number(id) || 0;
+        const label = String(product.name || 'Produk');
+        const shortName = label.length > 15 ? label.substring(0, 15) + '...' : label;
         return `
                     <span class="badge ${mp}">
-                        <span class="mp-tag ${mp} text-[8px]">${mp.charAt(0).toUpperCase()}</span>
-                        ${product.name.length > 15 ? product.name.substring(0, 15) + '...' : product.name}
-                        <button onclick="event.stopPropagation(); removeRoasProduct(${id})" class="badge-remove">×</button>
+                        <span class="mp-tag ${mp} text-[8px]">${safeHtml(mp.charAt(0).toUpperCase())}</span>
+                        ${safeHtml(shortName)}
+                        <button onclick="event.stopPropagation(); removeRoasProduct(${safeId})" class="badge-remove">×</button>
                     </span>
                 `;
     }).join('');
@@ -999,18 +1008,22 @@ function renderMultiProductAccordion() {
         totalProfit += roasData.netProfit;
         productCount++;
 
-        const mp = product.platform || 'shopee';
+        const mp = safeToken(product.platform || 'shopee');
         const isFirst = index === 0;
+        const roasBE = safeNumber(roasData.roasBE);
+        const netProfit = safeNumber(roasData.netProfit);
+        const acosMax = safeNumber(roasData.acosMax);
+        const maxCPC = safeNumber(roasData.maxCPC);
 
         return `
                     <div class="roas-accordion-item bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 rounded-xl border border-slate-200 dark:border-slate-600 overflow-hidden">
                         <button type="button" onclick="toggleRoasAccordion(this)" class="w-full p-4 flex items-center justify-between text-left">
                             <div class="flex items-center gap-2">
-                                <span class="mp-tag ${mp}">${mp.charAt(0).toUpperCase() + mp.slice(1)}</span>
-                                <span class="font-bold text-slate-800 dark:text-white">${product.name}</span>
+                                <span class="mp-tag ${mp}">${safeHtml(mp.charAt(0).toUpperCase() + mp.slice(1))}</span>
+                                <span class="font-bold text-slate-800 dark:text-white">${safeHtml(product.name)}</span>
                             </div>
                             <div class="flex items-center gap-3">
-                                <span class="text-purple-600 dark:text-purple-400 font-bold">${roasData.roasBE.toFixed(2)}x</span>
+                                <span class="text-purple-600 dark:text-purple-400 font-bold">${safeFixed(roasBE, 2)}x</span>
                                 <i class="fas fa-chevron-down text-slate-400 transition-transform ${isFirst ? 'rotate-180' : ''}"></i>
                             </div>
                         </button>
@@ -1026,21 +1039,21 @@ function renderMultiProductAccordion() {
                                 </div>
                                 <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
                                     <div class="text-slate-400 dark:text-slate-300">Profit</div>
-                                    <div class="font-bold ${roasData.netProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'}">${formatRupiah(Math.round(roasData.netProfit))}</div>
+                                    <div class="font-bold ${netProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'}">${formatRupiah(Math.round(netProfit))}</div>
                                 </div>
                                 <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
                                     <div class="text-slate-400 dark:text-slate-300">ROAS BE</div>
-                                    <div class="font-bold text-purple-600 dark:text-purple-400">${roasData.roasBE.toFixed(2)}x</div>
+                                    <div class="font-bold text-purple-600 dark:text-purple-400">${safeFixed(roasBE, 2)}x</div>
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-xs">
                                 <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
                                     <div class="text-slate-400 dark:text-slate-300">ACOS Max</div>
-                                    <div class="font-bold text-blue-600 dark:text-blue-400">${roasData.acosMax.toFixed(1)}%</div>
+                                    <div class="font-bold text-blue-600 dark:text-blue-400">${safeFixed(acosMax, 1)}%</div>
                                 </div>
                                 <div class="bg-white dark:bg-slate-600 rounded-lg p-2">
                                     <div class="text-slate-400 dark:text-slate-300">Max CPC</div>
-                                    <div class="font-bold text-emerald-600 dark:text-emerald-400">${formatRupiah(Math.round(roasData.maxCPC))}</div>
+                                    <div class="font-bold text-emerald-600 dark:text-emerald-400">${formatRupiah(Math.round(maxCPC))}</div>
                                 </div>
                             </div>
                         </div>
@@ -1067,17 +1080,17 @@ function renderMultiProductAccordion() {
     const cr = 2; // Default conversion rate
 
     // Update summary ROAS display
-    document.getElementById('roas_result_be').innerText = avgRoas.toFixed(2) + 'x';
-    document.getElementById('roas_result_acos').innerText = avgAcos.toFixed(1) + '%';
-    document.getElementById('roas_result_profit').innerText = formatRupiah(Math.round(avgProfit));
+    document.getElementById('roas_result_be').innerText = safeFixed(avgRoas, 2) + 'x';
+    document.getElementById('roas_result_acos').innerText = safeFixed(avgAcos, 1) + '%';
+    document.getElementById('roas_result_profit').innerText = formatRupiah(Math.round(safeNumber(avgProfit)));
     document.getElementById('roas_cr_display').innerText = cr + '%';
-    document.getElementById('roas_result_maxcpc').innerText = formatRupiah(Math.round(avgProfit * (cr / 100)));
+    document.getElementById('roas_result_maxcpc').innerText = formatRupiah(Math.round(safeNumber(avgProfit) * (cr / 100)));
 
     // Store Auto mode data for use by Analisa Kesehatan Iklan
     roasAutoData = {
-        price: avgPrice,
-        netProfit: avgProfit,
-        roasBE: avgRoas,
+        price: safeNumber(avgPrice),
+        netProfit: safeNumber(avgProfit),
+        roasBE: safeNumber(avgRoas),
         isActive: true
     };
 
@@ -1167,14 +1180,17 @@ function renderCmpMultiOptions(filter = '') {
 
     container.innerHTML = filtered.map(p => {
         const isSelected = cmpSelectedProducts.includes(p.id);
-        const profit = p.result_profit || p.profit || 0;
-        const mp = p.platform || 'shopee';
+        const profit = safeNumber(p.result_profit || p.profit);
+        const mp = safeToken(p.platform || 'shopee');
+        const safePlatform = mp;
+        const safeName = safeHtml(p.name);
+        const safeId = Number(p.id) || 0;
         return `
                     <label class="multiselect-option" onclick="event.stopPropagation()">
                         <input type="checkbox" ${isSelected ? 'checked' : ''} 
-                               onchange="toggleCmpProductSelection(${p.id})">
-                        <span class="mp-tag ${mp}">${mp.charAt(0).toUpperCase() + mp.slice(1)}</span>
-                        <span class="flex-1 font-medium">${p.name}</span>
+                               onchange="toggleCmpProductSelection(${safeId})">
+                        <span class="mp-tag ${safePlatform}">${safeHtml(mp.charAt(0).toUpperCase() + mp.slice(1))}</span>
+                        <span class="flex-1 font-medium">${safeName}</span>
                         <span class="text-xs ${profit >= 0 ? 'text-emerald-600' : 'text-red-500'}">${formatRupiah(profit)}</span>
                     </label>
                 `;
@@ -1208,8 +1224,8 @@ function updateCmpSelectedBadges() {
     badgeContainer.innerHTML = cmpSelectedProducts.map(id => {
         const p = productDB.find(prod => prod.id === id);
         if (!p) return '';
-        const mp = p.platform || 'shopee';
-        return `<span class="multiselect-badge ${mp}">${p.name}</span>`;
+        const mp = safeToken(p.platform || 'shopee');
+        return `<span class="multiselect-badge ${mp}">${safeHtml(p.name)}</span>`;
     }).join('');
 }
 
@@ -1259,7 +1275,7 @@ function renderComparisonCards() {
 
     let html = '';
     products.forEach(p => {
-        const mp = p.platform || 'shopee';
+        const mp = safeToken(p.platform || 'shopee');
         const mpColors = {
             shopee: { bg: 'from-orange-500 to-red-500', light: 'bg-orange-50 dark:bg-orange-900/20' },
             tokopedia: { bg: 'from-green-500 to-emerald-600', light: 'bg-green-50 dark:bg-green-900/20' },
@@ -1267,25 +1283,25 @@ function renderComparisonCards() {
             lazada: { bg: 'from-indigo-600 to-blue-800', light: 'bg-indigo-50 dark:bg-indigo-900/20' }
         };
         const colors = mpColors[mp] || mpColors.shopee;
-        const profit = p.result_profit || 0;
-        const margin = p.result_margin || 0;
-        const hpp = p.cost_of_goods || p.hpp || 0;
-        const sellingPrice = p.selling_price || p.display_price || 0;
+        const profit = safeNumber(p.result_profit || p.profit);
+        const margin = safeNumber(p.result_margin || p.margin);
+        const hpp = safeNumber(p.cost_of_goods || p.hpp);
+        const sellingPrice = safeNumber(p.selling_price || p.display_price);
         // Calculate Net Cash: selling price - hpp - total fees (what seller receives minus costs)
-        const totalFeeCalc = p.fee_total || 0;
-        const netCash = p.result_net_cash || (sellingPrice - totalFeeCalc) || sellingPrice;
+        const totalFeeCalc = safeNumber(p.fee_total);
+        const netCash = safeNumber(p.result_net_cash, sellingPrice - totalFeeCalc || sellingPrice);
         const isBest = profit === bestProfit && products.length > 1;
         const profitDiff = bestProfit - profit;
 
         // Fee breakdown
-        const adminFee = p.fee_admin || 0;
-        const serviceFee = p.fee_service || 0;
-        const affiliateFee = p.fee_affiliate || 0;
-        const totalFee = p.fee_total || (adminFee + serviceFee + affiliateFee);
-        const totalFeePct = p.fee_total_percent || 0;
+        const adminFee = safeNumber(p.fee_admin);
+        const serviceFee = safeNumber(p.fee_service);
+        const affiliateFee = safeNumber(p.fee_affiliate);
+        const totalFee = safeNumber(p.fee_total, adminFee + serviceFee + affiliateFee);
+        const totalFeePct = safeNumber(p.fee_total_percent);
 
         // ROAS Break-even calculation
-        const roasBE = profit > 0 ? (sellingPrice / profit).toFixed(2) : '∞';
+        const roasBE = profit > 0 ? safeFixed(sellingPrice / profit, 2) : '∞';
 
         // Margin bar width (capped at 100%)
         const marginWidth = Math.min(Math.max(margin, 0), 50) * 2;
@@ -1296,14 +1312,14 @@ function renderComparisonCards() {
                         <!-- Header -->
                         <div class="bg-gradient-to-r ${colors.bg} text-white p-3 flex justify-between items-center">
                             <div class="flex items-center gap-2">
-                                <span class="font-bold">${mp.charAt(0).toUpperCase() + mp.slice(1)}</span>
+                                <span class="font-bold">${safeHtml(mp.charAt(0).toUpperCase() + mp.slice(1))}</span>
                             </div>
                             ${isBest ? '<span class="text-xs bg-yellow-400 text-yellow-900 px-2 py-0.5 rounded-full font-bold flex items-center gap-1"><i class="fas fa-trophy"></i> BEST</span>' : ''}
                         </div>
                         
                         <!-- Product Info -->
                         <div class="p-4 border-b border-slate-100 dark:border-slate-700">
-                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-1 truncate">${p.name}</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-1 truncate">${safeHtml(p.name)}</div>
                             <div class="flex items-end justify-between">
                                 <div class="text-3xl font-black ${profit >= 0 ? 'text-emerald-600' : 'text-red-500'}">
                                     ${formatRupiah(profit)}
@@ -1319,7 +1335,7 @@ function renderComparisonCards() {
                         <div class="px-4 py-2 ${colors.light}">
                             <div class="flex justify-between text-xs mb-1">
                                 <span class="text-slate-500 dark:text-slate-400">Margin</span>
-                                <span class="font-bold ${margin >= 0 ? 'text-emerald-600' : 'text-red-500'}">${margin.toFixed(1)}%</span>
+                                <span class="font-bold ${margin >= 0 ? 'text-emerald-600' : 'text-red-500'}">${safeFixed(margin, 1)}%</span>
                             </div>
                             <div class="h-2 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
                                 <div class="h-full ${marginColor} rounded-full transition-all" style="width: ${marginWidth}%"></div>
@@ -1348,7 +1364,7 @@ function renderComparisonCards() {
                                     ${affiliateFee > 0 ? `<div class="flex justify-between"><span class="text-slate-500">Affiliate</span><span class="font-medium">${formatRupiah(affiliateFee)}</span></div>` : ''}
                                     <div class="flex justify-between pt-1 border-t border-slate-200 dark:border-slate-600 font-bold">
                                         <span>Total Fee</span>
-                                        <span class="text-red-500">${formatRupiah(totalFee)} (${totalFeePct}%)</span>
+                                        <span class="text-red-500">${formatRupiah(totalFee)} (${safeFixed(totalFeePct, 1)}%)</span>
                                     </div>
                                 </div>
                             </div>
@@ -1694,8 +1710,8 @@ function renderProductDB() {
         html += `
                     <div class="p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center justify-between">
                         <div class="flex-1 min-w-0">
-                            <div class="text-xs font-bold text-slate-700 dark:text-white truncate">${p.name}</div>
-                            <div class="text-[10px] text-slate-400">ID: ${p.productId} | HPP: ${formatRupiah(p.hpp)}</div>
+                            <div class="text-xs font-bold text-slate-700 dark:text-white truncate">${safeHtml(p.name)}</div>
+                            <div class="text-[10px] text-slate-400">ID: ${safeHtml(p.productId)} | HPP: ${formatRupiah(p.hpp)}</div>
                         </div>
                         <button onclick="deleteProduct(${idx})" class="text-red-400 hover:text-red-600 p-1">
                             <i class="fas fa-trash text-xs"></i>
@@ -1712,7 +1728,7 @@ function renderProductDB() {
 // Render product selectors in ROAS and Compare modules
 function renderProductSelectors() {
     const options = productDB.map(p =>
-        `<option value="${p.id}">${p.name} - ${formatRupiah(p.result_profit || p.profit || 0)}</option>`
+        `<option value="${safeHtml(p.id)}">${safeHtml(p.name)} - ${formatRupiah(p.result_profit || p.profit || 0)}</option>`
     ).join('');
 
     // For Compare module - only options (combobox handles display)
@@ -2574,8 +2590,13 @@ function renderHistory() {
 
     container.innerHTML = combined.map(h => {
         const isLoss = (h.profit || '').toString().includes('-');
+        const safeId = safeJsString(h.id);
+        const safeName = safeHtml(h.productName || 'Tanpa Nama');
+        const safeProfit = safeHtml(h.profit);
+        const safeMargin = safeHtml(h.margin);
+        const safeSellingPrice = safeHtml(h.sellingPrice);
         return `
-                <div onclick="openHistoryDetail('${h.id}')"
+                <div onclick="openHistoryDetail('${safeId}')"
                     class="bg-white dark:bg-slate-700 p-3 rounded-lg border border-slate-200 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500 transition-colors cursor-pointer relative group">
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex items-center gap-2">
@@ -2583,25 +2604,25 @@ function renderHistory() {
                                 ${getPlatformIcon(h.platform)}
                             </div>
                             <div>
-                                <div class="font-medium text-xs text-slate-700 dark:text-gray-200 text-ellipsis overflow-hidden whitespace-nowrap max-w-[120px]" title="${h.productName || 'Tanpa Nama'}">${h.productName || 'Tanpa Nama'}</div>
+                                <div class="font-medium text-xs text-slate-700 dark:text-gray-200 text-ellipsis overflow-hidden whitespace-nowrap max-w-[120px]" title="${safeName}">${safeName}</div>
                                 <div class="text-[10px] text-slate-400">${new Date(h.timestamp).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
                             </div>
                         </div>
                         <div class="text-right">
-                             <div class="font-bold text-xs ${isLoss ? 'text-red-500' : 'text-green-600'}">${h.profit}</div>
-                             <div class="text-[10px] ${isLoss ? 'text-red-400' : 'text-blue-500'} font-medium">${h.margin}</div>
+                             <div class="font-bold text-xs ${isLoss ? 'text-red-500' : 'text-green-600'}">${safeProfit}</div>
+                             <div class="text-[10px] ${isLoss ? 'text-red-400' : 'text-blue-500'} font-medium">${safeMargin}</div>
                         </div>
                     </div>
                     
                     <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-600">
                         <div>
-                            Jual: <span class="text-slate-700 dark:text-slate-300">${h.sellingPrice}</span>
+                            Jual: <span class="text-slate-700 dark:text-slate-300">${safeSellingPrice}</span>
                         </div>
                          <div class="flex gap-2">
-                            <button onclick="event.stopPropagation(); loadFromHistory('${h.id}')" class="text-xs text-blue-500 hover:text-blue-600 p-1" title="Muat Data">
+                            <button onclick="event.stopPropagation(); loadFromHistory('${safeId}')" class="text-xs text-blue-500 hover:text-blue-600 p-1" title="Muat Data">
                                 <i class="fas fa-upload"></i>
                             </button>
-                            <button onclick="event.stopPropagation(); deleteHistoryItem('${h.id}')" class="text-xs text-red-400 hover:text-red-500 p-1" title="Hapus">
+                            <button onclick="event.stopPropagation(); deleteHistoryItem('${safeId}')" class="text-xs text-red-400 hover:text-red-500 p-1" title="Hapus">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
@@ -3400,7 +3421,7 @@ function renderCustomCosts() {
     const container = document.getElementById('customCostsContainer'); if (!container) return; container.innerHTML = '';
     customCosts.forEach(cost => {
         const div = document.createElement('div'); div.className = "flex gap-2 items-center bg-white dark:bg-slate-700 p-2 rounded border border-slate-100 dark:border-slate-600 transition-colors";
-        div.innerHTML = `<input type="text" placeholder="Nama Biaya" value="${cost.name}" oninput="updateCost(${cost.id}, 'name', this.value)" class="w-1/3 text-xs p-1 border rounded border-slate-300 dark:border-slate-500 bg-white dark:bg-slate-800 text-slate-700 dark:text-white"><select onchange="updateCost(${cost.id}, 'category', this.value)" class="text-xs p-1 border rounded border-slate-300 dark:border-slate-500 w-1/4 bg-white dark:bg-slate-800 text-slate-700 dark:text-white"><option value="modal" ${cost.category === 'modal' ? 'selected' : ''}>Biaya Ops</option><option value="potongan" ${cost.category === 'potongan' ? 'selected' : ''}>Potongan</option></select><div class="flex-1 flex gap-1"><input type="number" value="${cost.amount}" oninput="updateCost(${cost.id}, 'amount', this.value)" class="w-full text-xs p-1 border rounded border-slate-300 dark:border-slate-500 text-right bg-white dark:bg-slate-800 text-slate-700 dark:text-white"><select onchange="updateCost(${cost.id}, 'isPercent', this.value)" class="text-xs p-1 border rounded border-slate-300 dark:border-slate-500 bg-slate-50 dark:bg-slate-600 text-slate-700 dark:text-white"><option value="false" ${!cost.isPercent ? 'selected' : ''}>Rp</option><option value="true" ${cost.isPercent ? 'selected' : ''}>%</option></select></div><button onclick="removeCostRow(${cost.id})" class="text-red-400 hover:text-red-600 px-1"><i class="fas fa-trash text-xs"></i></button>`;
+        div.innerHTML = `<input type="text" placeholder="Nama Biaya" value="${safeHtml(cost.name)}" oninput="updateCost(${cost.id}, 'name', this.value)" class="w-1/3 text-xs p-1 border rounded border-slate-300 dark:border-slate-500 bg-white dark:bg-slate-800 text-slate-700 dark:text-white"><select onchange="updateCost(${cost.id}, 'category', this.value)" class="text-xs p-1 border rounded border-slate-300 dark:border-slate-500 w-1/4 bg-white dark:bg-slate-800 text-slate-700 dark:text-white"><option value="modal" ${cost.category === 'modal' ? 'selected' : ''}>Biaya Ops</option><option value="potongan" ${cost.category === 'potongan' ? 'selected' : ''}>Potongan</option></select><div class="flex-1 flex gap-1"><input type="number" value="${Number(cost.amount) || 0}" oninput="updateCost(${cost.id}, 'amount', this.value)" class="w-full text-xs p-1 border rounded border-slate-300 dark:border-slate-500 text-right bg-white dark:bg-slate-800 text-slate-700 dark:text-white"><select onchange="updateCost(${cost.id}, 'isPercent', this.value)" class="text-xs p-1 border rounded border-slate-300 dark:border-slate-500 bg-slate-50 dark:bg-slate-600 text-slate-700 dark:text-white"><option value="false" ${!cost.isPercent ? 'selected' : ''}>Rp</option><option value="true" ${cost.isPercent ? 'selected' : ''}>%</option></select></div><button onclick="removeCostRow(${cost.id})" class="text-red-400 hover:text-red-600 px-1"><i class="fas fa-trash text-xs"></i></button>`;
         container.appendChild(div);
     });
     calculate();
@@ -3422,7 +3443,7 @@ function updateModalTooltipContent() {
 
             opsCosts.forEach(c => {
                 const amt = c.isPercent ? basisPrice * (c.amount / 100) : c.amount;
-                const row = document.createElement('div'); row.className = "flex justify-between text-slate-500 dark:text-slate-400"; row.innerHTML = `<span>${c.name || 'Biaya Lain'}</span><span>- ${formatRupiah(amt)}</span>`; summaryContainer.appendChild(row);
+                const row = document.createElement('div'); row.className = "flex justify-between text-slate-500 dark:text-slate-400"; row.innerHTML = `<span>${safeHtml(c.name || 'Biaya Lain')}</span><span>- ${formatRupiah(amt)}</span>`; summaryContainer.appendChild(row);
             });
         }
     }
@@ -3582,6 +3603,42 @@ function parseInputNumber(id) {
 function setText(id, text) {
     const el = document.getElementById(id);
     if (el) el.innerText = text;
+}
+
+function safeHtml(value) {
+    if (typeof Sanitize !== 'undefined' && Sanitize.escapeHtml) {
+        return Sanitize.escapeHtml(value);
+    }
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
+function safeJsString(value) {
+    return String(value ?? '')
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/\r/g, '\\r')
+        .replace(/\n/g, '\\n')
+        .replace(/</g, '\\x3C')
+        .replace(/>/g, '\\x3E');
+}
+
+function safeNumber(value, fallback = 0) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
+}
+
+function safeFixed(value, digits = 1, fallback = 0) {
+    return safeNumber(value, fallback).toFixed(digits);
+}
+
+function safeToken(value, fallback = 'shopee') {
+    const token = String(value ?? '').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    return token || fallback;
 }
 
 function setAdsTargetType(type) {

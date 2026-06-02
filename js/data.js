@@ -339,3 +339,11 @@ const translations = {
         // Add more as needed
     }
 };
+
+// Explicit browser globals for the current no-build script loading model.
+// This keeps data access stable and makes future module migration easier.
+if (typeof window !== 'undefined') {
+    window.shopeeRates = shopeeRates;
+    window.categoryData = categoryData;
+    window.translations = translations;
+}

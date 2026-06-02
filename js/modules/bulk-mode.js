@@ -10,6 +10,18 @@ const BulkMode = (function () {
     // Track current mode
     let currentMode = 'single';
 
+    function safeHtml(value) {
+        if (typeof Sanitize !== 'undefined' && Sanitize.escapeHtml) {
+            return Sanitize.escapeHtml(value);
+        }
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
     // ==================== MODE SWITCHING ====================
 
     /**
@@ -201,14 +213,14 @@ const BulkMode = (function () {
 
             tr.innerHTML = `
                 <td class="p-3 align-top">
-                    <input type="text" value="${p.name}" oninput="BulkMode.updateProduct(${index}, 'name', this.value)"
+                    <input type="text" value="${safeHtml(p.name)}" oninput="BulkMode.updateProduct(${index}, 'name', this.value)"
                         class="w-full p-2 text-xs border border-slate-200 dark:border-slate-600 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white dark:bg-slate-700 text-slate-700 dark:text-white" placeholder="Nama Produk...">
                 </td>
                 <td class="p-3 align-top">
                     <button onclick="BulkMode.openProductCategory(${index})"
                         class="w-full text-left p-2 text-xs border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20 rounded text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/40 flex justify-between items-center transition-colors">
-                        <span class="truncate max-w-[100px] font-medium">${p.categoryName}</span>
-                        <span class="ml-1 text-[10px] px-1 rounded bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 font-bold">${p.categoryGroup}</span>
+                        <span class="truncate max-w-[100px] font-medium">${safeHtml(p.categoryName)}</span>
+                        <span class="ml-1 text-[10px] px-1 rounded bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 font-bold">${safeHtml(p.categoryGroup)}</span>
                     </button>
                 </td>
                 <td class="p-3 align-top">

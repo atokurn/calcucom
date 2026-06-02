@@ -9,6 +9,29 @@ const SimulationCalculator = (function () {
 
     let currentMode = 'ads'; // 'ads' or 'sales'
 
+    function safeNumber(value, fallback = 0) {
+        const number = Number(value);
+        return Number.isFinite(number) ? number : fallback;
+    }
+
+    function formatFixed(value, digits = 1, fallback = 0) {
+        return safeNumber(value, fallback).toFixed(digits);
+    }
+
+    function sanitizeIconName(icon) {
+        return String(icon || '').replace(/[^a-z0-9-]/gi, '') || 'fa-info-circle';
+    }
+
+    function insightTypeClass(type) {
+        const classes = {
+            success: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+            info: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+            warning: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
+            danger: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+        };
+        return classes[type] || classes.info;
+    }
+
     // ==================== MODE SWITCHING ====================
 
     /**
@@ -102,8 +125,8 @@ const SimulationCalculator = (function () {
                 const acosBe = (profit / sellingPrice) * 100;
                 const maxCpc = profit * 0.02; // Assume 2% CR
 
-                elRoasBe.innerText = roasBe.toFixed(2) + "x";
-                elAcosBe.innerText = acosBe.toFixed(1) + "%";
+                elRoasBe.innerText = formatFixed(roasBe, 2) + "x";
+                elAcosBe.innerText = formatFixed(acosBe, 1) + "%";
                 if (elMaxCpc) elMaxCpc.innerText = formatRupiahFn(maxCpc);
                 if (elProfitUnit) elProfitUnit.innerText = formatRupiahFn(profit);
             } else {
@@ -208,7 +231,7 @@ const SimulationCalculator = (function () {
         } else if (targetRoas > 0 && actualRoas < targetRoas) {
             status = 'below_target';
             statusClass = 'bg-yellow-100 text-yellow-700';
-            recommendation = `Profit masih ada, tapi ROAS aktual di bawah target (${targetRoas.toFixed(2)}x).`;
+            recommendation = `Profit masih ada, tapi ROAS aktual di bawah target (${formatFixed(targetRoas, 2)}x).`;
         } else if (actualRoas > 0) {
             status = 'profit';
             statusClass = 'bg-emerald-100 text-emerald-600';
@@ -269,7 +292,7 @@ const SimulationCalculator = (function () {
             insights.push({
                 type: 'info',
                 icon: 'fa-info-circle',
-                text: `Margin ${margin.toFixed(1)}% cukup baik untuk iklan dengan ROAS target > ${roasBe.toFixed(1)}x.`
+                text: `Margin ${formatFixed(margin, 1)}% cukup baik untuk iklan dengan ROAS target > ${formatFixed(roasBe, 1)}x.`
             });
         } else if (margin >= 5) {
             insights.push({
@@ -290,13 +313,13 @@ const SimulationCalculator = (function () {
             insights.push({
                 type: 'success',
                 icon: 'fa-bullseye',
-                text: `Target ${dailySales} pcs/hari sangat realistis dengan iklan yang tepat.`
+                text: `Target ${safeNumber(dailySales)} pcs/hari sangat realistis dengan iklan yang tepat.`
             });
         } else if (dailySales <= 20) {
             insights.push({
                 type: 'info',
                 icon: 'fa-chart-line',
-                text: `Butuh ${dailySales} pcs/hari. Pertimbangkan bundling atau promo flash sale.`
+                text: `Butuh ${safeNumber(dailySales)} pcs/hari. Pertimbangkan bundling atau promo flash sale.`
             });
         }
 
@@ -315,7 +338,9 @@ const SimulationCalculator = (function () {
         calculateRoasMetrics,
         analyzeRoasPerformance,
         calculateMonthlyGoal,
-        generateInsights
+        generateInsights,
+        sanitizeIconName,
+        insightTypeClass
     };
 })();
 

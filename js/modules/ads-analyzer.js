@@ -36,6 +36,18 @@ const AdsAnalyzer = (function () {
         }).format(num);
     }
 
+    function safeHtml(value) {
+        if (typeof Sanitize !== 'undefined' && Sanitize.escapeHtml) {
+            return Sanitize.escapeHtml(value);
+        }
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
     /**
      * Set text content of element by ID
      * @param {string} id 
@@ -189,8 +201,8 @@ const AdsAnalyzer = (function () {
             html += `
                 <div class="p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center justify-between">
                     <div class="flex-1 min-w-0">
-                        <div class="text-xs font-bold text-slate-700 dark:text-white truncate">${p.name}</div>
-                        <div class="text-[10px] text-slate-400">ID: ${p.productId || p.id} | HPP: ${formatRupiah(p.hpp || p.cost_of_goods || 0)}</div>
+                        <div class="text-xs font-bold text-slate-700 dark:text-white truncate">${safeHtml(p.name)}</div>
+                        <div class="text-[10px] text-slate-400">ID: ${safeHtml(p.productId || p.id)} | HPP: ${formatRupiah(p.hpp || p.cost_of_goods || 0)}</div>
                     </div>
                     <button onclick="AdsAnalyzer.deleteProduct(${idx})" class="text-red-400 hover:text-red-600 p-1">
                         <i class="fas fa-trash text-xs"></i>
@@ -210,7 +222,7 @@ const AdsAnalyzer = (function () {
     function renderProductSelectors() {
         const productDB = getProductDB();
         const options = productDB.map(p =>
-            `<option value="${p.id}">${p.name} - ${formatRupiah(p.result_profit || p.profit || 0)}</option>`
+            `<option value="${safeHtml(p.id)}">${safeHtml(p.name)} - ${formatRupiah(p.result_profit || p.profit || 0)}</option>`
         ).join('');
 
         const cmpSelect = document.getElementById('cmp_product_select');

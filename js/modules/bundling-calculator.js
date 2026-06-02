@@ -30,6 +30,22 @@ const BundlingCalculator = (function () {
 
     // ==================== HELPER FUNCTIONS ====================
 
+    function safeHtml(value) {
+        if (typeof Sanitize !== 'undefined' && Sanitize.escapeHtml) {
+            return Sanitize.escapeHtml(value);
+        }
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    function safeAttr(value) {
+        return safeHtml(value);
+    }
+
     /**
      * Format rupiah using Formatters or fallback
      */
@@ -365,8 +381,8 @@ const BundlingCalculator = (function () {
         select.innerHTML = '<option value="">-- Pilih Produk (' + products.length + ') --</option>' +
             products.map(p => {
                 const hpp = p.cost_of_goods || p.hpp || 0;
-                return `<option value="${p.id}" data-hpp="${hpp}" data-name="${p.name}">
-                    ${p.name} (HPP: Rp ${hpp.toLocaleString('id-ID')})
+                return `<option value="${safeAttr(p.id)}" data-hpp="${hpp}" data-name="${safeAttr(p.name)}">
+                    ${safeHtml(p.name)} (HPP: Rp ${hpp.toLocaleString('id-ID')})
                 </option>`;
             }).join('');
     }
@@ -472,8 +488,8 @@ const BundlingCalculator = (function () {
             return `
                 <label class="${rowClass}" onclick="${clickHandler}" ${tooltipAttr}>
                     <input type="checkbox" ${checkboxChange}>
-                    <span class="mp-tag ${mp}">${mp.charAt(0).toUpperCase()}</span>
-                    <span class="flex-1 font-medium text-sm truncate">${p.name}</span>
+                    <span class="mp-tag ${safeAttr(mp)}">${safeHtml(mp.charAt(0).toUpperCase())}</span>
+                    <span class="flex-1 font-medium text-sm truncate">${safeHtml(p.name)}</span>
                     <span class="text-xs text-slate-500 whitespace-nowrap">Rp ${hpp.toLocaleString('id-ID')}</span>
                     ${isMarketplaceMismatch ? '<i class="fas fa-lock text-xs text-slate-400 ml-2"></i>' : ''}
                 </label>
@@ -527,10 +543,10 @@ const BundlingCalculator = (function () {
             const mp = product.platform || 'shopee';
             const name = product.name || 'Produk';
             return `
-                <span class="badge ${mp}">
-                    <span class="mp-tag ${mp} text-[8px]">${mp.charAt(0).toUpperCase()}</span>
-                    ${name.length > 12 ? name.substring(0, 12) + '...' : name}
-                    <button onclick="event.stopPropagation(); BundlingCalculator.removePendingProduct(${id})" class="badge-remove">×</button>
+                <span class="badge ${safeAttr(mp)}">
+                    <span class="mp-tag ${safeAttr(mp)} text-[8px]">${safeHtml(mp.charAt(0).toUpperCase())}</span>
+                    ${safeHtml(name.length > 12 ? name.substring(0, 12) + '...' : name)}
+                    <button onclick="event.stopPropagation(); BundlingCalculator.removePendingProduct(${Number(id) || 0})" class="badge-remove">×</button>
                 </span>
             `;
         }).join('');
@@ -835,9 +851,9 @@ const BundlingCalculator = (function () {
                         <i class="fas fa-times text-xs"></i>
                     </button>
                     
-                    <span class="mp-tag ${p.platform || 'shopee'} text-[8px] px-1 py-0.5 rounded font-bold">${platformTag}</span>
+                    <span class="mp-tag ${safeAttr(p.platform || 'shopee')} text-[8px] px-1 py-0.5 rounded font-bold">${safeHtml(platformTag)}</span>
                     
-                    <span class="flex-1 text-sm font-medium text-slate-700 dark:text-white truncate">${p.name}</span>
+                    <span class="flex-1 text-sm font-medium text-slate-700 dark:text-white truncate">${safeHtml(p.name)}</span>
                     
                     <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${categoryBadgeClass}">Grup ${p.categoryGroup || 'A'}</span>
                     
@@ -870,7 +886,7 @@ const BundlingCalculator = (function () {
                         </div>
                         <div>
                             <span class="text-slate-400">Kategori:</span>
-                            <span class="text-slate-700 dark:text-white font-medium">${p.categoryName || '-'}</span>
+                            <span class="text-slate-700 dark:text-white font-medium">${safeHtml(p.categoryName || '-')}</span>
                         </div>
                     </div>
                 </div>
@@ -889,7 +905,7 @@ const BundlingCalculator = (function () {
                     <i class="fas fa-times text-xs"></i>
                 </button>
                 
-                <input type="text" value="${p.name}" 
+                <input type="text" value="${safeAttr(p.name)}" 
                     onchange="BundlingCalculator.updateProduct(${p.id}, 'name', this.value)"
                     class="flex-1 min-w-0 px-2 py-1 text-sm border border-slate-200 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-white"
                     placeholder="Nama produk">
@@ -1159,7 +1175,7 @@ const BundlingCalculator = (function () {
 
             return `
                 <tr class="border-b border-slate-100 dark:border-slate-700">
-                    <td class="py-2 font-medium">${p.name}</td>
+                    <td class="py-2 font-medium">${safeHtml(p.name)}</td>
                     <td class="py-2 text-right">${formatRp(p.hpp)}</td>
                     <td class="py-2 text-center">${p.qty}</td>
                     <td class="py-2 text-right text-red-400">-${formatRp(p.allocatedFee)}</td>
@@ -1191,14 +1207,15 @@ const BundlingCalculator = (function () {
             const iconClass = insight.severity === 'danger' ? 'text-red-500' :
                 (insight.severity === 'warning' ? 'text-amber-500' : 'text-blue-500');
 
+            const safeIcon = String(insight.icon || 'info-circle').replace(/[^a-z0-9-]/gi, '');
             return `
                 <div class="p-3 rounded-lg border ${severityClass} mb-2">
                     <div class="flex items-start gap-2">
-                        <i class="fas fa-${insight.icon} ${iconClass} mt-0.5"></i>
+                        <i class="fas fa-${safeIcon} ${iconClass} mt-0.5"></i>
                         <div class="flex-1">
-                            <p class="text-sm font-medium text-slate-700 dark:text-slate-200">${insight.message}</p>
-                            ${insight.detail ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${insight.detail}</p>` : ''}
-                            ${insight.action ? `<p class="text-xs text-slate-600 dark:text-slate-300 mt-1 font-medium">💡 ${insight.action}</p>` : ''}
+                            <p class="text-sm font-medium text-slate-700 dark:text-slate-200">${safeHtml(insight.message)}</p>
+                            ${insight.detail ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${safeHtml(insight.detail)}</p>` : ''}
+                            ${insight.action ? `<p class="text-xs text-slate-600 dark:text-slate-300 mt-1 font-medium">💡 ${safeHtml(insight.action)}</p>` : ''}
                         </div>
                     </div>
                 </div>
@@ -1223,7 +1240,7 @@ const BundlingCalculator = (function () {
                 <button onclick="document.getElementById('bundlePrice').value='${s.price.toLocaleString('id-ID')}'; BundlingCalculator.setCalculatorMode('profit'); BundlingCalculator.calculateAndRender();"
                     class="px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:border-purple-400 transition-colors">
                     <div class="text-sm font-bold text-slate-700 dark:text-white">${formatRp(s.price)}</div>
-                    <div class="text-[10px] text-slate-400">${s.label}</div>
+                    <div class="text-[10px] text-slate-400">${safeHtml(s.label)}</div>
                 </button>
             `).join('');
         }

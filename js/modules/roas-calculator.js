@@ -42,6 +42,22 @@ const ROASCalculator = (function () {
         return window.productDB || [];
     }
 
+    function safeNumber(value, fallback = 0) {
+        const number = Number(value);
+        return Number.isFinite(number) ? number : fallback;
+    }
+
+    function formatFixed(value, digits = 1, fallback = 0) {
+        return safeNumber(value, fallback).toFixed(digits);
+    }
+
+    function createIcon(className) {
+        const icon = document.createElement('i');
+        icon.className = className;
+        icon.setAttribute('aria-hidden', 'true');
+        return icon;
+    }
+
     // ==================== MODE SWITCHING ====================
 
     /**
@@ -79,25 +95,44 @@ const ROASCalculator = (function () {
         }
 
         emptyState.className = 'text-center py-8 px-4 bg-purple-50/50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800 mb-4';
-        emptyState.innerHTML = `
-            <div class="text-purple-400 dark:text-purple-500 mb-3">
-                <i class="fas fa-chart-line text-4xl"></i>
-            </div>
-            <h3 class="font-bold text-slate-700 dark:text-slate-200 mb-2">Belum Ada Data ROAS</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
-                Mode Auto menggunakan data dari Profit Calculator.<br/>
-                Hitung profit produk dulu untuk melihat data ROAS otomatis.
-            </p>
-            <button onclick="switchModule('profit')" 
-                    class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium rounded-lg transition-colors">
-                <i class="fas fa-calculator mr-2"></i>
-                Ke Profit Calculator
-            </button>
-            <div class="mt-4 text-xs text-slate-400 dark:text-slate-500">
-                <i class="fas fa-lightbulb mr-1"></i>
-                Atau gunakan <button onclick="ROASCalculator.switchMode('manual')" class="text-purple-500 underline">Mode Manual</button> untuk input langsung
-            </div>
-        `;
+        emptyState.replaceChildren();
+
+        const iconWrap = document.createElement('div');
+        iconWrap.className = 'text-purple-400 dark:text-purple-500 mb-3';
+        iconWrap.appendChild(createIcon('fas fa-chart-line text-4xl'));
+
+        const title = document.createElement('h3');
+        title.className = 'font-bold text-slate-700 dark:text-slate-200 mb-2';
+        title.textContent = 'Belum Ada Data ROAS';
+
+        const description = document.createElement('p');
+        description.className = 'text-sm text-slate-500 dark:text-slate-400 mb-4';
+        description.append('Mode Auto menggunakan data dari Profit Calculator.');
+        description.appendChild(document.createElement('br'));
+        description.append('Hitung profit produk dulu untuk melihat data ROAS otomatis.');
+
+        const profitButton = document.createElement('button');
+        profitButton.type = 'button';
+        profitButton.className = 'px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium rounded-lg transition-colors';
+        profitButton.appendChild(createIcon('fas fa-calculator mr-2'));
+        profitButton.append('Ke Profit Calculator');
+        profitButton.addEventListener('click', () => {
+            if (typeof window.switchModule === 'function') window.switchModule('profit');
+        });
+
+        const hint = document.createElement('div');
+        hint.className = 'mt-4 text-xs text-slate-400 dark:text-slate-500';
+        hint.appendChild(createIcon('fas fa-lightbulb mr-1'));
+        hint.append('Atau gunakan ');
+        const manualButton = document.createElement('button');
+        manualButton.type = 'button';
+        manualButton.className = 'text-purple-500 underline';
+        manualButton.textContent = 'Mode Manual';
+        manualButton.addEventListener('click', () => switchMode('manual'));
+        hint.appendChild(manualButton);
+        hint.append(' untuk input langsung');
+
+        emptyState.append(iconWrap, title, description, profitButton, hint);
     }
 
     /**
@@ -283,17 +318,17 @@ const ROASCalculator = (function () {
         const crEl = document.getElementById('roas_cr_display');
         const maxCpcEl = document.getElementById('roas_result_maxcpc');
 
-        if (roasBEEl) roasBEEl.innerText = avgRoas.toFixed(2) + 'x';
-        if (acosEl) acosEl.innerText = avgAcos.toFixed(1) + '%';
-        if (profitEl) profitEl.innerText = formatRupiah(Math.round(avgProfit));
+        if (roasBEEl) roasBEEl.innerText = formatFixed(avgRoas, 2) + 'x';
+        if (acosEl) acosEl.innerText = formatFixed(avgAcos, 1) + '%';
+        if (profitEl) profitEl.innerText = formatRupiah(Math.round(safeNumber(avgProfit)));
         if (crEl) crEl.innerText = cr + '%';
-        if (maxCpcEl) maxCpcEl.innerText = formatRupiah(Math.round(avgProfit * (cr / 100)));
+        if (maxCpcEl) maxCpcEl.innerText = formatRupiah(Math.round(safeNumber(avgProfit) * (cr / 100)));
 
         // Store Auto mode data
         autoData = {
-            price: avgPrice,
-            netProfit: avgProfit,
-            roasBE: avgRoas,
+            price: safeNumber(avgPrice),
+            netProfit: safeNumber(avgProfit),
+            roasBE: safeNumber(avgRoas),
             isActive: true
         };
 

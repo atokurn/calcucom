@@ -1,0 +1,20 @@
+name = "cekbiayajualan"
+compatibility_date = "2026-05-11"
+pages_build_output_dir = "."
+
+# Cloudflare Pages Functions bindings.
+# Create the database first, then replace database_id:
+#   npx wrangler d1 create cekbiayajualan-db
+[[d1_databases]]
+binding = "DB"
+database_name = "cekbiayajualan-db"
+database_id = "f39b5d3a-93b7-4088-bc94-d20b3aee742a"
+
+[vars]
+# Set production value in Cloudflare dashboard or via wrangler pages secret/vars.
+APP_ORIGIN = "https://cekbiayajualan-5si.pages.dev"
+
+# Required secrets, do not commit real values:
+#   npx wrangler pages secret put GOOGLE_CLIENT_ID
+#   npx wrangler pages secret put GOOGLE_CLIENT_SECRET
+#   npx wrangler pages secret put SESSION_SECRET

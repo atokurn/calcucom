@@ -2,6 +2,218 @@
             font-family: 'Inter', sans-serif;
         }
 
+        .miro-landing,
+        .miro-landing button,
+        .miro-landing a {
+            font-family: 'Inter', 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .miro-board {
+            background-image:
+                linear-gradient(rgba(5, 5, 5, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(5, 5, 5, 0.035) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+
+        .miro-btn-primary,
+        .miro-btn-secondary {
+            min-height: 44px;
+        }
+
+        .miro-feature-card {
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+
+        .miro-feature-card:hover {
+            transform: translateY(-4px) rotate(-0.5deg);
+            box-shadow: 0 16px 0 rgba(5, 5, 5, 0.08);
+        }
+
+        .dark .miro-landing {
+            background:
+                radial-gradient(circle at 18% 8%, rgba(255, 208, 47, 0.16), transparent 28%),
+                radial-gradient(circle at 86% 18%, rgba(126, 93, 255, 0.18), transparent 30%),
+                linear-gradient(135deg, #070a12 0%, #101827 48%, #07111f 100%) !important;
+            color: #f8fafc;
+        }
+
+        .dark .miro-landing .bg-white,
+        .dark .miro-landing .bg-white\/90 {
+            background-color: rgba(15, 23, 42, 0.94) !important;
+        }
+
+        .dark .miro-landing .text-\[\#050505\] {
+            color: #f8fafc !important;
+        }
+
+        .dark .miro-landing .text-\[\#424242\],
+        .dark .miro-landing .text-\[\#686868\] {
+            color: #cbd5e1 !important;
+        }
+
+        .dark .miro-landing .border-\[\#050505\]\/10,
+        .dark .miro-landing .border-\[\#050505\] {
+            border-color: rgba(248, 250, 252, 0.22) !important;
+        }
+
+        .dark .miro-board {
+            background-color: #111827 !important;
+            border-color: rgba(248, 250, 252, 0.18) !important;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.58) !important;
+            background-image:
+                linear-gradient(rgba(248, 250, 252, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(248, 250, 252, 0.06) 1px, transparent 1px);
+        }
+
+        .dark .miro-board-canvas {
+            background: #0f172a !important;
+            border-color: rgba(248, 250, 252, 0.14) !important;
+        }
+
+        .dark .miro-board-stats {
+            background: rgba(15, 23, 42, 0.92) !important;
+            border-color: rgba(248, 250, 252, 0.18) !important;
+        }
+
+        .dark .miro-note-yellow,
+        .dark .miro-feature-yellow {
+            background: #facc15 !important;
+            color: #1f1a00 !important;
+        }
+
+        .dark .miro-note-green,
+        .dark .miro-feature-green {
+            background: #34d399 !important;
+            color: #052e22 !important;
+        }
+
+        .dark .miro-note-coral,
+        .dark .miro-feature-coral {
+            background: #fb7185 !important;
+            color: #3f0713 !important;
+        }
+
+        .dark .miro-note-purple,
+        .dark .miro-feature-purple {
+            background: #a78bfa !important;
+            color: #1e0b4b !important;
+        }
+
+        .dark .miro-note *,
+        .dark .miro-feature-card * {
+            color: inherit !important;
+        }
+
+        .dark .miro-btn-secondary {
+            background: #f8fafc !important;
+            color: #050505 !important;
+            border-color: #f8fafc !important;
+        }
+
+        .dark .miro-btn-primary {
+            background: #facc15 !important;
+            color: #050505 !important;
+        }
+
+        @media (max-width: 479px) {
+            .miro-landing {
+                min-height: auto;
+            }
+
+            .miro-landing-shell {
+                padding-top: 24px !important;
+                padding-bottom: 28px !important;
+            }
+
+            .miro-landing-top {
+                margin-bottom: 28px !important;
+            }
+
+            .miro-brand-pill {
+                width: 100%;
+                justify-content: center;
+                padding: 10px 14px !important;
+                font-size: 11px !important;
+                box-shadow: 0 5px 0 rgba(5, 5, 5, 0.08) !important;
+            }
+
+            .miro-hero-grid {
+                gap: 22px !important;
+            }
+
+            .miro-hero-copy {
+                text-align: center;
+            }
+
+            .miro-hero-title {
+                max-width: 340px;
+                margin: 0 auto;
+                font-size: clamp(38px, 11.8vw, 48px) !important;
+                line-height: 0.96 !important;
+                letter-spacing: -1.7px !important;
+            }
+
+            .miro-hero-actions {
+                margin-top: 24px !important;
+                gap: 10px !important;
+            }
+
+            .miro-hero-actions .miro-btn-primary,
+            .miro-hero-actions .miro-btn-secondary {
+                width: 100%;
+                min-height: 48px;
+                padding: 12px 20px !important;
+            }
+
+            .miro-hero-visual {
+                min-height: 210px !important;
+                margin: 4px -10px 0;
+            }
+
+            .miro-hero-glow {
+                inset: 8px !important;
+                filter: blur(28px);
+            }
+
+            .miro-hero-visual img {
+                max-width: 112%;
+                --base-rotation: -1deg;
+                filter: drop-shadow(0 18px 24px rgba(5, 5, 5, 0.18));
+            }
+
+            .miro-feature-grid {
+                gap: 10px !important;
+                margin-top: 28px !important;
+            }
+
+            .miro-feature-card {
+                display: grid;
+                grid-template-columns: 34px 1fr;
+                column-gap: 12px;
+                align-items: start;
+                border-radius: 18px !important;
+                padding: 16px !important;
+            }
+
+            .miro-feature-card i {
+                margin-bottom: 0 !important;
+                font-size: 20px !important;
+                line-height: 1.2;
+            }
+
+            .miro-feature-card h3 {
+                margin-bottom: 4px !important;
+                font-size: 20px !important;
+                line-height: 1.05 !important;
+            }
+
+            .miro-feature-card p {
+                grid-column: 2;
+                font-size: 13px !important;
+                line-height: 1.45 !important;
+            }
+        }
+
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -262,6 +474,11 @@
 
         #mobileProfit.negative {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        #mobileProfit.auth-hidden,
+        #mobileModuleNav.auth-hidden {
+            display: none !important;
         }
 
         /* Tablet mode (>= 768px - 1024px): no mobile nav, so bar at bottom */
@@ -1416,3 +1633,409 @@
             background: rgba(30, 41, 59, 0.9) !important;
             border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
         }
+
+/* Miro-inspired visual refresh */
+:root {
+    --miro-yellow: #ffd02f;
+    --miro-yellow-light: #fff7c2;
+    --miro-blue: #4262ff;
+    --miro-coral-light: #ffd7cc;
+    --miro-teal-light: #c7f0e9;
+    --miro-rose-light: #ffd9ef;
+    --miro-mint-light: #d8f7d0;
+    --miro-ink: #050038;
+    --miro-charcoal: #1f2937;
+    --miro-slate: #5f5c80;
+    --miro-surface: #f7f7f8;
+    --miro-hairline: #e7e6ef;
+    --miro-footer-bg: #050038;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fffdf6;
+    color: var(--miro-ink);
+    letter-spacing: -0.01em;
+}
+
+body.dark {
+    background: #0f172a;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background:
+        radial-gradient(circle at 14% 16%, rgba(255, 208, 47, 0.20), transparent 30%),
+        radial-gradient(circle at 86% 12%, rgba(66, 98, 255, 0.12), transparent 28%),
+        radial-gradient(circle at 78% 86%, rgba(199, 240, 233, 0.24), transparent 34%);
+}
+
+#mainNav {
+    background: rgba(255, 253, 246, 0.92) !important;
+    border-bottom: 1px solid var(--miro-hairline) !important;
+    box-shadow: none !important;
+    backdrop-filter: blur(18px);
+}
+
+.dark #mainNav {
+    background: rgba(15, 23, 42, 0.88) !important;
+}
+
+#mainNav .bg-gradient-to-br {
+    background: var(--miro-yellow) !important;
+    color: var(--miro-ink) !important;
+    border-radius: 9999px !important;
+    box-shadow: none !important;
+}
+
+#mainNav h1 {
+    color: var(--miro-ink) !important;
+    letter-spacing: -0.04em;
+    font-weight: 900;
+}
+
+.dark #mainNav h1 {
+    color: #fff !important;
+}
+
+#mainNav h1 .text-orange-500 {
+    color: var(--miro-blue) !important;
+}
+
+#btnCloudLogin,
+#btnLandingLogin {
+    background: #050038 !important;
+    color: #fff !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 10px 24px rgba(5, 0, 56, 0.16) !important;
+}
+
+#btnCloudPush,
+#btnCloudPull,
+#btnCompare,
+#btnSaveScenario,
+#mainNav button[onclick="toggleTheme()"],
+#mainNav button[onclick="toggleLanguage()"] {
+    border-radius: 9999px !important;
+}
+
+#landingPage {
+    background: linear-gradient(135deg, #fffdf6 0%, #ffffff 42%, #f5f7ff 100%) !important;
+}
+
+.dark #landingPage {
+    background: linear-gradient(135deg, #0f172a 0%, #111827 52%, #050038 100%) !important;
+}
+
+#landingPage h2 {
+    max-width: 780px;
+    color: var(--miro-ink) !important;
+    font-size: clamp(3rem, 7vw, 5.6rem) !important;
+    line-height: 0.98 !important;
+    letter-spacing: -0.07em !important;
+    font-weight: 900 !important;
+}
+
+.dark #landingPage h2 {
+    color: #fff !important;
+}
+
+#landingPage .rounded-3xl,
+#landingFeatures > div {
+    border-radius: 28px !important;
+    border-color: var(--miro-hairline) !important;
+    box-shadow: 0 12px 32px -10px rgba(5, 0, 56, 0.16) !important;
+}
+
+#landingFeatures > div:nth-child(1) {
+    background: var(--miro-yellow-light) !important;
+}
+
+#landingFeatures > div:nth-child(2) {
+    background: var(--miro-teal-light) !important;
+}
+
+#landingFeatures > div:nth-child(3) {
+    background: var(--miro-rose-light) !important;
+}
+
+#landingFeatures > div:nth-child(4) {
+    background: var(--miro-mint-light) !important;
+}
+
+/* Dark Mode Feature Cards styling override for readability and premium look */
+.dark #landingFeatures > div {
+    border-width: 1px !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark #landingFeatures > div:hover {
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5) !important;
+    transform: translateY(-4px) rotate(-0.5deg) !important;
+}
+
+.dark #landingFeatures > div:nth-child(1) {
+    background: rgba(250, 204, 21, 0.08) !important;
+    border-color: rgba(250, 204, 21, 0.3) !important;
+}
+
+.dark #landingFeatures > div:nth-child(2) {
+    background: rgba(52, 211, 153, 0.08) !important;
+    border-color: rgba(52, 211, 153, 0.3) !important;
+}
+
+.dark #landingFeatures > div:nth-child(3) {
+    background: rgba(251, 113, 133, 0.08) !important;
+    border-color: rgba(251, 113, 133, 0.3) !important;
+}
+
+.dark #landingFeatures > div:nth-child(4) {
+    background: rgba(167, 139, 250, 0.08) !important;
+    border-color: rgba(167, 139, 250, 0.3) !important;
+}
+
+/* Force readable text colors inside dark mode landing page feature cards */
+.dark #landingFeatures > div h3 {
+    color: #ffffff !important;
+}
+
+.dark #landingFeatures > div p {
+    color: #cbd5e1 !important; /* slate-300 - very readable */
+}
+
+/* Set bright icon colors in dark mode */
+.dark #landingFeatures > div:nth-child(1) i {
+    color: #ffd02f !important; /* bright yellow */
+}
+
+.dark #landingFeatures > div:nth-child(2) i {
+    color: #34d399 !important; /* bright green */
+}
+
+.dark #landingFeatures > div:nth-child(3) i {
+    color: #fb7185 !important; /* bright coral */
+}
+
+.dark #landingFeatures > div:nth-child(4) i {
+    color: #a78bfa !important; /* bright purple */
+}
+
+/* Platform Pills Styling for Readability (Light Mode) */
+.miro-platform-pills span:nth-child(1) { color: #4d4300 !important; }
+.miro-platform-pills span:nth-child(2) { color: #114d38 !important; }
+.miro-platform-pills span:nth-child(3) { color: #6c2218 !important; }
+.miro-platform-pills span:nth-child(4) { color: #3b246a !important; }
+
+/* Dark Mode Platform Pills styling */
+.dark .miro-platform-pills {
+    background: rgba(15, 23, 42, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+.dark .miro-platform-pills span {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.dark .miro-platform-pills span:nth-child(1) {
+    background: rgba(250, 204, 21, 0.15) !important;
+    color: #fef08a !important;
+    border-color: rgba(250, 204, 21, 0.2) !important;
+}
+.dark .miro-platform-pills span:nth-child(2) {
+    background: rgba(52, 211, 153, 0.15) !important;
+    color: #a7f3d0 !important;
+    border-color: rgba(52, 211, 153, 0.2) !important;
+}
+.dark .miro-platform-pills span:nth-child(3) {
+    background: rgba(251, 113, 133, 0.15) !important;
+    color: #fecdd3 !important;
+    border-color: rgba(251, 113, 133, 0.2) !important;
+}
+.dark .miro-platform-pills span:nth-child(4) {
+    background: rgba(167, 139, 250, 0.15) !important;
+    color: #ddd6fe !important;
+    border-color: rgba(167, 139, 250, 0.2) !important;
+}
+
+/* Dark Mode Primary Buttons Contrast Override */
+.dark #btnCloudLogin,
+.dark #btnLandingLogin {
+    background: var(--miro-yellow) !important;
+    color: var(--miro-ink) !important;
+}
+
+.dark #btnCloudLogin:hover,
+.dark #btnLandingLogin:hover {
+    background: #f4be15 !important;
+}
+
+/* Ensure the brand pill text remains dark in dark mode since its background is yellow */
+.dark .miro-landing .miro-brand-pill {
+    color: var(--miro-ink) !important;
+}
+
+/* Floating loop animation for landing page banner image */
+@keyframes miroFloat {
+    0% {
+        transform: translateY(0) rotate(var(--base-rotation, 0deg));
+    }
+    50% {
+        transform: translateY(-12px) rotate(calc(var(--base-rotation, 0deg) + 0.8deg));
+    }
+    100% {
+        transform: translateY(0) rotate(var(--base-rotation, 0deg));
+    }
+}
+
+.miro-hero-visual img {
+    --base-rotation: 0deg;
+    animation: miroFloat 6s ease-in-out infinite;
+}
+
+/* Landing Page Theme Toggle hover transition */
+.miro-theme-toggle {
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+}
+
+.miro-theme-toggle:hover {
+    transform: scale(1.08) rotate(15deg);
+}
+
+.miro-theme-toggle:active {
+    transform: scale(0.95);
+}
+
+#desktopTabsNav {
+    background: rgba(255, 253, 246, 0.92) !important;
+    border-bottom: 1px solid var(--miro-hairline) !important;
+    backdrop-filter: blur(18px);
+}
+
+.dark #desktopTabsNav {
+    background: rgba(15, 23, 42, 0.88) !important;
+}
+
+.module-tabs {
+    gap: 8px;
+    background: transparent !important;
+    padding: 0;
+}
+
+.module-tab {
+    border: 1px solid var(--miro-hairline);
+    background: #fff;
+    color: var(--miro-slate);
+    border-radius: 9999px;
+    padding: 10px 18px;
+    font-weight: 700;
+    box-shadow: none;
+}
+
+.module-tab.active {
+    background: #050038 !important;
+    color: #fff !important;
+    box-shadow: none !important;
+}
+
+.module-tab.active i {
+    color: var(--miro-yellow) !important;
+}
+
+.dark .module-tab {
+    background: #1e293b;
+    border-color: #334155;
+    color: #cbd5e1;
+}
+
+.dark .module-tab.active {
+    background: var(--miro-yellow) !important;
+    color: var(--miro-ink) !important;
+}
+
+#main-content > .module-panel > div,
+#main-content .bg-white,
+#main-content .dark\:bg-slate-800 {
+    border-radius: 24px !important;
+}
+
+#main-content .shadow-sm,
+#main-content .shadow-md,
+#main-content .shadow-lg {
+    box-shadow: 0 4px 14px rgba(5, 0, 56, 0.06) !important;
+}
+
+input,
+select,
+textarea {
+    border-radius: 12px !important;
+    border-color: var(--miro-hairline) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--miro-blue) !important;
+    box-shadow: 0 0 0 4px rgba(66, 98, 255, 0.12) !important;
+}
+
+.platform-btn,
+.marketplace-toggle,
+.mobile-nav-item {
+    border-radius: 9999px !important;
+}
+
+.platform-btn.active,
+.marketplace-toggle.active {
+    background: var(--miro-yellow) !important;
+    color: var(--miro-ink) !important;
+    border-color: var(--miro-yellow) !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.sticky-save-btn {
+    border-radius: 9999px !important;
+    background: #050038 !important;
+    color: #fff !important;
+    box-shadow: 0 16px 36px rgba(5, 0, 56, 0.18) !important;
+}
+
+#mobileProfit {
+    background: #050038 !important;
+    border-radius: 24px 24px 0 0;
+}
+
+.mobile-module-nav {
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -12px 30px rgba(5, 0, 56, 0.08);
+}
+
+.mobile-nav-item.active {
+    background: var(--miro-yellow) !important;
+    color: var(--miro-ink) !important;
+}
+
+.toast {
+    border-radius: 9999px !important;
+    border: 1px solid var(--miro-hairline);
+    box-shadow: 0 16px 48px -8px rgba(5, 0, 56, 0.20) !important;
+}
+
+@media (max-width: 768px) {
+    #landingPage h2 {
+        font-size: clamp(2.8rem, 13vw, 4.2rem) !important;
+    }
+
+    body[data-authenticated="false"] #mainNav .flex.gap-1 > button:not(#btnCloudLogin) {
+        display: none;
+    }
+}

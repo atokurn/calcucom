@@ -69,6 +69,27 @@ const CompareCalculator = (function () {
         b: null
     };
 
+    function safeHtml(value) {
+        if (typeof Sanitize !== 'undefined' && Sanitize.escapeHtml) {
+            return Sanitize.escapeHtml(value);
+        }
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function safePercent(value, digits = 1) {
+        const number = Number(value);
+        return Number.isFinite(number) ? number.toFixed(digits) : '0.0';
+    }
+
+    function profitClass(value) {
+        return Number(value) >= 0 ? 'text-emerald-600' : 'text-red-500';
+    }
+
     // ==================== SCENARIO MANAGEMENT ====================
 
     /**
@@ -158,6 +179,10 @@ const CompareCalculator = (function () {
 
         const a = scenarios.a;
         const b = scenarios.b;
+        const safeAName = safeHtml(a.name);
+        const safeBName = safeHtml(b.name);
+        const safeACategory = safeHtml(a.category);
+        const safeBCategory = safeHtml(b.category);
 
         // Find best marketplace for each scenario
         const bestA = a.results[0];
@@ -169,7 +194,7 @@ const CompareCalculator = (function () {
                 <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border-2 border-blue-200 dark:border-blue-800">
                     <div class="flex items-center gap-2 mb-3">
                         <span class="w-6 h-6 rounded-full bg-blue-500 text-white text-xs font-bold flex items-center justify-center">A</span>
-                        <span class="font-bold text-slate-700 dark:text-white truncate">${a.name}</span>
+                        <span class="font-bold text-slate-700 dark:text-white truncate">${safeAName}</span>
                     </div>
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
@@ -182,12 +207,12 @@ const CompareCalculator = (function () {
                         </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Kategori</span>
-                            <span class="font-medium text-slate-700 dark:text-white">${a.category}</span>
+                            <span class="font-medium text-slate-700 dark:text-white">${safeACategory}</span>
                         </div>
                         <div class="pt-2 border-t border-blue-200 dark:border-blue-700">
-                            <div class="text-xs text-slate-400 mb-1">Best: ${bestA.name}</div>
-                            <div class="text-xl font-black ${bestA.profit >= 0 ? 'text-emerald-600' : 'text-red-500'}">${formatRupiah(bestA.profit)}</div>
-                            <div class="text-xs text-slate-500">Margin: ${bestA.margin.toFixed(1)}%</div>
+                            <div class="text-xs text-slate-400 mb-1">Best: ${safeHtml(bestA.name)}</div>
+                            <div class="text-xl font-black ${profitClass(bestA.profit)}">${formatRupiah(bestA.profit)}</div>
+                            <div class="text-xs text-slate-500">Margin: ${safePercent(bestA.margin)}%</div>
                         </div>
                     </div>
                 </div>
@@ -196,7 +221,7 @@ const CompareCalculator = (function () {
                 <div class="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 border-2 border-purple-200 dark:border-purple-800">
                     <div class="flex items-center gap-2 mb-3">
                         <span class="w-6 h-6 rounded-full bg-purple-500 text-white text-xs font-bold flex items-center justify-center">B</span>
-                        <span class="font-bold text-slate-700 dark:text-white truncate">${b.name}</span>
+                        <span class="font-bold text-slate-700 dark:text-white truncate">${safeBName}</span>
                     </div>
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
@@ -209,12 +234,12 @@ const CompareCalculator = (function () {
                         </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Kategori</span>
-                            <span class="font-medium text-slate-700 dark:text-white">${b.category}</span>
+                            <span class="font-medium text-slate-700 dark:text-white">${safeBCategory}</span>
                         </div>
                         <div class="pt-2 border-t border-purple-200 dark:border-purple-700">
-                            <div class="text-xs text-slate-400 mb-1">Best: ${bestB.name}</div>
-                            <div class="text-xl font-black ${bestB.profit >= 0 ? 'text-emerald-600' : 'text-red-500'}">${formatRupiah(bestB.profit)}</div>
-                            <div class="text-xs text-slate-500">Margin: ${bestB.margin.toFixed(1)}%</div>
+                            <div class="text-xs text-slate-400 mb-1">Best: ${safeHtml(bestB.name)}</div>
+                            <div class="text-xl font-black ${profitClass(bestB.profit)}">${formatRupiah(bestB.profit)}</div>
+                            <div class="text-xs text-slate-500">Margin: ${safePercent(bestB.margin)}%</div>
                         </div>
                     </div>
                 </div>
@@ -248,7 +273,7 @@ const CompareCalculator = (function () {
                 ${diff > 0 ? '+' : '-'}${formatRupiah(absDiff)}
             </div>
             <div class="text-xs text-slate-500 mt-1">
-                <span class="font-medium">${winner}</span> lebih untung ${formatRupiah(absDiff)}
+                <span class="font-medium">${safeHtml(winner)}</span> lebih untung ${formatRupiah(absDiff)}
             </div>
         `;
     }
@@ -284,7 +309,7 @@ const CompareCalculator = (function () {
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center gap-2">
                             <span class="w-5 h-5 rounded-full bg-${colorClass}-500 text-white text-[10px] font-bold flex items-center justify-center">${slot.toUpperCase()}</span>
-                            <span class="text-xs font-bold text-slate-700 dark:text-white truncate">${scenario.name}</span>
+                            <span class="text-xs font-bold text-slate-700 dark:text-white truncate">${safeHtml(scenario.name)}</span>
                         </div>
                         <div class="flex gap-1">
                             <button onclick="CompareCalculator.loadScenario('${slot}')" 
@@ -301,8 +326,8 @@ const CompareCalculator = (function () {
                         <span>HPP ${formatRupiah(scenario.hpp)}</span> • <span>Jual ${formatRupiah(scenario.price)}</span>
                     </div>
                     <div class="mt-2 text-right">
-                        <span class="text-[10px] text-slate-400">${best.name}:</span>
-                        <span class="text-sm font-bold ${best.profit >= 0 ? 'text-emerald-600' : 'text-red-500'}">${formatRupiah(best.profit)}</span>
+                        <span class="text-[10px] text-slate-400">${safeHtml(best.name)}:</span>
+                        <span class="text-sm font-bold ${profitClass(best.profit)}">${formatRupiah(best.profit)}</span>
                     </div>
                 </div>
             `;
@@ -473,31 +498,31 @@ const CompareCalculator = (function () {
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-3 rounded-full" style="background: ${r.color}"></div>
-                            <span class="font-bold text-slate-800 dark:text-white">${r.name}</span>
+                            <span class="font-bold text-slate-800 dark:text-white">${safeHtml(r.name)}</span>
                         </div>
                         ${isBest ? '<span class="text-xs font-bold text-orange-500 bg-orange-50 dark:bg-orange-900/30 px-2 py-0.5 rounded-full">👑 Best</span>' : ''}
                     </div>
                     <div class="text-center mb-4">
                         <div class="text-xs text-slate-400 mb-1">Net Profit</div>
                         <div class="text-2xl font-black ${profitClass}">${formatRupiah(Math.round(r.profit))}</div>
-                        <div class="text-xs text-slate-500">Margin: ${r.margin.toFixed(1)}%</div>
+                        <div class="text-xs text-slate-500">Margin: ${safePercent(r.margin)}%</div>
                     </div>
                     <div class="space-y-2 text-xs">
                         <div class="flex justify-between text-slate-500 dark:text-slate-400">
                             <span>Admin Fee</span>
-                            <span>${r.adminPct}%</span>
+                            <span>${safePercent(r.adminPct)}%</span>
                         </div>
                         <div class="flex justify-between text-slate-500 dark:text-slate-400">
                             <span>Service Fee</span>
-                            <span>${r.servicePct}%</span>
+                            <span>${safePercent(r.servicePct)}%</span>
                         </div>
                         <div class="flex justify-between font-bold text-slate-700 dark:text-slate-200 pt-1 border-t border-slate-100 dark:border-slate-700">
                             <span>Total Fee</span>
-                            <span>${r.totalFeePct.toFixed(1)}%</span>
+                            <span>${safePercent(r.totalFeePct)}%</span>
                         </div>
                         <div class="flex justify-between text-slate-500 dark:text-slate-400 pt-2">
                             <span>ROAS Break-even</span>
-                            <span class="font-bold text-purple-600">${r.roasBE.toFixed(2)}x</span>
+                            <span class="font-bold text-purple-600">${safePercent(r.roasBE, 2)}x</span>
                         </div>
                     </div>
                 </div>`;

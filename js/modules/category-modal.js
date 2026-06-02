@@ -50,6 +50,18 @@ const CategoryModal = (function () {
         }
     };
 
+    function safeHtml(value) {
+        if (typeof Sanitize !== 'undefined' && Sanitize.escapeHtml) {
+            return Sanitize.escapeHtml(value);
+        }
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
     // ==================== DOM HELPERS ====================
 
     function getModal() {
@@ -172,7 +184,7 @@ const CategoryModal = (function () {
                 ? '<i class="fas fa-chevron-right text-xs ml-2 text-slate-300 dark:text-slate-500"></i>'
                 : '';
 
-            el.innerHTML = `<span>${item.name}</span>${arrow}`;
+            el.innerHTML = `<span>${safeHtml(item.name)}</span>${arrow}`;
 
             el.onclick = () => {
                 // Highlight selection
@@ -210,7 +222,7 @@ const CategoryModal = (function () {
                 ? '<i class="fas fa-chevron-right text-xs ml-2 text-slate-300 dark:text-slate-500"></i>'
                 : '';
 
-            el.innerHTML = `<span>${item.name}</span>${arrow}`;
+            el.innerHTML = `<span>${safeHtml(item.name)}</span>${arrow}`;
 
             el.onclick = () => {
                 Array.from(col2.children).forEach(child => child.classList.remove('active'));
@@ -239,7 +251,7 @@ const CategoryModal = (function () {
         subs.forEach(item => {
             const el = document.createElement('div');
             el.className = 'cat-item p-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition-colors';
-            el.innerHTML = `<span>${item.name}</span>`;
+            el.innerHTML = `<span>${safeHtml(item.name)}</span>`;
 
             el.onclick = () => {
                 Array.from(col3.children).forEach(child => child.classList.remove('active'));
@@ -310,7 +322,7 @@ const CategoryModal = (function () {
         matches.forEach(m => {
             const el = document.createElement('div');
             el.className = 'search-item text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 p-3 border-b border-slate-100 dark:border-slate-700 cursor-pointer transition-colors';
-            el.innerHTML = `<span class="font-semibold text-slate-800 dark:text-white">${m.l3.name}</span> <br><span class="text-xs text-slate-400">${m.l1.name} > ${m.l2.name}</span>`;
+            el.innerHTML = `<span class="font-semibold text-slate-800 dark:text-white">${safeHtml(m.l3.name)}</span> <br><span class="text-xs text-slate-400">${safeHtml(m.l1.name)} &gt; ${safeHtml(m.l2.name)}</span>`;
 
             el.onclick = () => {
                 const group = m.l3.group || m.l2.group || m.l1.group || 'A';

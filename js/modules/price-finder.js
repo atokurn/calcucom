@@ -316,6 +316,18 @@ const PriceFinder = (function () {
         }
     }
 
+    function safeHtml(value) {
+        if (typeof Sanitize !== 'undefined' && Sanitize.escapeHtml) {
+            return Sanitize.escapeHtml(value);
+        }
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
     /**
      * Render cost components list
      */
@@ -334,7 +346,7 @@ const PriceFinder = (function () {
 
         container.innerHTML = costComponents.map(c => `
             <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-white dark:bg-slate-700 p-2 rounded-lg border border-slate-200 dark:border-slate-600">
-                <input type="text" value="${c.name}" placeholder="Nama biaya" 
+                <input type="text" value="${safeHtml(c.name)}" placeholder="Nama biaya" 
                     onchange="PriceFinder.updateCostComponent(${c.id}, 'name', this.value)"
                     class="w-full sm:flex-1 text-xs p-1.5 border border-slate-200 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-white">
                 <div class="flex items-center gap-2 w-full sm:w-auto">

@@ -26,6 +26,28 @@ const HistoryManager = (function () {
         }
     }
 
+    function safeHtml(value) {
+        if (typeof Sanitize !== 'undefined' && Sanitize.escapeHtml) {
+            return Sanitize.escapeHtml(value);
+        }
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    function safeJsString(value) {
+        return String(value ?? '')
+            .replace(/\\/g, '\\\\')
+            .replace(/'/g, "\\'")
+            .replace(/\r/g, '\\r')
+            .replace(/\n/g, '\\n')
+            .replace(/</g, '\\x3C')
+            .replace(/>/g, '\\x3E');
+    }
+
     // ==================== STORAGE ====================
 
     /**
@@ -300,35 +322,41 @@ const HistoryManager = (function () {
 
         container.innerHTML = combined.map(h => {
             const isLoss = String(h.profit).includes('-');
+            const safeId = safeJsString(h.id);
+            const safeSource = safeJsString(h.source);
+            const safeName = safeHtml(h.productName || 'Tanpa Nama');
+            const safeProfit = safeHtml(h.profit);
+            const safeMargin = safeHtml(h.margin);
+            const safeSellingPrice = safeHtml(h.sellingPrice);
             return `
-                <div onclick="HistoryManager.openDetail('${h.id}')"
+                <div onclick="HistoryManager.openDetail('${safeId}')"
                     class="bg-white dark:bg-slate-700 p-3 rounded-lg border border-slate-200 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500 transition-colors cursor-pointer relative group"
-                    role="button" tabindex="0" aria-label="Lihat detail ${h.productName || 'Tanpa Nama'}">
+                    role="button" tabindex="0" aria-label="Lihat detail ${safeName}">
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex items-center gap-2">
                             <div class="w-6 h-6 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-600 text-xs">
                                 ${getPlatformIconFn(h.platform)}
                             </div>
                             <div>
-                                <div class="font-medium text-xs text-slate-700 dark:text-gray-200 text-ellipsis overflow-hidden whitespace-nowrap max-w-[120px]" title="${h.productName || 'Tanpa Nama'}">${h.productName || 'Tanpa Nama'}</div>
+                                <div class="font-medium text-xs text-slate-700 dark:text-gray-200 text-ellipsis overflow-hidden whitespace-nowrap max-w-[120px]" title="${safeName}">${safeName}</div>
                                 <div class="text-[10px] text-slate-400">${new Date(h.timestamp).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
                             </div>
                         </div>
                         <div class="text-right">
-                             <div class="font-bold text-xs ${isLoss ? 'text-red-500' : 'text-green-600'}">${h.profit}</div>
-                             <div class="text-[10px] ${isLoss ? 'text-red-400' : 'text-blue-500'} font-medium">${h.margin}</div>
+                             <div class="font-bold text-xs ${isLoss ? 'text-red-500' : 'text-green-600'}">${safeProfit}</div>
+                             <div class="text-[10px] ${isLoss ? 'text-red-400' : 'text-blue-500'} font-medium">${safeMargin}</div>
                         </div>
                     </div>
                     
                     <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-600">
                         <div>
-                            Jual: <span class="text-slate-700 dark:text-slate-300">${h.sellingPrice}</span>
+                            Jual: <span class="text-slate-700 dark:text-slate-300">${safeSellingPrice}</span>
                         </div>
                          <div class="flex gap-2">
-                            <button onclick="event.stopPropagation(); HistoryManager.loadEntry('${h.id}')" class="text-xs text-blue-500 hover:text-blue-600 p-1" title="Muat Data" aria-label="Muat data">
+                            <button onclick="event.stopPropagation(); HistoryManager.loadEntry('${safeId}')" class="text-xs text-blue-500 hover:text-blue-600 p-1" title="Muat Data" aria-label="Muat data">
                                 <i class="fas fa-upload" aria-hidden="true"></i>
                             </button>
-                            <button onclick="event.stopPropagation(); HistoryManager.confirmDelete('${h.id}', '${h.source}')" class="text-xs text-red-400 hover:text-red-500 p-1" title="Hapus" aria-label="Hapus">
+                            <button onclick="event.stopPropagation(); HistoryManager.confirmDelete('${safeId}', '${safeSource}')" class="text-xs text-red-400 hover:text-red-500 p-1" title="Hapus" aria-label="Hapus">
                                 <i class="fas fa-trash-alt" aria-hidden="true"></i>
                             </button>
                         </div>

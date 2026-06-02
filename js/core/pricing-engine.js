@@ -178,10 +178,12 @@ const PricingEngine = (function () {
         let cashbackFee = 0;
 
         if (isFreeShip) {
-            freeShipFee = Math.min(basis * 0.04, 40000);
+            const freeShipCap = params.maxServiceFee > 0 ? params.maxServiceFee : (params.freeShipCap ?? 40000);
+            freeShipFee = Math.min(basis * 0.04, freeShipCap);
         }
         if (isCashback) {
-            cashbackFee = basis * 0.045;
+            const cashbackCap = params.cashbackCap ?? 60000;
+            cashbackFee = Math.min(basis * 0.045, cashbackCap);
         }
 
         const serviceFee = freeShipFee + cashbackFee;
@@ -192,16 +194,18 @@ const PricingEngine = (function () {
         let customAdditions = 0;
         customCosts.forEach(cost => {
             const amount = cost.isPercent ? basis * (cost.amount / 100) : cost.amount;
-            if (cost.category === 'deduction') {
+            const category = cost.category || 'addition';
+            if (category === 'deduction' || category === 'potongan') {
                 customDeductions += amount;
             } else {
                 customAdditions += amount;
             }
         });
 
-        const totalDeductions = adminFee + serviceFee + affiliateFee + customDeductions;
+        const marketplaceDeductions = adminFee + serviceFee + affiliateFee + orderProcessFee + fixedFee;
+        const totalDeductions = marketplaceDeductions + customDeductions;
         const netIncome = basis - totalDeductions;
-        const totalCost = hpp + totalFixedFees + customAdditions;
+        const totalCost = hpp + operationalCost + adsCost + customAdditions;
         const netProfit = netIncome - totalCost;
         const margin = basis > 0 ? (netProfit / basis) * 100 : 0;
 
@@ -210,7 +214,7 @@ const PricingEngine = (function () {
             adminRate, adminFee, serviceFee, freeShipFee, cashbackFee,
             affiliateFee, orderProcessFee, fixedFee, operationalCost, adsCost,
             customDeductions, customAdditions,
-            totalDeductions, totalFixedFees, totalCost,
+            marketplaceDeductions, totalDeductions, totalFixedFees, totalCost,
             netIncome, netProfit, margin,
             isHealthy: netProfit > 0,
             healthLevel: getHealthLevel(margin)

@@ -30,11 +30,14 @@ const UIManager = (function () {
 
         const icon = icons[type] || icons.info;
 
-        toast.innerHTML = `
-            <i class="fas ${icon}" aria-hidden="true"></i>
-            <span>${message}</span>
-        `;
+        const iconEl = document.createElement('i');
+        iconEl.className = `fas ${icon}`;
+        iconEl.setAttribute('aria-hidden', 'true');
 
+        const messageEl = document.createElement('span');
+        messageEl.textContent = String(message ?? '');
+
+        toast.append(iconEl, messageEl);
         container.appendChild(toast);
 
         // Trigger animation

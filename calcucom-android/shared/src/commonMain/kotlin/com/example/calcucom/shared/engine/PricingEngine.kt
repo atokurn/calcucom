@@ -476,4 +476,114 @@ object PricingEngine {
     private fun formatDouble(value: Double): String {
         return round(value * 100.0 / 100.0).toString()
     }
+
+    fun generateBusinessInsights(bundleResult: BundleResult): List<Map<String, Any?>> {
+        val insights = mutableListOf<Map<String, Any?>>()
+        val netProfit = bundleResult.netProfit
+        val margin = bundleResult.margin
+        val products = bundleResult.products
+        val bundlePrice = bundleResult.bundlePrice
+
+        // 1. Loss Warning
+        if (netProfit < 0.0) {
+            insights.add(mapOf(
+                "type" to "LOSS_WARNING",
+                "severity" to "danger",
+                "icon" to "exclamation-triangle",
+                "message" to "Bundle ini mengalami RUGI ${formatRp(abs(netProfit))}!",
+                "action" to "Naikkan harga bundle atau kurangi produk"
+            ))
+        }
+
+        // 2. Low Margin Warning
+        if (netProfit >= 0.0 && margin < 5.0) {
+            val roundedMargin = round(margin * 10.0) / 10.0
+            insights.add(mapOf(
+                "type" to "LOW_MARGIN",
+                "severity" to "warning",
+                "icon" to "exclamation-circle",
+                "message" to "Margin bundle tipis ($roundedMargin%). Risiko rugi tinggi jika ada diskon/promo.",
+                "action" to "Pertimbangkan naikkan harga 5-10%"
+            ))
+        }
+
+        // 3. Subsidy Detection
+        val lossMakingProducts = products.filter { it.allocatedProfit < 0.0 }
+        val profitableProducts = products.filter { it.allocatedProfit > 0.0 }
+
+        if (lossMakingProducts.isNotEmpty() && netProfit > 0.0) {
+            val subsidizers = profitableProducts.joinToString(", ") { it.product.name }
+            val subsidized = lossMakingProducts.joinToString(", ") { "${it.product.name} (rugi ${formatRp(abs(it.allocatedProfit))})" }
+
+            insights.add(mapOf(
+                "type" to "SUBSIDY_WARNING",
+                "severity" to "warning",
+                "icon" to "balance-scale",
+                "message" to "Produk berikut mengalami rugi: $subsidized",
+                "detail" to "Disubsidi oleh: $subsidizers",
+                "action" to "Evaluasi komposisi bundle"
+            ))
+        }
+
+        // 4. Profit Contributor
+        val topContributor = products.filter { it.allocatedProfit > 0.0 }
+            .maxByOrNull { it.profitShare }
+        if (topContributor != null && topContributor.profitShare > 50.0) {
+            val shareRounded = round(topContributor.profitShare)
+            insights.add(mapOf(
+                "type" to "PROFIT_CONTRIBUTOR",
+                "severity" to "info",
+                "icon" to "star",
+                "message" to "Produk \"${topContributor.product.name}\" menyumbang ${shareRounded.toInt()}% profit bundle",
+                "detail" to "Profit: ${formatRp(topContributor.allocatedProfit)}"
+            ))
+        }
+
+        // 5. Discount Limit
+        if (netProfit > 0.0 && bundlePrice > 0.0) {
+            val maxDiscount = (netProfit / bundlePrice) * 100.0
+            val maxDiscountRounded = round(maxDiscount * 10.0) / 10.0
+            insights.add(mapOf(
+                "type" to "DISCOUNT_LIMIT",
+                "severity" to if (maxDiscount < 5.0) "warning" else "info",
+                "icon" to "tag",
+                "message" to "Maksimal diskon bundle: $maxDiscountRounded% (${formatRp(netProfit)})",
+                "detail" to "Diskon melebihi ini akan menyebabkan rugi"
+            ))
+        }
+
+        // 6. Optimization Tips
+        if (lossMakingProducts.isNotEmpty() && products.size > 2) {
+            val worstProduct = lossMakingProducts.minByOrNull { it.allocatedProfit }
+            if (worstProduct != null) {
+                insights.add(mapOf(
+                    "type" to "OPTIMIZATION_TIP",
+                    "severity" to "info",
+                    "icon" to "lightbulb",
+                    "message" to "Pertimbangkan menghapus atau mengganti \"${worstProduct.product.name}\"",
+                    "detail" to "Rugi: ${formatRp(abs(worstProduct.allocatedProfit))} per bundle",
+                    "action" to "Ganti dengan produk margin lebih tinggi"
+                ))
+            }
+        }
+
+        return insights
+    }
+
+    private fun formatRp(value: Double): String {
+        val rounded = round(value).toLong()
+        val isNegative = rounded < 0
+        val absVal = abs(rounded).toString()
+        val sb = StringBuilder()
+        var count = 0
+        for (i in absVal.length - 1 downTo 0) {
+            sb.append(absVal[i])
+            count++
+            if (count % 3 == 0 && i > 0) {
+                sb.append('.')
+            }
+        }
+        val formatted = sb.reverse().toString()
+        return if (isNegative) "-Rp $formatted" else "Rp $formatted"
+    }
 }

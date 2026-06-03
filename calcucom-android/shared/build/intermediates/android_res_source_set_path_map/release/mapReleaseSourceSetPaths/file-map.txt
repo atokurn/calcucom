@@ -1,0 +1,9 @@
+com.calcucom.shared-pngs-0 /Volumes/ScutiEX/ScutiEX/antigravity/calcu/calcucom/calcucom-android/shared/build/generated/res/pngs/release
+com.calcucom.shared-updated_navigation_xml-1 /Volumes/ScutiEX/ScutiEX/antigravity/calcu/calcucom/calcucom-android/shared/build/generated/updated_navigation_xml/release
+com.calcucom.shared-mergeReleaseResources-2 /Volumes/ScutiEX/ScutiEX/antigravity/calcu/calcucom/calcucom-android/shared/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
+com.calcucom.shared-mergeReleaseResources-3 /Volumes/ScutiEX/ScutiEX/antigravity/calcu/calcucom/calcucom-android/shared/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+com.calcucom.shared-release-4 /Volumes/ScutiEX/ScutiEX/antigravity/calcu/calcucom/calcucom-android/shared/build/intermediates/merged_res/release/mergeReleaseResources
+com.calcucom.shared-androidMain-5 /Volumes/ScutiEX/ScutiEX/antigravity/calcu/calcucom/calcucom-android/shared/src/androidMain/res
+com.calcucom.shared-androidRelease-6 /Volumes/ScutiEX/ScutiEX/antigravity/calcu/calcucom/calcucom-android/shared/src/androidRelease/res
+com.calcucom.shared-main-7 /Volumes/ScutiEX/ScutiEX/antigravity/calcu/calcucom/calcucom-android/shared/src/main/res
+com.calcucom.shared-release-8 /Volumes/ScutiEX/ScutiEX/antigravity/calcu/calcucom/calcucom-android/shared/src/release/res

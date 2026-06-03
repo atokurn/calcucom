@@ -1,0 +1,28 @@
+<variant
+    name="debug"
+    package="com.calcucom.shared"
+    minSdkVersion="24"
+    targetSdkVersion="35"
+    debuggable="true"
+    mergedManifest="build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml"
+    manifestMergeReport="build/outputs/logs/manifest-merger-debug-report.txt"
+    partialResultsDir="build/intermediates/android_test_lint_partial_results/debug/lintAnalyzeDebugAndroidTest/out">
+  <buildFeatures/>
+  <sourceProviders>
+  </sourceProviders>
+  <testSourceProviders>
+    <sourceProvider
+        manifests="src/androidInstrumentedTest/AndroidManifest.xml"
+        javaDirectories="src/androidTest/java:src/androidTestDebug/java:src/androidInstrumentedTest/kotlin:src/androidTest/kotlin:src/androidTestDebug/kotlin"
+        resDirectories="src/androidTest/res:src/androidInstrumentedTest/res:src/androidTestDebug/res:src/androidInstrumentedTestDebug/res"
+        assetsDirectories="src/androidTest/assets:src/androidInstrumentedTest/assets:src/androidTestDebug/assets:src/androidInstrumentedTestDebug/assets"
+        androidTest="true"/>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <artifact
+      type="INSTRUMENTATION_TEST"
+      applicationId="com.calcucom.shared.test"
+      desugaredMethodsFiles="/Volumes/ScutiEX/ScutiEX/.gradle/caches/9.1.0/transforms/d1702b4cc98441209008f63c6fc771b3/transformed/D8BackportedDesugaredMethods.txt">
+  </artifact>
+</variant>

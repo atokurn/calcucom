@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 9.0.1" type="incidents">
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of `compileSdk` than 35 is available: 36">
+        <fix-replace
+            description="Set compileSdk to 36"
+            oldString="35"
+            replacement="36"
+            priority="0"/>
+        <location
+            file="${:shared*projectDir}/build.gradle.kts"
+            line="25"
+            column="5"
+            startOffset="513"
+            endLine="25"
+            endColumn="20"
+            endOffset="528"/>
+    </incident>
+
+</incidents>

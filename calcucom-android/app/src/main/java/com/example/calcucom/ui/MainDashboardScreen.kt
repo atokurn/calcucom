@@ -7,68 +7,88 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainDashboardScreen() {
     var selectedTab by remember { mutableStateOf(0) }
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
     
     val tabs = listOf(
-        TabItem("Profit", Icons.Default.ShoppingCart),
-        TabItem("Price", Icons.Default.Star),
-        TabItem("Bundling", Icons.Default.Build),
-        TabItem("ROAS", Icons.Default.Info),
-        TabItem("Resep", Icons.Default.List)
+        TabItem("Profit Calculator", Icons.Default.ShoppingCart),
+        TabItem("Price Finder", Icons.Default.Star),
+        TabItem("Bundling Calculator", Icons.Default.Build),
+        TabItem("ROAS Calculator", Icons.Default.Info),
+        TabItem("Kalkulator Resep", Icons.Default.List)
     )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "CekBiayaJualan",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        Text(
-                            text = "Super Calculator & Analytics",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            ScrollableTabRow(
-                selectedTabIndex = selectedTab,
-                edgePadding = 16.dp,
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-            ) {
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Spacer(modifier = Modifier.height(16.dp))
+                Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)) {
+                    Text(
+                        text = "CekBiayaJualan",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "Super Calculator & Analytics",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Divider(modifier = Modifier.padding(vertical = 12.dp))
                 tabs.forEachIndexed { index, tab ->
-                    Tab(
+                    NavigationDrawerItem(
+                        label = { Text(tab.title) },
                         selected = selectedTab == index,
-                        onClick = { selectedTab = index },
-                        text = { Text(tab.title) },
-                        icon = { Icon(imageVector = tab.icon, contentDescription = tab.title) }
+                        onClick = {
+                            selectedTab = index
+                            scope.launch { drawerState.close() }
+                        },
+                        icon = { Icon(tab.icon, contentDescription = tab.title) },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
                 }
             }
-
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Column {
+                            Text(
+                                text = "CekBiayaJualan",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = tabs[selectedTab].title,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                )
+            }
+        ) { paddingValues ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .weight(1f)
+                    .padding(paddingValues)
             ) {
                 when (selectedTab) {
                     0 -> ProfitCalculatorTab()
@@ -86,3 +106,4 @@ data class TabItem(
     val title: String,
     val icon: androidx.compose.ui.graphics.vector.ImageVector
 )
+
